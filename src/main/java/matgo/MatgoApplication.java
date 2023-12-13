@@ -1,13 +1,13 @@
-package com.project.zbproject;
+package matgo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ZbProjectApplication {
+public class MatgoApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ZbProjectApplication.class, args);
+        SpringApplication.run(MatgoApplication.class, args);
     }
 
 }
