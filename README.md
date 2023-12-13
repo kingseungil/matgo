@@ -81,13 +81,13 @@
 
 ## ERD
 
-![](image/erd.png)
+![](images/erd.png)
 
 ## Tech Stack
 
 ### Back-end
 
-![img.png](image/backend-tech-stack.png)
+![img.png](images/backend-tech-stack.png)
 
 ### Infra
 
