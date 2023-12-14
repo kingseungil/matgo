@@ -11,7 +11,8 @@ assignees: ''
 작업할 내용을 작성해주세요
 
 To-do
-[ ] todo
-[ ] todo
+- [ ] todo
+- [ ] todo
+
 🎸 기타사항
 기타 사항을 작성해주세요
