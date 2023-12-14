@@ -91,7 +91,7 @@
 
 ### Back-end
 
-![img.png](images/backend-tech-stack.png)
+![img.png](images/backend-techstack.png)
 
 ### Infra
 
