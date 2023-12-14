@@ -5,6 +5,10 @@
 
 ### ✨전주 맛집 탐방✨
 
+[wiki](https://github.com/kingseungil/matgo/wiki) |
+[API 문서]()
+
+
 [전주시 음식점 공공데이터](https://www.data.go.kr/tcs/dss/selectFileDataDetailView.do?publicDataPk=15076735#tab-layer-openapi)를
 이용한 맛집 커뮤니티 서비스입니다.
 
