@@ -1,0 +1,35 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  jpa:
+    database: h2
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+    defer-datasource-initialization: true
+
+  security:
+    jwt:
+      secret-key: test
+      access:
+        expiration: 1800000 # 30분
+      refresh:
+        expiration: 108000000 # 30일
+
+logging:
+  level:
+    org.hibernate.type.descriptor.sql: info
