@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -46,8 +47,11 @@ public class Member extends BaseEntity {
     @Column(name = "role", nullable = false)
     private UserRole role;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private Region region;
+
+    @OneToOne(mappedBy = "member")
+    private EmailVerification emailVerification;
 
     @Builder
     // TODO : 매개변수 DTO로 변경
