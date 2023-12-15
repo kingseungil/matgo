@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -64,7 +65,7 @@ public class Member extends BaseEntity {
     @Column(name = "role", nullable = false)
     private UserRole role;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", foreignKey = @ForeignKey(name = "fk_member_region"), nullable = false)
     private Region region;
 
@@ -88,11 +89,14 @@ public class Member extends BaseEntity {
 
     @Builder
     // TODO : 매개변수 DTO로 변경
-    public Member(String email, String nickname, String password, String profileImage, UserRole role) {
+    public Member(String email, String nickname, String password, String profileImage, UserRole role, Region region) {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
         this.profileImage = (profileImage != null) ? profileImage : DEFAULT_PROFILE_IMAGE;
         this.role = (role != null) ? role : UserRole.USER;
+        this.region = region;
     }
+
+
 }
