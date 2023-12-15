@@ -5,20 +5,35 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import matgo.comment.domain.entity.Comment;
 import matgo.global.entity.BaseEntity;
 import matgo.member.domain.type.UserRole;
+import matgo.post.domain.entity.Post;
+import matgo.post.domain.entity.PostReaction;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+  uniqueConstraints = {
+    @UniqueConstraint(name = "UK_email", columnNames = {"email"}),
+    @UniqueConstraint(name = "UK_nickname", columnNames = {"nickname"}),
+  }
+)
 public class Member extends BaseEntity {
 
     private static final String DEFAULT_PROFILE_IMAGE = "https://dthezntil550i.cloudfront.net/pn/latest/pn1608281849186400000834203/1280_960/468201b8-3f90-4f98-b8ae-06aa4f156741.png";
@@ -28,10 +43,10 @@ public class Member extends BaseEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "nickname", nullable = false, unique = true)
+    @Column(name = "nickname", nullable = false)
     private String nickname;
 
     @Column(name = "password", nullable = false)
@@ -48,10 +63,20 @@ public class Member extends BaseEntity {
     private UserRole role;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", foreignKey = @ForeignKey(name = "fk_member_region"), nullable = false)
     private Region region;
 
     @OneToOne(mappedBy = "member")
     private EmailVerification emailVerification;
+
+    @OneToMany(mappedBy = "member")
+    private List<Post> posts;
+
+    @OneToMany(mappedBy = "member")
+    private List<PostReaction> postReactions;
+
+    @OneToMany(mappedBy = "member")
+    private List<Comment> comments;
 
     @Builder
     // TODO : 매개변수 DTO로 변경
