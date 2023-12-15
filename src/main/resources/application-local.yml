@@ -31,6 +31,14 @@ spring:
       refresh:
         expiration: 108000000 # 30일
 
+aws:
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
+  region: ${AWS_REGION}
+  s3:
+    bucket: ${AWS_S3_BUCKET}
+
+
 logging:
   level:
     org.hibernate.type.descriptor.sql: info
