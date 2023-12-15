@@ -10,6 +10,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,6 +19,7 @@ import lombok.NoArgsConstructor;
 import matgo.comment.domain.entity.Comment;
 import matgo.global.entity.BaseEntity;
 import matgo.member.domain.entity.Member;
+import matgo.member.domain.entity.Region;
 
 @Entity
 @Getter
@@ -34,16 +37,20 @@ public class Post extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", foreignKey = @ForeignKey(name = "fk_post_region"), nullable = false)
+    private Region region;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "fk_post_member"), nullable = false)
     private Member member;
 
     @OneToMany(mappedBy = "post")
-    private List<PostImage> postImage;
+    private List<PostImage> postImage = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<PostReaction> postReaction;
+    private List<PostReaction> postReaction = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<Comment> comment;
+    private List<Comment> comment = new ArrayList<>();
 }

@@ -1,4 +1,4 @@
-package matgo.post.domain.entity;
+package matgo.review.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,22 +20,21 @@ import matgo.member.domain.entity.Member;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostReaction {
+public class ReviewReaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private Reaction type;
+    private Reaction reaction;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "fk_reaction_post"), nullable = false)
-    private Post post;
+    @JoinColumn(name = "review_id", foreignKey = @ForeignKey(name = "fk_reaction_review"), nullable = false)
+    private Review review;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "fk_post_reaction_member"), nullable = false)
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "fk_review_reaction_member"), nullable = false)
     private Member member;
 }

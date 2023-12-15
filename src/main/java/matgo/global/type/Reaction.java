@@ -1,4 +1,4 @@
-package matgo.post.domain.type;
+package matgo.global.type;
 
 public enum Reaction {
     LIKE, DISLIKE

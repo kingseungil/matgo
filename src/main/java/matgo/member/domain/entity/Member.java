@@ -14,6 +14,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -24,6 +25,7 @@ import matgo.global.entity.BaseEntity;
 import matgo.member.domain.type.UserRole;
 import matgo.post.domain.entity.Post;
 import matgo.post.domain.entity.PostReaction;
+import matgo.review.domain.entity.Review;
 
 @Entity
 @Getter
@@ -70,13 +72,19 @@ public class Member extends BaseEntity {
     private EmailVerification emailVerification;
 
     @OneToMany(mappedBy = "member")
-    private List<Post> posts;
+    private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<PostReaction> postReactions;
+    private List<PostReaction> postReactions = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Review> reviewReactions = new ArrayList<>();
 
     @Builder
     // TODO : 매개변수 DTO로 변경
