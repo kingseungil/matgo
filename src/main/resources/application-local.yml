@@ -16,7 +16,7 @@ spring:
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -37,6 +37,10 @@ aws:
   region: ${AWS_REGION}
   s3:
     bucket: ${AWS_S3_BUCKET}
+    directory: ${AWS_S3_DIRECTORY}
+
+images:
+  default-profile-image: ${AWS_S3_DEFAULT_PROFILE_IMAGE}
 
 
 logging:

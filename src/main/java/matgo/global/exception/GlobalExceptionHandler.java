@@ -1,13 +1,11 @@
 package matgo.global.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import matgo.global.exception.dto.ErrorLogRequest;
 import matgo.global.exception.dto.ErrorResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,16 +24,17 @@ public class GlobalExceptionHandler {
 
     // Validation 에러
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<String>> handleInvalidDtoField(MethodArgumentNotValidException e) {
-        List<String> errors = new ArrayList<>();
-        e.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = Objects.requireNonNull(error.getCodes())[1];
-            String errorMessage = error.getDefaultMessage();
-            String invalidValue = Objects.requireNonNull(error.getArguments())[1].toString();
-            errors.add(String.format(INVALID_DTO_FIELD_ERROR_MESSAGE_FORMAT, fieldName, errorMessage, invalidValue));
-        });
+    public ResponseEntity<ErrorResponse> handleInvalidDtoField(MethodArgumentNotValidException e) {
+        FieldError fieldError = e.getFieldErrors().get(0);
+        String errorMessage = String.format(
+          INVALID_DTO_FIELD_ERROR_MESSAGE_FORMAT,
+          fieldError.getField(),
+          fieldError.getDefaultMessage(),
+          fieldError.getRejectedValue()
+        );
 
-        return ResponseEntity.badRequest().body(errors);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_REQUEST, errorMessage);
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     // 기타 에러
