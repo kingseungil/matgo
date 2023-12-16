@@ -35,7 +35,8 @@ public class SecurityConfig {
           .authorizeHttpRequests(authorizeRequests -> authorizeRequests
               // 모두 허용
               .requestMatchers(
-                "/api/member" // 회원가입
+                "/api/member", // 회원가입
+                "/api/auth/verify" // 이메일 인증 코드 확인
               ).permitAll()
               // 고객만 허용
               // 관리자만 허용

@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import matgo.auth.domain.entity.EmailVerification;
 import matgo.comment.domain.entity.Comment;
 import matgo.global.entity.BaseEntity;
 import matgo.member.domain.type.UserRole;
@@ -90,5 +91,12 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<Review> reviewReactions = new ArrayList<>();
 
+    public void verifyEmail() {
+        this.isActive = true;
+    }
+
+    public boolean isVerified() {
+        return this.isActive;
+    }
 
 }

@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import matgo.auth.application.MailService;
 import matgo.global.s3.S3Service;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
@@ -33,7 +34,9 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final RegionRepository regionRepository;
+
     private final S3Service s3Service;
+    private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${images.default-profile-image}")
@@ -42,6 +45,7 @@ public class MemberService {
     public SignUpResponse saveMember(SignUpRequest signUpRequest) {
         validateDuplicateEmail(signUpRequest.email());
         validateDuplicateNickname(signUpRequest.nickname());
+
         Region region = getRegion(signUpRequest.region());
         String password = passwordEncoder.encode(signUpRequest.password());
         String imageUrl = uploadAndGetImageURL(signUpRequest.profileImage());
@@ -54,7 +58,9 @@ public class MemberService {
                               .region(region)
                               .build();
         memberRepository.save(member);
-        return SignUpResponse.from(member.getId());
+        mailService.sendVerificationCode(member.getEmail());
+
+        return SignUpResponse.from(member.getId(), member.getEmail());
     }
 
 
