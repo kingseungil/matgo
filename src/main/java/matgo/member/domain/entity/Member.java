@@ -18,6 +18,7 @@ import jakarta.persistence.UniqueConstraint;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,8 @@ import matgo.review.domain.entity.Review;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @Table(
   uniqueConstraints = {
     @UniqueConstraint(name = "UK_email", columnNames = {"email"}),
@@ -86,17 +89,6 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<Review> reviewReactions = new ArrayList<>();
-
-    @Builder
-    // TODO : 매개변수 DTO로 변경
-    public Member(String email, String nickname, String password, String profileImage, UserRole role, Region region) {
-        this.email = email;
-        this.nickname = nickname;
-        this.password = password;
-        this.profileImage = (profileImage != null) ? profileImage : DEFAULT_PROFILE_IMAGE;
-        this.role = (role != null) ? role : UserRole.USER;
-        this.region = region;
-    }
 
 
 }
