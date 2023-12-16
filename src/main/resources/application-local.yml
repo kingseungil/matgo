@@ -31,6 +31,19 @@ spring:
       refresh:
         expiration: 108000000 # 30일
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    default-encoding: UTF-8
+
 aws:
   access-key: ${AWS_ACCESS_KEY}
   secret-key: ${AWS_SECRET_KEY}
@@ -41,6 +54,8 @@ aws:
 
 images:
   default-profile-image: ${AWS_S3_DEFAULT_PROFILE_IMAGE}
+
+
 
 
 logging:

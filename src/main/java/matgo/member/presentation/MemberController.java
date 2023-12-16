@@ -22,10 +22,11 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping
-    public ResponseEntity<Void> register(
+    public ResponseEntity<String> register(
       @ModelAttribute @Valid SignUpRequest signUpRequest
     ) {
         SignUpResponse signUpResponse = memberService.saveMember(signUpRequest);
-        return ResponseEntity.created(URI.create("/api/members" + signUpResponse.id())).build();
+        return ResponseEntity.created(URI.create("/api/member/" + signUpResponse.id()))
+                             .body(signUpResponse.email());
     }
 }
