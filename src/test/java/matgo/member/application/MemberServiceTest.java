@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 class MemberServiceTest extends BaseServiceTest {
@@ -28,6 +29,7 @@ class MemberServiceTest extends BaseServiceTest {
 
     @Nested
     @DisplayName("saveMember 메서드는")
+    @Transactional
     class saveMember {
 
         Region region = new Region("효자동");

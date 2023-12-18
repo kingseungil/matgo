@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.transaction.annotation.Transactional;
 
 class JavaMailServieImplTest extends BaseServiceTest {
 
@@ -68,6 +69,7 @@ class JavaMailServieImplTest extends BaseServiceTest {
 
     @Nested
     @DisplayName("verifyCode 메서드는")
+    @Transactional
     class verifyCode {
 
         EmailVerification successCase = new EmailVerification("111111", LocalDateTime.now().plusHours(24),
