@@ -10,7 +10,6 @@ import static matgo.global.util.DtoValidator.PW_MESSAGE;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import org.springframework.web.multipart.MultipartFile;
 
 public record SignUpRequest(
   @NotBlank(message = EMPTY_MESSAGE)
@@ -22,7 +21,6 @@ public record SignUpRequest(
   @NotBlank(message = EMPTY_MESSAGE)
   @Pattern(regexp = PW_FORMAT, message = PW_MESSAGE)
   String password,
-  MultipartFile profileImage,
   @NotBlank(message = EMPTY_MESSAGE)
   String region
 ) {
@@ -31,8 +29,8 @@ public record SignUpRequest(
       String email,
       String nickname,
       String password,
-      MultipartFile profileImage
+      String region
     ) {
-        return new SignUpRequest(email, nickname, password, profileImage, null);
+        return new SignUpRequest(email, nickname, password, region);
     }
 }
