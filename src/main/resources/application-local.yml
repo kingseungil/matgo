@@ -1,5 +1,10 @@
 server:
   port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
 
 spring:
   datasource:
@@ -52,11 +57,15 @@ aws:
     bucket: ${AWS_S3_BUCKET}
     directory: ${AWS_S3_DIRECTORY}
 
+springdoc:
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    url: /docs/matgo-api.yaml
+    path: /docs/swagger
+
 images:
   default-profile-image: ${AWS_S3_DEFAULT_PROFILE_IMAGE}
-
-
-
 
 logging:
   level:

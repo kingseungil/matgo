@@ -23,8 +23,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() { // 나중에 restdocs, swagger 등을 사용할 때 필요
-        return webSecurity -> webSecurity.ignoring().requestMatchers("/");
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return webSecurity -> webSecurity.ignoring().requestMatchers("/docs/**", "/error", "/v3/api-docs/**");
     }
 
     @Bean
