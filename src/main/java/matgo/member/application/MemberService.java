@@ -42,13 +42,13 @@ public class MemberService {
     @Value("${images.default-profile-image}")
     private String defaultProfileImage;
 
-    public SignUpResponse saveMember(SignUpRequest signUpRequest) {
+    public SignUpResponse saveMember(SignUpRequest signUpRequest, MultipartFile profileImage) {
         validateDuplicateEmail(signUpRequest.email());
         validateDuplicateNickname(signUpRequest.nickname());
 
         Region region = getRegion(signUpRequest.region());
         String password = passwordEncoder.encode(signUpRequest.password());
-        String imageUrl = uploadAndGetImageURL(signUpRequest.profileImage());
+        String imageUrl = uploadAndGetImageURL(profileImage);
         Member member = Member.builder()
                               .email(signUpRequest.email())
                               .nickname(signUpRequest.nickname())

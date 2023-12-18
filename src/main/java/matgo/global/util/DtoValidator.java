@@ -11,5 +11,5 @@ public class DtoValidator {
     public static final String TIME_FORMAT = "HH:mm:ss";
     public static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssxxx";
     public static final String PW_FORMAT = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W).{8,20}$";
-    public static final String NAMING_FORMAT = "^[ a-zA-Z0-9ㄱ-힣]{1,10}$";
+    public static final String NAMING_FORMAT = "^[a-zA-Z0-9\\p{IsHangul}]{1,10}$";
 }

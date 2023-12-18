@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import matgo.auth.domain.entity.EmailVerification;
 import matgo.comment.domain.entity.Comment;
 import matgo.global.entity.BaseEntity;
@@ -74,6 +75,7 @@ public class Member extends BaseEntity {
     private Region region;
 
     @OneToOne(mappedBy = "member")
+    @Setter
     private EmailVerification emailVerification;
 
     @OneToMany(mappedBy = "member")
