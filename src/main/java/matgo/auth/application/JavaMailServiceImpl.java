@@ -8,11 +8,9 @@ import static matgo.global.exception.ErrorCode.UNMATCHED_VERIFICATION_CODE;
 
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import matgo.auth.domain.entity.EmailVerification;
 import matgo.auth.domain.repository.EmailVerificationRepository;
 import matgo.auth.dto.request.EmailVerificationRequest;
 import matgo.auth.exception.AuthException;
@@ -27,7 +25,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class JavaMailServieImpl implements MailService {
+public class JavaMailServiceImpl implements MailService {
 
     private static final String EMAIL_SUBJECT = "Matgo 인증 코드";
 
@@ -51,12 +49,6 @@ public class JavaMailServieImpl implements MailService {
         }
         log.info("Sent a verification code: {} to {}", verificationCode, email);
 
-        Member member = memberRepository.findByEmail(email)
-                                        .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
-        EmailVerification emailVerification = new EmailVerification(verificationCode,
-          LocalDateTime.now().plusHours(24), member);
-        emailVerificationRepository.save(emailVerification);
-
         return verificationCode;
     }
 
@@ -69,6 +61,7 @@ public class JavaMailServieImpl implements MailService {
         }
         return sb.toString();
     }
+
 
     @Override
     @Transactional

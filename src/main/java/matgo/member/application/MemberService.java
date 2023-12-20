@@ -6,11 +6,13 @@ import static matgo.global.exception.ErrorCode.NOT_FOUND_REGION;
 import static matgo.member.domain.type.UserRole.USER;
 
 import jakarta.transaction.Transactional;
-import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import matgo.auth.application.MailService;
+import matgo.auth.domain.entity.EmailVerification;
+import matgo.auth.domain.repository.EmailVerificationRepository;
 import matgo.global.s3.S3Service;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
@@ -34,6 +36,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final RegionRepository regionRepository;
+    private final EmailVerificationRepository emailVerificationRepository;
 
     private final S3Service s3Service;
     private final MailService mailService;
@@ -58,7 +61,8 @@ public class MemberService {
                               .region(region)
                               .build();
         memberRepository.save(member);
-        mailService.sendVerificationCode(member.getEmail());
+        String verificationCode = mailService.sendVerificationCode(member.getEmail());
+        saveEmailVerification(verificationCode, member);
 
         return SignUpResponse.from(member.getId(), member.getEmail());
     }
@@ -81,15 +85,18 @@ public class MemberService {
                                .orElseThrow(() -> new MemberException(NOT_FOUND_REGION));
     }
 
-    public String uploadAndGetImageURL(MultipartFile profileImage) {
-        return Optional.ofNullable(profileImage)
-                       .filter(image -> !image.isEmpty())
-                       .map(image -> s3Service.upload(
-                         image,
-                         S3_DIRECTORY,
-                         String.valueOf(UUID.randomUUID()),
-                         image.getOriginalFilename()))
-                       .orElse(defaultProfileImage);
+    private String uploadAndGetImageURL(MultipartFile profileImage) {
+        if (profileImage == null || profileImage.isEmpty()) {
+            return defaultProfileImage;
+        }
+        return s3Service.upload(profileImage, S3_DIRECTORY, String.valueOf(UUID.randomUUID()),
+          profileImage.getOriginalFilename());
+    }
+
+    private void saveEmailVerification(String verificationCode, Member member) {
+        EmailVerification emailVerification = new EmailVerification(verificationCode,
+          LocalDateTime.now().plusHours(24), member);
+        emailVerificationRepository.save(emailVerification);
     }
 
 }
