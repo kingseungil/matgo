@@ -29,14 +29,14 @@ import org.mockito.Mock;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.transaction.annotation.Transactional;
 
-class JavaMailServieImplTest extends BaseServiceTest {
+class JavaMailServiceImplTest extends BaseServiceTest {
 
     @Mock
     private JavaMailSender javaMailSender;
     @Mock
     private MimeMessage mimeMessage;
     @InjectMocks
-    private JavaMailServieImpl javaMailService;
+    private JavaMailServiceImpl javaMailService;
 
     private Member member;
 
