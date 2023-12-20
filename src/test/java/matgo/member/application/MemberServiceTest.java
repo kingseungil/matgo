@@ -8,6 +8,7 @@ import static org.mockito.Mockito.doReturn;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import matgo.auth.domain.entity.EmailVerification;
 import matgo.common.BaseServiceTest;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
@@ -48,6 +49,7 @@ class MemberServiceTest extends BaseServiceTest {
             doReturn("encoded_password").when(passwordEncoder).encode(anyString());
             doReturn(null).when(memberRepository).save(any(Member.class));
             doReturn("mocked_code").when(mailService).sendVerificationCode(anyString());
+            doReturn(null).when(emailVerificationRepository).save(any(EmailVerification.class));
 
             // when
             SignUpResponse result = memberService.saveMember(signUpRequest, profileImage);
@@ -66,6 +68,7 @@ class MemberServiceTest extends BaseServiceTest {
             doReturn("encoded_password").when(passwordEncoder).encode(anyString());
             doReturn(null).when(memberRepository).save(any(Member.class));
             doReturn("mocked_code").when(mailService).sendVerificationCode(anyString());
+            doReturn(null).when(emailVerificationRepository).save(any(EmailVerification.class));
 
             // when
             SignUpResponse result = memberService.saveMember(signUpRequest, null);

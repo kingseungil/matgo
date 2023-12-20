@@ -53,7 +53,6 @@ class JavaMailServiceImplTest extends BaseServiceTest {
     @DisplayName("sendVerificationCode 메서드 성공")
     void sendVerificationCode() {
         // given
-        doReturn(Optional.of(member)).when(memberRepository).findByEmail(anyString());
         doReturn(mimeMessage).when(javaMailSender).createMimeMessage();
         doNothing().when(javaMailSender).send(any(MimeMessage.class));
 
@@ -62,7 +61,6 @@ class JavaMailServiceImplTest extends BaseServiceTest {
 
         // then
         verify(javaMailSender).send(any(MimeMessage.class));
-        verify(emailVerificationRepository).save(any(EmailVerification.class));
         assertNotNull(verificationCode);
     }
 
