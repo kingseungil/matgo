@@ -6,9 +6,7 @@ public interface MailService {
 
     // 인증번호 발송
     String sendVerificationCode(String email);
-
-    //
-
+    
     // 인증번호 확인
     void verifyCode(EmailVerificationRequest request);
 
