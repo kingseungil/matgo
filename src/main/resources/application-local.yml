@@ -30,11 +30,7 @@ spring:
 
   security:
     jwt:
-      secret-key: test
-      access:
-        expiration: 1800000 # 30분
-      refresh:
-        expiration: 108000000 # 30일
+      secret: ${JWT_SECRET}
 
   mail:
     host: smtp.gmail.com
