@@ -3,7 +3,7 @@ package matgo.member.application;
 import static matgo.global.exception.ErrorCode.ALREADY_EXISTED_EMAIL;
 import static matgo.global.exception.ErrorCode.ALREADY_EXISTED_NICKNAME;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_REGION;
-import static matgo.member.domain.type.UserRole.USER;
+import static matgo.member.domain.type.UserRole.ROLE_USER;
 
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -57,7 +57,7 @@ public class MemberService {
                               .nickname(signUpRequest.nickname())
                               .password(password)
                               .profileImage(imageUrl)
-                              .role(USER)
+                              .role(ROLE_USER)
                               .region(region)
                               .build();
         memberRepository.save(member);

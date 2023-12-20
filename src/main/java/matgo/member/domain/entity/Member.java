@@ -43,9 +43,7 @@ import matgo.review.domain.entity.Review;
   }
 )
 public class Member extends BaseEntity {
-
-    private static final String DEFAULT_PROFILE_IMAGE = "https://dthezntil550i.cloudfront.net/pn/latest/pn1608281849186400000834203/1280_960/468201b8-3f90-4f98-b8ae-06aa4f156741.png";
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
