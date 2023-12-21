@@ -14,12 +14,13 @@ public enum ErrorCode {
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근이 거부되었습니다."),
 
     // Auth
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
     NOT_SUPPORTED_USER_TYPE(HttpStatus.BAD_REQUEST, "지원하지 않는 유저 타입입니다."),
     EXPIRED_VERIFICATION_CODE(HttpStatus.UNAUTHORIZED, "인증 코드가 만료되었습니다."),
     UNMATCHED_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "인증 코드가 일치하지 않습니다."),
     ALREADY_VERIFIED_EMAIL(HttpStatus.BAD_REQUEST, "이미 인증된 이메일입니다."),
     WRONG_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
-    NOT_ACTIVATED_USER(HttpStatus.BAD_REQUEST, "활성화되지 않은 회원입니다."),
+    NOT_ACTIVATED_USER(HttpStatus.UNAUTHORIZED, "활성화되지 않은 회원입니다."),
 
     // TOKEN
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 엑세스토큰입니다."),

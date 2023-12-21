@@ -2,7 +2,6 @@ package matgo.auth.security;
 
 import static matgo.global.exception.ErrorCode.NOT_ACTIVATED_USER;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_MEMBER;
-import static matgo.member.domain.type.UserRole.ROLE_USER;
 
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,7 @@ public class CustomUserDetailService implements UserDetailsService {
             throw new AuthException(NOT_ACTIVATED_USER);
         }
 
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(ROLE_USER.name());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(member.getRole().name());
 
         return new User(String.valueOf(member.getId()),
           member.getPassword(),

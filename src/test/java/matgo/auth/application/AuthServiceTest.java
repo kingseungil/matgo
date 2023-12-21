@@ -1,6 +1,7 @@
 package matgo.auth.application;
 
 import static matgo.global.exception.ErrorCode.NOT_FOUND_MEMBER;
+import static matgo.global.exception.ErrorCode.UNAUTHORIZED;
 import static matgo.global.exception.ErrorCode.WRONG_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -9,13 +10,14 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
+import java.util.Collections;
 import matgo.auth.domain.entity.Token;
 import matgo.auth.domain.repository.TokenRepository;
 import matgo.auth.dto.request.LoginRequest;
 import matgo.auth.dto.response.LoginResponse;
 import matgo.auth.exception.AuthException;
 import matgo.auth.jwt.JwtTokenProvider;
-import matgo.auth.security.UserDetailServiceSelector;
+import matgo.auth.security.CustomUserDetailService;
 import matgo.common.BaseServiceTest;
 import matgo.global.util.SecurityUtil;
 import matgo.member.domain.type.UserRole;
@@ -26,8 +28,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 class AuthServiceTest extends BaseServiceTest {
 
@@ -36,13 +39,11 @@ class AuthServiceTest extends BaseServiceTest {
     @Mock
     private TokenRepository tokenRepository;
     @Mock
-    private UserDetailServiceSelector userDetailServiceSelector;
+    private CustomUserDetailService customUserDetailService;
     @Mock
     private TokenService tokenService;
     @Mock
     private JwtTokenProvider jwtTokenProvider;
-    @Mock
-    private UserDetailsService userDetailsService;
     @Mock
     private UserDetails userDetails;
 
@@ -56,8 +57,9 @@ class AuthServiceTest extends BaseServiceTest {
         @DisplayName("로그인에 성공하면 토큰을 반환한다.")
         void success() {
             // given
-            doReturn(userDetailsService).when(userDetailServiceSelector).select(any());
-            doReturn(userDetails).when(userDetailsService).loadUserByUsername(any());
+            doReturn(userDetails).when(customUserDetailService).loadUserByUsername(any());
+            GrantedAuthority authority = new SimpleGrantedAuthority(UserRole.ROLE_USER.name());
+            doReturn(Collections.singleton(authority)).when(userDetails).getAuthorities();
             Authentication authentication = SecurityUtil.authenticate(userDetails);
             doReturn("encodedPassword").when(userDetails).getPassword();
             doReturn(true).when(passwordEncoder).matches(any(), any());
@@ -76,8 +78,9 @@ class AuthServiceTest extends BaseServiceTest {
         @DisplayName("비밀번호가 틀리면 예외를 던진다.")
         void wrongPassword() {
             // given
-            doReturn(userDetailsService).when(userDetailServiceSelector).select(any());
-            doReturn(userDetails).when(userDetailsService).loadUserByUsername(any());
+            GrantedAuthority authority = new SimpleGrantedAuthority(UserRole.ROLE_USER.name());
+            doReturn(Collections.singleton(authority)).when(userDetails).getAuthorities();
+            doReturn(userDetails).when(customUserDetailService).loadUserByUsername(any());
             doReturn("encodedPassword").when(userDetails).getPassword();
 
             // when & then
@@ -90,13 +93,26 @@ class AuthServiceTest extends BaseServiceTest {
         @DisplayName("존재하지 않는 이메일로 로그인을 시도하면 예외를 던진다.")
         void notExistedEmail() {
             // given
-            doReturn(userDetailsService).when(userDetailServiceSelector).select(any());
-            doThrow(new MemberException(NOT_FOUND_MEMBER)).when(userDetailsService).loadUserByUsername(any());
+            doThrow(new MemberException(NOT_FOUND_MEMBER)).when(customUserDetailService).loadUserByUsername(any());
 
             // when & then
             assertThatThrownBy(() -> authService.login(loginRequest))
               .isInstanceOf(MemberException.class)
               .hasMessageContaining(NOT_FOUND_MEMBER.getMessage());
+        }
+
+        @Test
+        @DisplayName("권한이 없는 사용자가 로그인을 시도하면 예외를 던진다.")
+        void notAuthorizedUser() {
+            // given
+            GrantedAuthority authority = new SimpleGrantedAuthority(UserRole.ROLE_ADMIN.name());
+            doReturn(Collections.singleton(authority)).when(userDetails).getAuthorities();
+            doReturn(userDetails).when(customUserDetailService).loadUserByUsername(any());
+
+            // when & then
+            assertThatThrownBy(() -> authService.login(loginRequest))
+              .isInstanceOf(AuthException.class)
+              .hasMessageContaining(UNAUTHORIZED.getMessage());
         }
     }
 
