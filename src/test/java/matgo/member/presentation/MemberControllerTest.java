@@ -5,33 +5,32 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import java.io.File;
 import matgo.common.BaseControllerTest;
-import matgo.member.dto.request.SignUpRequest;
+import matgo.member.domain.entity.Region;
+import matgo.member.domain.repository.RegionRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 class MemberControllerTest extends BaseControllerTest {
 
-    private final File image = new File("src/test/resources/img.jpeg");
-
     @Autowired
-    private ObjectMapper mapper;
+    private RegionRepository regionRepository;
 
+    @BeforeEach
+    void setUp() {
+        regionRepository.save(new Region("효자동"));
+    }
+    
     @Test
     @DisplayName("[성공]회원가입")
-    @Transactional
-    void registerMember_success() throws JsonProcessingException {
+    void registerMember_success() {
         // given
-        SignUpRequest signUpRequest = new SignUpRequest("test@naver.com", "testnick", "1!asdasd", "효자동");
         MultiPartSpecBuilder request = new MultiPartSpecBuilder(signUpRequest);
         request.charset("UTF-8");
         request.controlName("signUpRequest");

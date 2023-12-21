@@ -27,5 +27,5 @@ public abstract class BaseServiceTest {
     protected PasswordEncoder passwordEncoder;
     @Mock
     protected MailService mailService;
-
+    
 }

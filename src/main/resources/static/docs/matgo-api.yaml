@@ -1,0 +1,123 @@
+openapi: 3.0.1
+info:
+  title: matgo-API
+  description: matgo-API입니다
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+tags: []
+paths:
+  /api/member:
+    post:
+      tags:
+      - Member
+      summary: 회원가입
+      description: 회원가입
+      operationId: 회원가입
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member486549215'
+              examples:
+                회원가입:
+                  value: test@naver.com
+  /api/auth/login:
+    post:
+      tags:
+      - Auth
+      summary: 로그인
+      description: 로그인
+      operationId: 로그인
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-auth-login-1354847443'
+            examples:
+              로그인:
+                value: |-
+                  {
+                    "email" : "test@naver.com",
+                    "password" : "1!asdasd",
+                    "role" : "ROLE_USER"
+                  }
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member486549215'
+              examples:
+                로그인:
+                  value: |-
+                    {
+                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwMzEzOTc2MywiaXNzIjoibWF0Z28iLCJleHAiOjE3MDMxMzk4MjN9.x-KfUsoY6j9iuGqNQ0uvUpgrgP9BLUy2otT7TZ1bhCA"
+                    }
+  /api/auth/logout:
+    delete:
+      tags:
+      - Auth
+      summary: 로그아웃
+      description: 로그아웃
+      operationId: 로그아웃
+      responses:
+        "200":
+          description: "200"
+      security:
+      - bearerAuthJWT: []
+  /api/auth/verify-emailcode:
+    post:
+      tags:
+      - Auth
+      summary: 이메일 인증
+      description: 이메일 인증
+      operationId: 이메일 인증
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-auth-verify-emailcode358504075'
+            examples:
+              이메일 인증:
+                value: |-
+                  {
+                    "email" : "test@naver.com",
+                    "code" : "123456"
+                  }
+      responses:
+        "200":
+          description: "200"
+components:
+  schemas:
+    api-auth-login-1354847443:
+      type: object
+      properties:
+        password:
+          type: string
+          description: 비밀번호
+        role:
+          type: string
+          description: 유저 권한
+        email:
+          type: string
+          description: 이메일
+    api-auth-verify-emailcode358504075:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 인증 코드
+        email:
+          type: string
+          description: 이메일
+    api-member486549215:
+      type: object
+  securitySchemes:
+    bearerAuthJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
