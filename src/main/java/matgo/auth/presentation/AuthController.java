@@ -36,7 +36,7 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(
       @Valid @RequestBody LoginRequest request
     ) {
-        LoginResponse response = authService.signIn(request);
+        LoginResponse response = authService.login(request);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Authorization", "Bearer " + response.accessToken());
         return ResponseEntity.ok().headers(httpHeaders).body(response);
