@@ -19,4 +19,21 @@ public class AuthDocument {
         );
     }
 
+    public static RestDocumentationFilter loginDocument() {
+        return document("로그인",
+          resourceDetails().tag("Auth").description("로그인"),
+          requestFields(
+            fieldWithPath("email").description("이메일"),
+            fieldWithPath("password").description("비밀번호"),
+            fieldWithPath("role").description("유저 권한")
+          )
+        );
+    }
+
+    public static RestDocumentationFilter logoutDocument() {
+        return document("로그아웃",
+          resourceDetails().tag("Auth").description("로그아웃")
+        );
+    }
+
 }
