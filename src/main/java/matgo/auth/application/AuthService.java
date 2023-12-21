@@ -25,6 +25,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailServiceSelector userDetailServiceSelector;
+    private final TokenService tokenService;
 
 
     public LoginResponse signIn(LoginRequest request) {
@@ -50,6 +51,10 @@ public class AuthService {
         if (!passwordEncoder.matches(password, encodedPassword)) {
             throw new AuthException(WRONG_PASSWORD);
         }
+    }
+
+    public void logout(Long userId) {
+        tokenService.deleteToken(userId);
     }
 
 }
