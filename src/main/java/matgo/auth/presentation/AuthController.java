@@ -7,7 +7,6 @@ import matgo.auth.application.MailService;
 import matgo.auth.dto.request.EmailVerificationRequest;
 import matgo.auth.dto.request.LoginRequest;
 import matgo.auth.dto.response.LoginResponse;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,9 +36,7 @@ public class AuthController {
       @Valid @RequestBody LoginRequest request
     ) {
         LoginResponse response = authService.login(request);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", "Bearer " + response.accessToken());
-        return ResponseEntity.ok().headers(httpHeaders).body(response);
+        return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping("/logout")
