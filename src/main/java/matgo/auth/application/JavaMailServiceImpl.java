@@ -11,7 +11,6 @@ import jakarta.transaction.Transactional;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import matgo.auth.domain.repository.EmailVerificationRepository;
 import matgo.auth.dto.request.EmailVerificationRequest;
 import matgo.auth.exception.AuthException;
 import matgo.auth.exception.MailException;
@@ -28,10 +27,7 @@ import org.springframework.stereotype.Service;
 public class JavaMailServiceImpl implements MailService {
 
     private static final String EMAIL_SUBJECT = "Matgo 인증 코드";
-
     private final MemberRepository memberRepository;
-    private final EmailVerificationRepository emailVerificationRepository;
-
     private final JavaMailSender javaMailSender;
 
     @Override

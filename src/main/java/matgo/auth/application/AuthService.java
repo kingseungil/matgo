@@ -28,7 +28,7 @@ public class AuthService {
     private final TokenService tokenService;
 
 
-    public LoginResponse signIn(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         UserDetails userDetails = getUserDetails(request);
         checkPassword(request.password(), userDetails.getPassword());
         Authentication authentication = SecurityUtil.authenticate(userDetails);
