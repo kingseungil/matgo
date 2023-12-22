@@ -16,6 +16,7 @@ import matgo.global.entity.BaseEntity;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
+  name = "region",
   uniqueConstraints = {
     @UniqueConstraint(name = "UK_REGION_NAME", columnNames = {"name"})
   }
