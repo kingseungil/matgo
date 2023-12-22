@@ -8,7 +8,6 @@ import static matgo.global.exception.ErrorCode.UNMATCHED_VERIFICATION_CODE;
 
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
-import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import matgo.auth.dto.request.EmailVerificationRequest;
@@ -17,6 +16,7 @@ import matgo.auth.exception.MailException;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.repository.MemberRepository;
 import matgo.member.exception.MemberException;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -50,12 +50,7 @@ public class JavaMailServiceImpl implements MailService {
 
     private String generateVerificationCode() {
         // 이메일 인증 코드 (6자리)
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 6; i++) {
-            sb.append(random.nextInt(10));
-        }
-        return sb.toString();
+        return RandomStringUtils.randomNumeric(6);
     }
 
 
@@ -86,6 +81,16 @@ public class JavaMailServiceImpl implements MailService {
 
     @Override
     public void sendTemporaryPassword(String email, String password) {
-
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+            helper.setTo(email);
+            helper.setSubject(EMAIL_SUBJECT);
+            helper.setText("임시 비밀번호 : " + password);
+            javaMailSender.send(mimeMessage);
+        } catch (Exception e) {
+            throw new MailException(MAIL_SEND_ERROR);
+        }
+        log.info("Sent a temporary password: {} to {}", password, email);
     }
 }

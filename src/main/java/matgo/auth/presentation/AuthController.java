@@ -6,6 +6,7 @@ import matgo.auth.application.AuthService;
 import matgo.auth.application.MailService;
 import matgo.auth.dto.request.EmailVerificationRequest;
 import matgo.auth.dto.request.LoginRequest;
+import matgo.auth.dto.request.SendTemporaryPasswordRequest;
 import matgo.auth.dto.response.LoginResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,9 +27,9 @@ public class AuthController {
 
     @PostMapping("/verify-emailcode")
     public ResponseEntity<Void> verifyEmailCode(
-      @RequestBody EmailVerificationRequest request) {
+      @Valid @RequestBody EmailVerificationRequest request) {
         mailService.verifyCode(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/login")
@@ -44,6 +45,15 @@ public class AuthController {
       @AuthenticationPrincipal UserDetails userDetails
     ) {
         authService.logout(Long.parseLong(userDetails.getUsername()));
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/send-temporary-password")
+    public ResponseEntity<Void> sendTemporaryPassword(
+      @Valid @RequestBody SendTemporaryPasswordRequest request
+    ) {
+        authService.forgetPassword(request);
+        return ResponseEntity.noContent().build();
+    }
+
 }
