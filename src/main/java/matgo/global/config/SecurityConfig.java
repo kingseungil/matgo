@@ -53,10 +53,12 @@ public class SecurityConfig {
             .requestMatchers(
               "/api/member/signup", // 회원가입
               "/api/auth/verify-emailcode", // 이메일 인증 코드 확인
-              "/api/auth/login" // 로그인
+              "/api/auth/login", // 로그인
+              "/api/auth/send-temporary-password" // 임시 비밀번호 발급
             ).permitAll()
             // 고객만 허용
             .requestMatchers(HttpMethod.PUT, "/api/member").hasRole("USER") // 회원 정보 수정
+            .requestMatchers(HttpMethod.PUT, "/api/member/reset-password").hasRole("USER") // 비밀번호 재설정
             // 관리자만 허용
             // 그 외는 인증 필요
             .anyRequest().authenticated())

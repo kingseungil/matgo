@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import matgo.auth.security.OnlyUser;
 import matgo.member.application.MemberService;
 import matgo.member.dto.request.MemberUpdateRequest;
+import matgo.member.dto.request.ResetPasswordRequest;
 import matgo.member.dto.request.SignUpRequest;
 import matgo.member.dto.response.SignUpResponse;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,4 +52,13 @@ public class MemberController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/reset-password")
+    @OnlyUser
+    public ResponseEntity<Void> resetPassword(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @Valid @RequestBody ResetPasswordRequest resetPasswordRequest
+    ) {
+        memberService.resetPassword(Long.parseLong(userDetails.getUsername()), resetPasswordRequest);
+        return ResponseEntity.noContent().build();
+    }
 }
