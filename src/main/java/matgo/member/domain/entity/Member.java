@@ -111,4 +111,8 @@ public class Member extends BaseEntity {
     public void changeRegion(Region region) {
         this.region = region;
     }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
 }
