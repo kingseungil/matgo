@@ -87,11 +87,7 @@ public class JwtTokenProvider {
         validateRefreshToken(refreshToken);
 
         Authentication authentication = getAuthentication(refreshToken);
-        String newAccessToken = createAccessToken(authentication);
-
-        token.updateAccessToken(newAccessToken);
-        tokenService.saveAccessToken(token);
-        return newAccessToken;
+        return createAccessToken(authentication);
     }
 
 
