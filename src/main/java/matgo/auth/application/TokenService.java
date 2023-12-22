@@ -19,7 +19,6 @@ public class TokenService {
     }
 
     public Token findByAccessToken(String accessToken) {
-        System.out.println("accessToken = " + accessToken);
         return tokenRepository.findByAccessToken(accessToken)
                               .orElseThrow(() -> new TokenException(EXPIRED_REFRESH_TOKEN));
     }

@@ -6,6 +6,7 @@ import matgo.auth.security.CustomAccessDeniedHandler;
 import matgo.auth.security.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -50,14 +51,12 @@ public class SecurityConfig {
           .authorizeHttpRequests(authorizeRequests -> authorizeRequests
             // 모두 허용
             .requestMatchers(
-              "/api/member", // 회원가입
+              "/api/member/signup", // 회원가입
               "/api/auth/verify-emailcode", // 이메일 인증 코드 확인
               "/api/auth/login" // 로그인
             ).permitAll()
             // 고객만 허용
-            .requestMatchers(
-              "/api/member/me" // 내 정보 조회
-            ).hasRole("USER")
+            .requestMatchers(HttpMethod.PUT, "/api/member").hasRole("USER") // 회원 정보 수정
             // 관리자만 허용
             // 그 외는 인증 필요
             .anyRequest().authenticated())

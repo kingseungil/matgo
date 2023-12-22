@@ -1,5 +1,6 @@
 package matgo.global.s3;
 
+import static matgo.global.exception.ErrorCode.FILE_DELETE_ERROR;
 import static matgo.global.exception.ErrorCode.FILE_UPLOAD_ERROR;
 
 import java.io.IOException;
@@ -12,8 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Slf4j
@@ -57,6 +61,18 @@ public class S3ServiceImpl implements S3Service {
 
     @Override
     public void delete(String imageUrl) throws S3Exception {
+        String key = extractKeyFromUrl(imageUrl);
 
+        try {
+            s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucket).key(key).build());
+        } catch (AwsServiceException | SdkClientException e) {
+            log.error("S3 삭제 에러", e);
+            throw new S3Exception(FILE_DELETE_ERROR);
+        }
+    }
+
+    private String extractKeyFromUrl(String imageUrl) {
+        String key = imageUrl.substring(imageUrl.indexOf(bucket) + bucket.length() + 1);
+        return key.substring(key.indexOf("/") + 1);
     }
 }

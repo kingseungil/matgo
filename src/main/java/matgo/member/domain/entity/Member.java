@@ -37,13 +37,14 @@ import matgo.review.domain.entity.Review;
 @AllArgsConstructor
 @Builder
 @Table(
+  name = "member",
   uniqueConstraints = {
     @UniqueConstraint(name = "UK_email", columnNames = {"email"}),
     @UniqueConstraint(name = "UK_nickname", columnNames = {"nickname"}),
   }
 )
 public class Member extends BaseEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -99,4 +100,15 @@ public class Member extends BaseEntity {
         return this.isActive;
     }
 
+    public void changeProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void changeRegion(Region region) {
+        this.region = region;
+    }
 }
