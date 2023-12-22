@@ -4,6 +4,7 @@ import static matgo.global.exception.ErrorCode.ALREADY_EXISTED_EMAIL;
 import static matgo.global.exception.ErrorCode.ALREADY_EXISTED_NICKNAME;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_REGION;
+import static matgo.global.exception.ErrorCode.WRONG_PASSWORD;
 import static matgo.member.domain.type.UserRole.ROLE_USER;
 
 import java.time.LocalDateTime;
@@ -13,12 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 import matgo.auth.application.MailService;
 import matgo.auth.domain.entity.EmailVerification;
 import matgo.auth.domain.repository.EmailVerificationRepository;
+import matgo.auth.exception.AuthException;
 import matgo.global.s3.S3Service;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
 import matgo.member.domain.repository.MemberRepository;
 import matgo.member.domain.repository.RegionRepository;
 import matgo.member.dto.request.MemberUpdateRequest;
+import matgo.member.dto.request.ResetPasswordRequest;
 import matgo.member.dto.request.SignUpRequest;
 import matgo.member.dto.response.SignUpResponse;
 import matgo.member.exception.MemberException;
@@ -130,7 +133,7 @@ public class MemberService {
         if (newNickname == null) {
             return;
         }
-        
+
         if (!member.getNickname().equals(newNickname)) {
             validateDuplicateNickname(newNickname);
             member.changeNickname(newNickname);
@@ -148,4 +151,14 @@ public class MemberService {
         }
     }
 
+    public void resetPassword(Long memberId, ResetPasswordRequest resetPasswordRequest) {
+        Member member = getMemberById(memberId);
+
+        if (!passwordEncoder.matches(resetPasswordRequest.currentPassword(), member.getPassword())) {
+            throw new AuthException(WRONG_PASSWORD);
+        }
+
+        String newPassword = passwordEncoder.encode(resetPasswordRequest.newPassword());
+        member.changePassword(newPassword);
+    }
 }
