@@ -29,4 +29,18 @@ public class MemberDocument {
         );
     }
 
+    public static RestDocumentationFilter updateMemberDocument() {
+        return document("회원 정보 수정",
+          resourceDetails().tag("Member").description("회원 정보 수정"),
+          requestParts(
+            partWithName("memberUpdateRequest").description("회원 정보 수정 정보"),
+            partWithName("profileImage").description("프로필 이미지").optional()
+          ),
+          requestPartFields("memberUpdateRequest",
+            fieldWithPath("nickname").description("닉네임"),
+            fieldWithPath("region").description("지역")
+          )
+        );
+    }
+
 }

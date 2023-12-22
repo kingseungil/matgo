@@ -2,6 +2,7 @@ package matgo.common;
 
 
 import static io.restassured.RestAssured.given;
+import static matgo.auth.presentation.AuthControllerTest.loginMember;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.restassured.RestAssuredRestDocumentation.documentationConfiguration;
 
@@ -14,15 +15,23 @@ import matgo.auth.application.AuthService;
 import matgo.auth.application.MailService;
 import matgo.auth.dto.request.LoginRequest;
 import matgo.global.s3.S3Service;
+import matgo.member.domain.entity.Member;
+import matgo.member.domain.entity.Region;
+import matgo.member.domain.repository.MemberRepository;
+import matgo.member.domain.repository.RegionRepository;
 import matgo.member.domain.type.UserRole;
+import matgo.member.dto.request.MemberUpdateRequest;
 import matgo.member.dto.request.SignUpRequest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -31,25 +40,38 @@ import org.springframework.test.context.ActiveProfiles;
 public abstract class BaseControllerTest {
 
     protected static final File image = new File("src/test/resources/img.jpeg");
-    protected static final SignUpRequest signUpRequest = new SignUpRequest("test@naver.com", "testnick", "1!asdasd",
+    protected static final SignUpRequest signUpRequest = new SignUpRequest("signup@naver.com", "signup", "1!asdasd",
       "효자동");
     protected static final LoginRequest loginRequest = new LoginRequest("test@naver.com", "1!asdasd",
       UserRole.ROLE_USER);
-
-
-    protected RequestSpecification spec;
-
+    protected static final MemberUpdateRequest memberUpdateRequest = new MemberUpdateRequest("updateTest", "효자동");
+    protected static RequestSpecification spec;
+    protected static String accessToken;
     @SpyBean
     protected S3Service s3Service;
     @SpyBean
     protected MailService mailService;
-    @SpyBean
+    @Autowired
     protected AuthService authService;
+    @Autowired
+    protected RegionRepository regionRepository;
+    @Autowired
+    protected MemberRepository memberRepository;
+    @Autowired
+    protected PasswordEncoder passwordEncoder;
     @LocalServerPort
     int port;
 
+    @Autowired
+    private DatabaseCleaner databaseCleaner;
+
     protected static RequestSpecification customGiven() {
         final RequestSpecification customGiven = given();
+        return customGiven.log().all();
+    }
+
+    protected static RequestSpecification customGivenWithDocs(Filter document) {
+        final RequestSpecification customGiven = given(spec).filter(document);
         return customGiven.log().all();
     }
 
@@ -62,11 +84,25 @@ public abstract class BaseControllerTest {
           .withRequestDefaults(prettyPrint())
           .withResponseDefaults(prettyPrint());
 
-        this.spec = new RequestSpecBuilder().addFilter(documentConfig).build();
+        spec = new RequestSpecBuilder().addFilter(documentConfig).build();
+
+        Region region = regionRepository.save(new Region("효자동"));
+        String password = passwordEncoder.encode("1!asdasd");
+        memberRepository.save(Member.builder()
+                                    .email("test@naver.com")
+                                    .nickname("testnick")
+                                    .password(password)
+                                    .profileImage(
+                                      "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image")
+                                    .role(UserRole.ROLE_USER)
+                                    .region(region)
+                                    .isActive(true)
+                                    .build());
+        accessToken = loginMember().jsonPath().getString("accessToken");
     }
 
-    protected RequestSpecification customGivenWithDocs(Filter document) {
-        final RequestSpecification customGiven = given(spec).filter(document);
-        return customGiven.log().all();
+    @AfterEach
+    void tearDown() {
+        databaseCleaner.execute();
     }
 }
