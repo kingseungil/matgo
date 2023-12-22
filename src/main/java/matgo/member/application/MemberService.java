@@ -2,10 +2,10 @@ package matgo.member.application;
 
 import static matgo.global.exception.ErrorCode.ALREADY_EXISTED_EMAIL;
 import static matgo.global.exception.ErrorCode.ALREADY_EXISTED_NICKNAME;
+import static matgo.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_REGION;
 import static matgo.member.domain.type.UserRole.ROLE_USER;
 
-import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +18,14 @@ import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
 import matgo.member.domain.repository.MemberRepository;
 import matgo.member.domain.repository.RegionRepository;
+import matgo.member.dto.request.MemberUpdateRequest;
 import matgo.member.dto.request.SignUpRequest;
 import matgo.member.dto.response.SignUpResponse;
 import matgo.member.exception.MemberException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -97,6 +99,53 @@ public class MemberService {
         EmailVerification emailVerification = new EmailVerification(verificationCode,
           LocalDateTime.now().plusHours(24), member);
         emailVerificationRepository.save(emailVerification);
+    }
+
+
+    public void updateMember(Long memberId, MemberUpdateRequest memberUpdateRequest, MultipartFile profileImage) {
+        Member member = getMemberById(memberId);
+
+        updateProfileImageIfPresent(member, profileImage);
+        updateNicknameIfChanged(member, memberUpdateRequest.nickname());
+        updateRegionIfChanged(member, memberUpdateRequest.region());
+    }
+
+    private Member getMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                               .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+    }
+
+    private void updateProfileImageIfPresent(Member member, MultipartFile profileImage) {
+        if (profileImage == null) {
+            return;
+        }
+
+        if (!profileImage.isEmpty()) {
+            s3Service.delete(member.getProfileImage());
+            member.changeProfileImage(uploadAndGetImageURL(profileImage));
+        }
+    }
+
+    private void updateNicknameIfChanged(Member member, String newNickname) {
+        if (newNickname == null) {
+            return;
+        }
+        
+        if (!member.getNickname().equals(newNickname)) {
+            validateDuplicateNickname(newNickname);
+            member.changeNickname(newNickname);
+        }
+    }
+
+    private void updateRegionIfChanged(Member member, String newRegionName) {
+        if (newRegionName == null) {
+            return;
+        }
+
+        if (!member.getRegion().getName().equals(newRegionName)) {
+            Region region = getRegion(newRegionName);
+            member.changeRegion(region);
+        }
     }
 
 }

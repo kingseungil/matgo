@@ -15,7 +15,7 @@ public record SignUpRequest(
   @NotBlank(message = EMPTY_MESSAGE)
   @Email(message = EMAIL_MESSAGE)
   String email,
-  @NotBlank(message = EMAIL_MESSAGE)
+  @NotBlank(message = EMPTY_MESSAGE)
   @Pattern(regexp = NAMING_FORMAT, message = NICKNAME_MESSAGE)
   String nickname,
   @NotBlank(message = EMPTY_MESSAGE)
@@ -24,5 +24,5 @@ public record SignUpRequest(
   @NotBlank(message = EMPTY_MESSAGE)
   String region
 ) {
-    
+
 }
