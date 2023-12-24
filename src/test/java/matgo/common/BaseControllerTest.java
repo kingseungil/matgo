@@ -14,6 +14,7 @@ import java.io.File;
 import matgo.auth.application.AuthService;
 import matgo.auth.application.MailService;
 import matgo.auth.dto.request.LoginRequest;
+import matgo.auth.dto.request.SendTemporaryPasswordRequest;
 import matgo.global.s3.S3Service;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
@@ -45,6 +46,8 @@ public abstract class BaseControllerTest {
     protected static final LoginRequest loginRequest = new LoginRequest("test@naver.com", "1!asdasd",
       UserRole.ROLE_USER);
     protected static final MemberUpdateRequest memberUpdateRequest = new MemberUpdateRequest("updateTest", "효자동");
+    protected static final SendTemporaryPasswordRequest sendTemporaryPasswordRequest = new SendTemporaryPasswordRequest(
+      "test@naver.com");
     protected static RequestSpecification spec;
     protected static String accessToken;
     @SpyBean
@@ -98,7 +101,7 @@ public abstract class BaseControllerTest {
                                     .region(region)
                                     .isActive(true)
                                     .build());
-        accessToken = loginMember().jsonPath().getString("accessToken");
+        accessToken = loginMember(loginRequest).jsonPath().getString("accessToken");
     }
 
     @AfterEach

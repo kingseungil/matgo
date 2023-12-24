@@ -8,22 +8,17 @@ servers:
 tags: []
 paths:
   /api/member:
-    post:
+    put:
       tags:
       - Member
-      summary: 회원가입
-      description: 회원가입
-      operationId: 회원가입
+      summary: 회원 정보 수정
+      description: 회원 정보 수정
+      operationId: 회원 정보 수정
       responses:
-        "201":
-          description: "201"
-          content:
-            application/json;charset=UTF-8:
-              schema:
-                $ref: '#/components/schemas/api-member486549215'
-              examples:
-                회원가입:
-                  value: test@naver.com
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
   /api/auth/login:
     post:
       tags:
@@ -50,12 +45,12 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/api-member486549215'
+                $ref: '#/components/schemas/api-member-signup486549215'
               examples:
                 로그인:
                   value: |-
                     {
-                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwMzEzOTc2MywiaXNzIjoibWF0Z28iLCJleHAiOjE3MDMxMzk4MjN9.x-KfUsoY6j9iuGqNQ0uvUpgrgP9BLUy2otT7TZ1bhCA"
+                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwMzQwNDQyNiwiaXNzIjoibWF0Z28iLCJleHAiOjE3MDM0MDQ0ODZ9.Dsxw1kZd_4dPyJVchMYYxLFGGiwW54mHytavxF4ZyGY"
                     }
   /api/auth/logout:
     delete:
@@ -65,10 +60,31 @@ paths:
       description: 로그아웃
       operationId: 로그아웃
       responses:
-        "200":
-          description: "200"
+        "204":
+          description: "204"
       security:
       - bearerAuthJWT: []
+  /api/auth/send-temporary-password:
+    post:
+      tags:
+      - Auth
+      summary: 임시 비밀번호 발급
+      description: 임시 비밀번호 발급
+      operationId: 임시 비밀번호 발급
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-auth-send-temporary-password-272417006'
+            examples:
+              임시 비밀번호 발급:
+                value: |-
+                  {
+                    "email" : "test@naver.com"
+                  }
+      responses:
+        "204":
+          description: "204"
   /api/auth/verify-emailcode:
     post:
       tags:
@@ -89,10 +105,33 @@ paths:
                     "code" : "123456"
                   }
       responses:
-        "200":
-          description: "200"
+        "204":
+          description: "204"
+  /api/member/signup:
+    post:
+      tags:
+      - Member
+      summary: 회원가입
+      description: 회원가입
+      operationId: 회원가입
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                회원가입:
+                  value: signup@naver.com
 components:
   schemas:
+    api-auth-send-temporary-password-272417006:
+      type: object
+      properties:
+        email:
+          type: string
+          description: 이메일
     api-auth-login-1354847443:
       type: object
       properties:
@@ -114,7 +153,7 @@ components:
         email:
           type: string
           description: 이메일
-    api-member486549215:
+    api-member-signup486549215:
       type: object
   securitySchemes:
     bearerAuthJWT:

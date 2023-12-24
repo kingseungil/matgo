@@ -36,4 +36,12 @@ public class AuthDocument {
         );
     }
 
+    public static RestDocumentationFilter sendTemporayPasswordDocument() {
+        return document("임시 비밀번호 발급",
+          resourceDetails().tag("Auth").description("임시 비밀번호 발급"),
+          requestFields(
+            fieldWithPath("email").description("이메일")
+          )
+        );
+    }
 }

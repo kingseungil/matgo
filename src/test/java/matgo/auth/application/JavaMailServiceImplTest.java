@@ -2,6 +2,7 @@ package matgo.auth.application;
 
 import static matgo.global.exception.ErrorCode.ALREADY_VERIFIED_EMAIL;
 import static matgo.global.exception.ErrorCode.EXPIRED_VERIFICATION_CODE;
+import static matgo.global.exception.ErrorCode.MAIL_SEND_ERROR;
 import static matgo.global.exception.ErrorCode.UNMATCHED_VERIFICATION_CODE;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,6 +11,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 
 import jakarta.mail.internet.MimeMessage;
@@ -18,6 +20,7 @@ import java.util.Optional;
 import matgo.auth.domain.entity.EmailVerification;
 import matgo.auth.dto.request.EmailVerificationRequest;
 import matgo.auth.exception.AuthException;
+import matgo.auth.exception.MailException;
 import matgo.common.BaseServiceTest;
 import matgo.member.domain.entity.Member;
 import org.junit.jupiter.api.BeforeEach;
@@ -145,6 +148,37 @@ class JavaMailServiceImplTest extends BaseServiceTest {
                   .isInstanceOf(AuthException.class)
                   .hasMessageContaining(ALREADY_VERIFIED_EMAIL.getMessage());
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("sendTemporaryPassword 메서드는")
+    class sendTemporaryPassword {
+
+        @Test
+        @DisplayName("성공하면 임시 비밀번호를 메일로 전송한다.")
+        void success() {
+            // given
+            doReturn(mimeMessage).when(javaMailSender).createMimeMessage();
+            doNothing().when(javaMailSender).send(any(MimeMessage.class));
+
+            // when
+            javaMailService.sendTemporaryPassword("test@naver.com", "!1asdasd");
+
+            // then
+            verify(javaMailSender).send(any(MimeMessage.class));
+        }
+
+        @Test
+        @DisplayName("실패하면 예외를 던진다.")
+        void fail() {
+            // given
+            lenient().doThrow(new RuntimeException()).when(javaMailSender).send(any(MimeMessage.class));
+
+            // when & then
+            assertThatThrownBy(() -> javaMailService.sendTemporaryPassword("test@naver.com", "!1asdasd"))
+              .isInstanceOf(MailException.class)
+              .hasMessageContaining(MAIL_SEND_ERROR.getMessage());
         }
     }
 }

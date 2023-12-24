@@ -6,25 +6,32 @@ import static matgo.global.exception.ErrorCode.WRONG_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
+import java.util.Optional;
 import matgo.auth.domain.entity.Token;
 import matgo.auth.domain.repository.TokenRepository;
 import matgo.auth.dto.request.LoginRequest;
+import matgo.auth.dto.request.SendTemporaryPasswordRequest;
 import matgo.auth.dto.response.LoginResponse;
 import matgo.auth.exception.AuthException;
 import matgo.auth.jwt.JwtTokenProvider;
 import matgo.auth.security.CustomUserDetailService;
 import matgo.common.BaseServiceTest;
 import matgo.global.util.SecurityUtil;
+import matgo.member.domain.entity.Member;
+import matgo.member.domain.entity.Region;
 import matgo.member.domain.type.UserRole;
 import matgo.member.exception.MemberException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.security.core.Authentication;
@@ -131,6 +138,55 @@ class AuthServiceTest extends BaseServiceTest {
 
             // then
             verify(tokenService).deleteToken(userId);
+        }
+    }
+
+    @Nested
+    @DisplayName("forgetPassword 메서드는")
+    class forgetPassword {
+
+        Region region = new Region("효자동");
+        Member member = Member.builder()
+                              .id(1L)
+                              .email("test@naver.com")
+                              .nickname("testnick")
+                              .password("!1asdasd")
+                              .profileImage(
+                                "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image")
+                              .role(UserRole.ROLE_USER)
+                              .region(region)
+                              .isActive(true)
+                              .build();
+
+        SendTemporaryPasswordRequest sendTemporaryPasswordRequest = new SendTemporaryPasswordRequest("test@naver.com");
+
+        @Test
+        @DisplayName("성공하면 임시 비밀번호를 메일로 전송한다.")
+        void success() {
+            // given
+            doReturn(Optional.of(member)).when(memberRepository).findByEmail(anyString());
+            doReturn("encodedPassword").when(passwordEncoder).encode(anyString());
+            ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+
+            // when
+            authService.forgetPassword(sendTemporaryPasswordRequest);
+
+            // then
+            verify(mailService).sendTemporaryPassword(eq(sendTemporaryPasswordRequest.email()), captor.capture());
+            assertThat(captor.getValue()).hasSize(8);
+            assertThat(member.getPassword()).isEqualTo("encodedPassword");
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 이메일로 비밀번호를 찾으면 예외를 던진다.")
+        void notExistedEmail() {
+            // given
+            doReturn(Optional.empty()).when(memberRepository).findByEmail(anyString());
+
+            // when & then
+            assertThatThrownBy(() -> authService.forgetPassword(sendTemporaryPasswordRequest))
+              .isInstanceOf(MemberException.class)
+              .hasMessageContaining(NOT_FOUND_MEMBER.getMessage());
         }
     }
 }
