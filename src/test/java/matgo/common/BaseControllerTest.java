@@ -3,6 +3,8 @@ package matgo.common;
 
 import static io.restassured.RestAssured.given;
 import static matgo.auth.presentation.AuthControllerTest.loginMember;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.restassured.RestAssuredRestDocumentation.documentationConfiguration;
 
@@ -28,7 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -50,9 +52,9 @@ public abstract class BaseControllerTest {
       "test@naver.com");
     protected static RequestSpecification spec;
     protected static String accessToken;
-    @SpyBean
+    @MockBean
     protected S3Service s3Service;
-    @SpyBean
+    @MockBean
     protected MailService mailService;
     @Autowired
     protected AuthService authService;
@@ -102,6 +104,7 @@ public abstract class BaseControllerTest {
                                     .isActive(true)
                                     .build());
         accessToken = loginMember(loginRequest).jsonPath().getString("accessToken");
+        doReturn("code").when(mailService).sendVerificationCode(anyString());
     }
 
     @AfterEach
