@@ -1,14 +1,17 @@
-package matgo.global.s3;
+package matgo.global.filesystem.s3;
 
 import static matgo.global.exception.ErrorCode.FILE_DELETE_ERROR;
 import static matgo.global.exception.ErrorCode.FILE_UPLOAD_ERROR;
+import static matgo.global.exception.ErrorCode.NOT_IMAGE_EXTENSION;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import matgo.global.s3.exception.S3Exception;
+import matgo.global.filesystem.FileException;
+import matgo.global.filesystem.s3.exception.S3Exception;
+import matgo.global.util.FileUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -35,10 +38,16 @@ public class S3ServiceImpl implements S3Service {
     public String upload(MultipartFile multipartFile, String directoryName, String saveFileName,
       String originFileName) {
         try {
-            RequestBody requestBody = RequestBody.fromInputStream(multipartFile.getInputStream(),
-              multipartFile.getSize());
-            MediaType mediaType = MediaType.parseMediaType(Files.probeContentType(Paths.get(originFileName)));
-            return uploadFile(requestBody, directoryName, saveFileName, mediaType);
+            FileUtil.checkFileSize(multipartFile);
+            String extension = FileUtil.getExtension(multipartFile);
+            if (FileUtil.isImageExtension(extension)) {
+                RequestBody requestBody = RequestBody.fromInputStream(multipartFile.getInputStream(),
+                  multipartFile.getSize());
+                MediaType mediaType = MediaType.parseMediaType(Files.probeContentType(Paths.get(originFileName)));
+                return uploadFile(requestBody, directoryName, saveFileName, mediaType);
+            } else {
+                throw new FileException(NOT_IMAGE_EXTENSION);
+            }
         } catch (IOException e) {
             log.error("S3 업로드 에러", e);
             throw new S3Exception(FILE_UPLOAD_ERROR);

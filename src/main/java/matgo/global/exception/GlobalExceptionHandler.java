@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @RestControllerAdvice
 @Slf4j
@@ -35,6 +36,13 @@ public class GlobalExceptionHandler {
         );
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_REQUEST, errorMessage);
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    // 파일 크기 초과 에러
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.FILE_SIZE_EXCEEDED, e.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 

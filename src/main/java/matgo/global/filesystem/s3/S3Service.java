@@ -1,6 +1,6 @@
-package matgo.global.s3;
+package matgo.global.filesystem.s3;
 
-import matgo.global.s3.exception.S3Exception;
+import matgo.global.filesystem.s3.exception.S3Exception;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface S3Service {

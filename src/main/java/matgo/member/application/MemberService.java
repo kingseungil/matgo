@@ -15,7 +15,7 @@ import matgo.auth.application.MailService;
 import matgo.auth.domain.entity.EmailVerification;
 import matgo.auth.domain.repository.EmailVerificationRepository;
 import matgo.auth.exception.AuthException;
-import matgo.global.s3.S3Service;
+import matgo.global.filesystem.s3.S3Service;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
 import matgo.member.domain.repository.MemberRepository;

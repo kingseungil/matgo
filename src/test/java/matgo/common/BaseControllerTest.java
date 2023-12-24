@@ -15,7 +15,7 @@ import matgo.auth.application.AuthService;
 import matgo.auth.application.MailService;
 import matgo.auth.dto.request.LoginRequest;
 import matgo.auth.dto.request.SendTemporaryPasswordRequest;
-import matgo.global.s3.S3Service;
+import matgo.global.filesystem.s3.S3Service;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
 import matgo.member.domain.repository.MemberRepository;
