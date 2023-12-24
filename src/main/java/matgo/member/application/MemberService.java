@@ -111,6 +111,7 @@ public class MemberService {
         updateProfileImageIfPresent(member, profileImage);
         updateNicknameIfChanged(member, memberUpdateRequest.nickname());
         updateRegionIfChanged(member, memberUpdateRequest.region());
+
     }
 
     private Member getMemberById(Long memberId) {
@@ -124,8 +125,10 @@ public class MemberService {
         }
 
         if (!profileImage.isEmpty()) {
-            s3Service.delete(member.getProfileImage());
-            member.changeProfileImage(uploadAndGetImageURL(profileImage));
+            String newImageURL = uploadAndGetImageURL(profileImage);
+            String oldImageURL = member.getProfileImage();
+            member.changeProfileImage(newImageURL);
+            s3Service.delete(oldImageURL);
         }
     }
 

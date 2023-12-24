@@ -53,9 +53,14 @@ public class S3ServiceImpl implements S3Service {
                                                             .contentType(mediaType.toString())
                                                             .build();
 
-        s3Client.putObject(putObjectRequest, requestBody);
-        // uploaded url return
-        return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(uploadPath)).toExternalForm();
+        try {
+            s3Client.putObject(putObjectRequest, requestBody);
+            // uploaded url return
+            return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(uploadPath)).toExternalForm();
+        } catch (AwsServiceException | SdkClientException e) {
+            log.error("S3 파일 업로드 에러", e);
+            throw new S3Exception(FILE_UPLOAD_ERROR);
+        }
     }
 
 
@@ -64,6 +69,7 @@ public class S3ServiceImpl implements S3Service {
         String key = extractKeyFromUrl(imageUrl);
 
         try {
+            log.info("S3 삭제 요청 : {}", key);
             s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucket).key(key).build());
         } catch (AwsServiceException | SdkClientException e) {
             log.error("S3 삭제 에러", e);
