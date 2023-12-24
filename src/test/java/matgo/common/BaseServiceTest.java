@@ -2,7 +2,7 @@ package matgo.common;
 
 import matgo.auth.application.MailService;
 import matgo.auth.domain.repository.EmailVerificationRepository;
-import matgo.global.s3.S3Service;
+import matgo.global.filesystem.s3.S3Service;
 import matgo.member.domain.repository.MemberRepository;
 import matgo.member.domain.repository.RegionRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,5 +27,5 @@ public abstract class BaseServiceTest {
     protected PasswordEncoder passwordEncoder;
     @Mock
     protected MailService mailService;
-    
+
 }

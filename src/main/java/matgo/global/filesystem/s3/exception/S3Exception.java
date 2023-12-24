@@ -1,4 +1,4 @@
-package matgo.global.s3.exception;
+package matgo.global.filesystem.s3.exception;
 
 import matgo.global.exception.CustomException;
 import matgo.global.exception.ErrorCode;

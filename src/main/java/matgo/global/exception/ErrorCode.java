@@ -34,6 +34,10 @@ public enum ErrorCode {
     FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
     FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 삭제에 실패했습니다."),
 
+    // File
+    NOT_FOUND_IMAGE_EXTENSION(HttpStatus.BAD_REQUEST, "이미지 확장자를 찾을 수 없습니다."),
+    NOT_IMAGE_EXTENSION(HttpStatus.BAD_REQUEST, "이미지 확장자가 아닙니다."),
+    FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "파일 크기가 초과되었습니다."),
 
     // Member
     ALREADY_EXISTED_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
