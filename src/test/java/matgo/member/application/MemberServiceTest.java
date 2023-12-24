@@ -1,7 +1,9 @@
 package matgo.member.application;
 
 import static matgo.global.exception.ErrorCode.ALREADY_EXISTED_NICKNAME;
+import static matgo.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_REGION;
+import static matgo.global.exception.ErrorCode.WRONG_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -12,14 +14,17 @@ import static org.mockito.Mockito.doReturn;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import matgo.auth.domain.entity.EmailVerification;
+import matgo.auth.exception.AuthException;
 import matgo.common.BaseServiceTest;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
 import matgo.member.domain.type.UserRole;
 import matgo.member.dto.request.MemberUpdateRequest;
+import matgo.member.dto.request.ResetPasswordRequest;
 import matgo.member.dto.request.SignUpRequest;
 import matgo.member.dto.response.SignUpResponse;
 import matgo.member.exception.MemberException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,6 +36,24 @@ class MemberServiceTest extends BaseServiceTest {
 
     @InjectMocks
     private MemberService memberService;
+
+    private Member member;
+
+    @BeforeEach
+    void setUp() {
+        Region region = new Region("효자동");
+        member = Member.builder()
+                       .id(1L)
+                       .email("test@naver.com")
+                       .nickname("testnick")
+                       .password("!1asdasd")
+                       .profileImage(
+                         "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image")
+                       .role(UserRole.ROLE_USER)
+                       .region(region)
+                       .isActive(true)
+                       .build();
+    }
 
     @Nested
     @DisplayName("saveMember 메서드는")
@@ -124,20 +147,7 @@ class MemberServiceTest extends BaseServiceTest {
     @DisplayName("updateMember 메서드는")
     class updateMember {
 
-        Region region = new Region("효자동");
         Region updatedRegion = new Region("newRegion");
-        Member member = Member.builder()
-                              .id(1L)
-                              .email("test@naver.com")
-                              .nickname("testnick")
-                              .password("!1asdasd")
-                              .profileImage(
-                                "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image")
-                              .role(UserRole.ROLE_USER)
-                              .region(region)
-                              .isActive(true)
-                              .build();
-
         MultipartFile newProfileImage = new MockMultipartFile("profileImage", "img.jpeg", "image/jpeg",
           "image data".getBytes(StandardCharsets.UTF_8));
         MemberUpdateRequest memberUpdateRequest = new MemberUpdateRequest("newNickname", "newRegion");
@@ -234,5 +244,53 @@ class MemberServiceTest extends BaseServiceTest {
               .isInstanceOf(MemberException.class)
               .hasMessageContaining("존재하지 않는 회원입니다.");
         }
+    }
+
+    @Nested
+    @DisplayName("resetPassword 메서드는")
+    class resetPassword {
+
+        ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest("1!asdasd", "1!qweqwe");
+
+        @Test
+        @DisplayName("성공하면 비밀번호를 변경한다.")
+        void success() {
+            // given
+            doReturn(Optional.of(member)).when(memberRepository).findById(anyLong());
+            doReturn(true).when(passwordEncoder).matches(anyString(), anyString());
+            doReturn("encoded_new_password").when(passwordEncoder).encode(anyString());
+
+            // when
+            memberService.resetPassword(member.getId(), resetPasswordRequest);
+
+            // then
+            assertThat(member.getPassword()).isEqualTo("encoded_new_password");
+        }
+
+        @Test
+        @DisplayName("현재 비밀번호가 일치하지 않으면 AuthException을 던진다.")
+        void wrongCurrentPassword() {
+            // given
+            doReturn(Optional.of(member)).when(memberRepository).findById(anyLong());
+            doReturn(false).when(passwordEncoder).matches(anyString(), anyString());
+
+            // when & then
+            assertThatThrownBy(() -> memberService.resetPassword(member.getId(), resetPasswordRequest))
+              .isInstanceOf(AuthException.class)
+              .hasMessageContaining(WRONG_PASSWORD.getMessage());
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 회원으로 비밀번호 변경을 시도하면 MemberException을 던진다.")
+        void notFoundMember() {
+            // given
+            doReturn(Optional.empty()).when(memberRepository).findById(anyLong());
+
+            // when & then
+            assertThatThrownBy(() -> memberService.resetPassword(member.getId(), resetPasswordRequest))
+              .isInstanceOf(MemberException.class)
+              .hasMessageContaining(NOT_FOUND_MEMBER.getMessage());
+        }
+
     }
 }

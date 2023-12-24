@@ -50,7 +50,7 @@ paths:
                 로그인:
                   value: |-
                     {
-                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwMzQwNDQyNiwiaXNzIjoibWF0Z28iLCJleHAiOjE3MDM0MDQ0ODZ9.Dsxw1kZd_4dPyJVchMYYxLFGGiwW54mHytavxF4ZyGY"
+                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwMzQwNjM4NSwiaXNzIjoibWF0Z28iLCJleHAiOjE3MDM0MDY0NDV9.s6XcEgQvBR65mq3jXdfl2syxUhRz4vgIr0nK29v_WPg"
                     }
   /api/auth/logout:
     delete:
@@ -107,6 +107,30 @@ paths:
       responses:
         "204":
           description: "204"
+  /api/member/reset-password:
+    put:
+      tags:
+      - Member
+      summary: 비밀번호 초기화
+      description: 비밀번호 초기화
+      operationId: 비밀번호 초기화
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-member-reset-password-244801712'
+            examples:
+              비밀번호 초기화:
+                value: |-
+                  {
+                    "currentPassword" : "1!asdasd",
+                    "newPassword" : "1!qweqwe"
+                  }
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
   /api/member/signup:
     post:
       tags:
@@ -153,6 +177,15 @@ components:
         email:
           type: string
           description: 이메일
+    api-member-reset-password-244801712:
+      type: object
+      properties:
+        newPassword:
+          type: string
+          description: 새 비밀번호
+        currentPassword:
+          type: string
+          description: 현재 비밀번호
     api-member-signup486549215:
       type: object
   securitySchemes:
