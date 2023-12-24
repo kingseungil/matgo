@@ -4,6 +4,7 @@ package matgo.member.presentation;
 import static com.epages.restdocs.apispec.RestAssuredRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.RestAssuredRestDocumentationWrapper.resourceDetails;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
@@ -43,4 +44,13 @@ public class MemberDocument {
         );
     }
 
+    public static RestDocumentationFilter resetPasswordDocument() {
+        return document("비밀번호 초기화",
+          resourceDetails().tag("Member").description("비밀번호 초기화"),
+          requestFields(
+            fieldWithPath("currentPassword").description("현재 비밀번호"),
+            fieldWithPath("newPassword").description("새 비밀번호")
+          )
+        );
+    }
 }

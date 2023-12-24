@@ -1,6 +1,7 @@
 package matgo.member.presentation;
 
 import static matgo.member.presentation.MemberDocument.registerMemberDocument;
+import static matgo.member.presentation.MemberDocument.resetPasswordDocument;
 import static matgo.member.presentation.MemberDocument.updateMemberDocument;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -11,6 +12,7 @@ import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import matgo.common.BaseControllerTest;
+import matgo.member.dto.request.ResetPasswordRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,4 +72,21 @@ class MemberControllerTest extends BaseControllerTest {
         assertThat(response.statusCode()).isEqualTo(204);
     }
 
+    @Test
+    @DisplayName("[성공]비밀번호 초기화(변경)")
+    void restPassword() {
+        // given
+        ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest("1!asdasd", "1!qweqwe");
+
+        // when
+        Response response = customGivenWithDocs(resetPasswordDocument())
+          .contentType(ContentType.JSON)
+          .header("Authorization", "Bearer " + accessToken)
+          .body(resetPasswordRequest)
+          .accept(ContentType.JSON)
+          .put("/api/member/reset-password");
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(204);
+    }
 }

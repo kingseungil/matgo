@@ -25,6 +25,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private static final String[] WHITELIST = {
+      "/docs/**", // swagger
+      "/v3/api-docs/**", // swagger
       "/api/auth/login", // 로그인
       "/api/auth/verify-emailcode", // 이메일 인증
       "/api/member/signup",     // 회원가입
