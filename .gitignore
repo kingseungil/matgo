@@ -41,3 +41,7 @@ out/
 
 ### querydsl ###
 /src/main/generated/
+
+### docker ###
+/docker/mysql-data
+/docker/redis-data

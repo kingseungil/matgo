@@ -1,0 +1,77 @@
+version: '3.7'
+name: matgo
+
+services:
+  # backend server 추가
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    env_file:
+      - env.properties
+    environment:
+      TZ: Asia/Seoul
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - matgo
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    environment:
+      - appendonly=yes
+      - appendfsync=everysec
+      - auto-aof-rewrite-percentage=100
+      - auto-aof-rewrite-min-size=64mb
+    volumes:
+      - ./redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - matgo
+    restart: always
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - matgo
+    restart: always
+
+  # kibana:
+  #   container_name: kibana
+  #   image: docker.elastic.co/kibana/kibana:8.6.2
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #   ports:
+  #     - 5601:5601
+  #   depends_on:
+  #     - elasticsearch
+
+volumes:
+  elasticsearch-data:
+    driver: local
+
+networks:
+  matgo:
+    driver: bridge
