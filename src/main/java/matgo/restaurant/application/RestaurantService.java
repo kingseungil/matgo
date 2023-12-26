@@ -1,5 +1,6 @@
 package matgo.restaurant.application;
 
+import static matgo.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static matgo.global.exception.ErrorCode.UPDATABLE_RESTAURANT_NOT_FOUND;
 
 import java.time.LocalDateTime;
@@ -7,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import matgo.member.domain.entity.Member;
+import matgo.member.domain.repository.MemberRepository;
+import matgo.member.exception.MemberException;
 import matgo.restaurant.domain.entity.Restaurant;
 import matgo.restaurant.domain.entity.RestaurantSearch;
 import matgo.restaurant.domain.repository.RestaurantRepository;
@@ -32,6 +36,7 @@ public class RestaurantService {
     private static final int MAX_COUNT = 4000;
 
     private final JeonjuRestaurantClient jeonjuRestaurantClient;
+    private final MemberRepository memberRepository;
     private final RestaurantRepository restaurantRepository;
     private final RestaurantSearchRepository restaurantSearchRepository;
     private final RestaurantSearchRepositoryImpl restaurantSearchRepositoryImpl;
@@ -101,6 +106,17 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public RestaurantsSliceResponse getRestaurantsByAddress(String addressKeyword, Pageable pageable) {
         Slice<RestaurantSearch> slice = restaurantSearchRepository.findByAddressExactMatch(addressKeyword, pageable);
+        List<RestaurantSliceResponse> restaurants = slice.map(RestaurantSliceResponse::from).toList();
+
+        return new RestaurantsSliceResponse(restaurants, slice.hasNext());
+    }
+
+    @Transactional(readOnly = true)
+    public RestaurantsSliceResponse getRestaurantsByRegion(Long userId, Pageable pageable) {
+        Member member = memberRepository.findById(userId).orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+
+        Slice<RestaurantSearch> slice = restaurantSearchRepository.findByAddressExactMatch(member.getRegion().getName(),
+          pageable);
         List<RestaurantSliceResponse> restaurants = slice.map(RestaurantSliceResponse::from).toList();
 
         return new RestaurantsSliceResponse(restaurants, slice.hasNext());
