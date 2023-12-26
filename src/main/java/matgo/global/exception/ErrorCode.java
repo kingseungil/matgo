@@ -48,7 +48,10 @@ public enum ErrorCode {
     NOT_FOUND_REGION(HttpStatus.BAD_REQUEST, "존재하지 않는 지역입니다."),
 
     // Mail
-    MAIL_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "메일 전송에 실패했습니다.");
+    MAIL_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "메일 전송에 실패했습니다."),
+
+    // OpenFeign
+    CANT_PARSE_RESPONSE(HttpStatus.INTERNAL_SERVER_ERROR, "응답을 파싱할 수 없습니다.");
 
 
     private final HttpStatus status;

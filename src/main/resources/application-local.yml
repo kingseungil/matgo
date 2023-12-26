@@ -68,6 +68,11 @@ springdoc:
 images:
   default-profile-image: ${AWS_S3_DEFAULT_PROFILE_IMAGE}
 
+external:
+  jeonju-restaurant:
+    url: ${JEONJU_RESTAURANT_URL}
+    key: ${JEONJU_RESTAURANT_KEY}
+
 logging:
   level:
     org.hibernate.type.descriptor.sql: info
