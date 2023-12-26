@@ -54,7 +54,9 @@ public class SecurityConfig {
               "/api/member/signup", // 회원가입
               "/api/auth/verify-emailcode", // 이메일 인증 코드 확인
               "/api/auth/login", // 로그인
-              "/api/auth/send-temporary-password" // 임시 비밀번호 발급
+              "/api/auth/send-temporary-password", // 임시 비밀번호 발급
+              "/api/restaurants", // 전체 식당 목록 조회
+              "/api/restaurants/address" // 주소로 식당 목록 조회
             ).permitAll()
             // 고객만 허용
             .requestMatchers(HttpMethod.PUT, "/api/member").hasRole("USER") // 회원 정보 수정

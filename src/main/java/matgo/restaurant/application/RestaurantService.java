@@ -12,10 +12,14 @@ import matgo.restaurant.domain.entity.RestaurantSearch;
 import matgo.restaurant.domain.repository.RestaurantRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepositoryImpl;
+import matgo.restaurant.dto.response.RestaurantSliceResponse;
+import matgo.restaurant.dto.response.RestaurantsSliceResponse;
 import matgo.restaurant.exception.RestaurantException;
 import matgo.restaurant.feignclient.JeonjuRestaurantClient;
 import matgo.restaurant.feignclient.dto.RestaurantData;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,5 +87,22 @@ public class RestaurantService {
                                                                .toList();
         restaurantSearchRepositoryImpl.bulkInsertOrUpdate(restaurantSearches);
         log.info("elasticsearch indexing success");
+    }
+
+
+    @Transactional(readOnly = true)
+    public RestaurantsSliceResponse getRestaurants(Pageable pageable) {
+        Slice<RestaurantSearch> slice = restaurantSearchRepository.findAll(pageable);
+        List<RestaurantSliceResponse> restaurants = slice.map(RestaurantSliceResponse::from).toList();
+
+        return new RestaurantsSliceResponse(restaurants, slice.hasNext());
+    }
+
+    @Transactional(readOnly = true)
+    public RestaurantsSliceResponse getRestaurantsByAddress(String addressKeyword, Pageable pageable) {
+        Slice<RestaurantSearch> slice = restaurantSearchRepository.findByAddressExactMatch(addressKeyword, pageable);
+        List<RestaurantSliceResponse> restaurants = slice.map(RestaurantSliceResponse::from).toList();
+
+        return new RestaurantsSliceResponse(restaurants, slice.hasNext());
     }
 }
