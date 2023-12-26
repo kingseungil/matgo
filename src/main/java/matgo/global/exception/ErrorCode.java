@@ -51,7 +51,10 @@ public enum ErrorCode {
     MAIL_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "메일 전송에 실패했습니다."),
 
     // OpenFeign
-    CANT_PARSE_RESPONSE(HttpStatus.INTERNAL_SERVER_ERROR, "응답을 파싱할 수 없습니다.");
+    CANT_PARSE_RESPONSE(HttpStatus.INTERNAL_SERVER_ERROR, "응답을 파싱할 수 없습니다."),
+
+    // Restaurant
+    UPDATABLE_RESTAURANT_NOT_FOUND(HttpStatus.NOT_FOUND, "업데이트 가능한 식당이 존재하지 않습니다.");
 
 
     private final HttpStatus status;

@@ -13,6 +13,7 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import matgo.global.entity.BaseEntity;
 import matgo.restaurant.feignclient.dto.RestaurantData;
 import matgo.review.domain.entity.Review;
 
@@ -20,7 +21,7 @@ import matgo.review.domain.entity.Review;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "restaurant")
-public class Restaurant {
+public class Restaurant extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

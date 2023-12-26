@@ -2,7 +2,9 @@ package matgo.restaurant.domain.repository;
 
 import matgo.restaurant.domain.entity.RestaurantSearch;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.stereotype.Repository;
 
-public interface RestaurantSearchRepository extends ElasticsearchRepository<RestaurantSearch, Long> {
+@Repository
+public interface RestaurantSearchRepository extends ElasticsearchRepository<RestaurantSearch, String> {
 
 }
