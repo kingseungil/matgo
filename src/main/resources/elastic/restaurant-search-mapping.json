@@ -1,0 +1,28 @@
+{
+  "properties": {
+    "id": {
+      "type": "keyword"
+    },
+    "name": {
+      "type": "text",
+      "analyzer": "nori"
+    },
+    "address": {
+      "type": "text",
+      "analyzer": "nori"
+    },
+    "phoneNumber": {
+      "type": "text"
+    },
+    "lat": {
+      "type": "double"
+    },
+    "lon": {
+      "type": "double"
+    },
+    "description": {
+      "type": "text",
+      "analyzer": "nori"
+    }
+  }
+}
