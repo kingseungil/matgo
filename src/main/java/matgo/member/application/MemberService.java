@@ -120,11 +120,7 @@ public class MemberService {
     }
 
     private void updateProfileImageIfPresent(Member member, MultipartFile profileImage) {
-        if (profileImage == null) {
-            return;
-        }
-
-        if (!profileImage.isEmpty()) {
+        if (profileImage != null && !profileImage.isEmpty()) {
             String newImageURL = uploadAndGetImageURL(profileImage);
             String oldImageURL = member.getProfileImage();
             member.changeProfileImage(newImageURL);
@@ -133,22 +129,14 @@ public class MemberService {
     }
 
     private void updateNicknameIfChanged(Member member, String newNickname) {
-        if (newNickname == null) {
-            return;
-        }
-
-        if (!member.getNickname().equals(newNickname)) {
+        if (newNickname != null && !newNickname.isEmpty()) {
             validateDuplicateNickname(newNickname);
             member.changeNickname(newNickname);
         }
     }
 
     private void updateRegionIfChanged(Member member, String newRegionName) {
-        if (newRegionName == null) {
-            return;
-        }
-
-        if (!member.getRegion().getName().equals(newRegionName)) {
+        if (newRegionName != null && !newRegionName.isEmpty()) {
             Region region = getRegion(newRegionName);
             member.changeRegion(region);
         }
