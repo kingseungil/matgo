@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -20,7 +21,12 @@ import matgo.review.domain.entity.Review;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "restaurant")
+@Table(
+  name = "restaurant",
+  indexes = {
+    @Index(name = "IDX_name_address", columnList = "name,address")
+  }
+)
 public class Restaurant extends BaseEntity {
 
     @Id
@@ -81,5 +87,14 @@ public class Restaurant extends BaseEntity {
         String description = data.description() != null ? data.description() : "설명 없음";
 
         return new RestaurantData(name, address, phoneNumber, lat, lon, description);
+    }
+
+    public void update(Restaurant restaurant) {
+        this.name = restaurant.name;
+        this.address = restaurant.address;
+        this.phoneNumber = restaurant.phoneNumber;
+        this.lat = restaurant.lat;
+        this.lon = restaurant.lon;
+        this.description = restaurant.description;
     }
 }

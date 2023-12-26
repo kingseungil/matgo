@@ -4,11 +4,13 @@ import static matgo.global.exception.ErrorCode.UPDATABLE_RESTAURANT_NOT_FOUND;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import matgo.restaurant.domain.entity.Restaurant;
 import matgo.restaurant.domain.entity.RestaurantSearch;
 import matgo.restaurant.domain.repository.RestaurantRepository;
+import matgo.restaurant.domain.repository.RestaurantSearchRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepositoryImpl;
 import matgo.restaurant.exception.RestaurantException;
 import matgo.restaurant.feignclient.JeonjuRestaurantClient;
@@ -27,7 +29,8 @@ public class RestaurantService {
 
     private final JeonjuRestaurantClient jeonjuRestaurantClient;
     private final RestaurantRepository restaurantRepository;
-    private final RestaurantSearchRepositoryImpl restaurantSearchRepository;
+    private final RestaurantSearchRepository restaurantSearchRepository;
+    private final RestaurantSearchRepositoryImpl restaurantSearchRepositoryImpl;
 
     @Value("${external.jeonju-restaurant.key}")
     private String key;
@@ -41,12 +44,32 @@ public class RestaurantService {
                                                          .map(Restaurant::from)
                                                          .toList();
 
-        restaurantRepository.saveAll(restaurants);
+        List<String> restaurantNames = restaurants.stream()
+                                                  .map(Restaurant::getName)
+                                                  .toList();
+        List<String> restaurantAddresses = restaurants.stream()
+                                                      .map(Restaurant::getAddress)
+                                                      .toList();
+        List<Restaurant> existingRestaurants = restaurantRepository.findByNameInAndAddressIn(restaurantNames,
+          restaurantAddresses);
+
+        for (Restaurant restaurant : restaurants) {
+            Optional<Restaurant> optionalRestaurant
+              = existingRestaurants.stream()
+                                   .filter(
+                                     r -> r.getName().equals(restaurant.getName()) &&
+                                       r.getAddress().equals(restaurant.getAddress()))
+                                   .findFirst();
+            optionalRestaurant.ifPresentOrElse(savedRestaurant -> savedRestaurant.update(restaurant),
+              () -> restaurantRepository.save(restaurant));
+        }
+
         log.info("fetch and save restaurants success");
     }
 
     @Transactional
-    @Scheduled(cron = "0 6 * * * *")
+    // 한시간에 한번씩 실행
+    @Scheduled(cron = "0 0 * * * *")
     public void indexingToES() {
         // 1시간 이내에 수정된 식당만 elasticsearch에 저장
         LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
@@ -58,7 +81,7 @@ public class RestaurantService {
         List<RestaurantSearch> restaurantSearches = restaurants.stream()
                                                                .map(RestaurantSearch::from)
                                                                .toList();
-        restaurantSearchRepository.bulkInsertOrUpdate(restaurantSearches);
+        restaurantSearchRepositoryImpl.bulkInsertOrUpdate(restaurantSearches);
         log.info("elasticsearch indexing success");
     }
 }
