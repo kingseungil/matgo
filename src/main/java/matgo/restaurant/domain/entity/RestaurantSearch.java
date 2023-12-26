@@ -3,7 +3,6 @@ package matgo.restaurant.domain.entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.data.domain.Persistable;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -15,12 +14,14 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 @Setting(settingPath = "elastic/restaurant-search-setting.json")
 @Getter
 @AllArgsConstructor
-public class RestaurantSearch implements Persistable<String> {
+public class RestaurantSearch {
 
     @Id
     private String id;
     @Field(type = FieldType.Text, name = "name")
     private String name;
+    @Field(type = FieldType.Text, name = "roadAddress")
+    private String roadAddress;
     @Field(type = FieldType.Text, name = "address")
     private String address;
     @Field(type = FieldType.Text, name = "phoneNumber")
@@ -36,21 +37,12 @@ public class RestaurantSearch implements Persistable<String> {
         return new RestaurantSearch(
           restaurant.getId().toString(),
           restaurant.getName(),
+          restaurant.getRoadAddress(),
           restaurant.getAddress(),
           restaurant.getPhoneNumber(),
           restaurant.getLat(),
           restaurant.getLon(),
           restaurant.getDescription()
         );
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public boolean isNew() {
-        return id == null;
     }
 }
