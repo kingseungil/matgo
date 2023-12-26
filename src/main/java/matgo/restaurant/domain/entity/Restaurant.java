@@ -36,6 +36,9 @@ public class Restaurant extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "road_address", nullable = false)
+    private String roadAddress;
+
     @Column(name = "address", nullable = false)
     private String address;
 
@@ -57,8 +60,10 @@ public class Restaurant extends BaseEntity {
     @OneToMany(mappedBy = "restaurant")
     private List<Review> reviews = new ArrayList<>();
 
-    public Restaurant(String name, String address, String phoneNumber, Double lat, Double lon, String description) {
+    public Restaurant(String name, String roadAddress, String address, String phoneNumber, Double lat, Double lon,
+      String description) {
         this.name = name;
+        this.roadAddress = roadAddress;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.lat = lat;
@@ -70,6 +75,7 @@ public class Restaurant extends BaseEntity {
         data = validate(data);
         return new Restaurant(
           data.name(),
+          data.roadAddress(),
           data.address(),
           data.phoneNumber(),
           data.lat(),
@@ -80,13 +86,14 @@ public class Restaurant extends BaseEntity {
 
     private static RestaurantData validate(RestaurantData data) {
         String name = data.name() != null ? data.name() : "이름 없음";
+        String roadAddress = data.roadAddress() != null ? data.roadAddress() : "도로명 주소 없음";
         String address = data.address() != null ? data.address() : "주소 없음";
         String phoneNumber = data.phoneNumber() != null ? data.phoneNumber() : "전화번호 없음";
         Double lat = data.lat() != null ? data.lat() : 0.0;
         Double lon = data.lon() != null ? data.lon() : 0.0;
         String description = data.description() != null ? data.description() : "설명 없음";
 
-        return new RestaurantData(name, address, phoneNumber, lat, lon, description);
+        return new RestaurantData(name, roadAddress, address, phoneNumber, lat, lon, description);
     }
 
     public void update(Restaurant restaurant) {

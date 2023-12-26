@@ -7,6 +7,10 @@
       "type": "text",
       "analyzer": "nori"
     },
+    "roadAddress": {
+      "type": "text",
+      "analyzer": "nori"
+    },
     "address": {
       "type": "text",
       "analyzer": "nori"
