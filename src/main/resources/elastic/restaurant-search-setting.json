@@ -3,13 +3,18 @@
     "analyzer": {
       "nori": {
         "type": "custom",
-        "tokenizer": "nori_mixed"
+        "tokenizer": "nori_mixed",
+        "filter": [
+          "lowercase",
+          "stop"
+        ]
       }
     },
     "tokenizer": {
       "nori_mixed": {
         "type": "nori_tokenizer",
-        "decompound_mode": "mixed"
+        "decompound_mode": "mixed",
+        "discard_punctuation": "false"
       }
     }
   }

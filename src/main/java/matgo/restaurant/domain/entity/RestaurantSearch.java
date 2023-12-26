@@ -15,10 +15,10 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 @Setting(settingPath = "elastic/restaurant-search-setting.json")
 @Getter
 @AllArgsConstructor
-public class RestaurantSearch implements Persistable<Long> {
+public class RestaurantSearch implements Persistable<String> {
 
     @Id
-    private Long id;
+    private String id;
     @Field(type = FieldType.Text, name = "name")
     private String name;
     @Field(type = FieldType.Text, name = "address")
@@ -26,17 +26,26 @@ public class RestaurantSearch implements Persistable<Long> {
     @Field(type = FieldType.Text, name = "phoneNumber")
     private String phoneNumber;
     @Field(type = FieldType.Double, name = "lat")
-    private String lat;
+    private Double lat;
     @Field(type = FieldType.Double, name = "lon")
-    private String lon;
+    private Double lon;
     @Field(type = FieldType.Text, name = "description")
     private String description;
 
-//    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "yyyy-MM-dd HH:mm:ss")
-//    private LocalDateTime createdAt;
+    public static RestaurantSearch from(Restaurant restaurant) {
+        return new RestaurantSearch(
+          restaurant.getId().toString(),
+          restaurant.getName(),
+          restaurant.getAddress(),
+          restaurant.getPhoneNumber(),
+          restaurant.getLat(),
+          restaurant.getLon(),
+          restaurant.getDescription()
+        );
+    }
 
     @Override
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
