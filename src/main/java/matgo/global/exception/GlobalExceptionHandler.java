@@ -7,6 +7,7 @@ import matgo.global.exception.dto.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -43,6 +44,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.FILE_SIZE_EXCEEDED, e.getMessage());
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    // parameter 에러
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(
+      MissingServletRequestParameterException e) {
+        String name = e.getParameterName();
+        String type = e.getParameterType();
+        String errorMessage = String.format("요청 파라미터 %s(%s)가 누락되었습니다.", name, type);
+
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_REQUEST, errorMessage);
         return ResponseEntity.badRequest().body(errorResponse);
     }
 

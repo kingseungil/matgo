@@ -10,7 +10,9 @@ public record RestaurantSliceResponse(
   String phoneNumber,
   Double lat,
   Double lon,
-  String description
+  String description,
+  Double rating,
+  Integer reviewCount
 ) {
 
     public static RestaurantSliceResponse from(RestaurantSearch restaurantSearch) {
@@ -22,7 +24,9 @@ public record RestaurantSliceResponse(
           restaurantSearch.getPhoneNumber(),
           restaurantSearch.getLat(),
           restaurantSearch.getLon(),
-          restaurantSearch.getDescription()
+          restaurantSearch.getDescription(),
+          restaurantSearch.getRating(),
+          restaurantSearch.getReviewCount()
         );
     }
 }

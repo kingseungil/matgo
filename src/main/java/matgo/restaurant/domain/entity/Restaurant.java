@@ -57,6 +57,12 @@ public class Restaurant extends BaseEntity {
     @Column(name = "approved_at")
     private LocalDateTime approvedAt = LocalDateTime.now();
 
+    @Column(name = "rating", nullable = false)
+    private Double rating = 0.0;
+
+    @Column(name = "review_count", nullable = false)
+    private Integer reviewCount = 0;
+
     @OneToMany(mappedBy = "restaurant")
     private List<Review> reviews = new ArrayList<>();
 
@@ -116,5 +122,10 @@ public class Restaurant extends BaseEntity {
         this.lat = restaurant.lat;
         this.lon = restaurant.lon;
         this.description = restaurant.description;
+    }
+
+    public void updateRatingAndReviewCount(Double rating, Integer reviewCount) {
+        this.rating = rating;
+        this.reviewCount = reviewCount;
     }
 }

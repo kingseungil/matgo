@@ -32,6 +32,10 @@ public class RestaurantSearch {
     private Double lon;
     @Field(type = FieldType.Text, name = "description")
     private String description;
+    @Field(type = FieldType.Double, name = "rating")
+    private Double rating;
+    @Field(type = FieldType.Integer, name = "reviewCount")
+    private Integer reviewCount;
 
     public static RestaurantSearch from(Restaurant restaurant) {
         return new RestaurantSearch(
@@ -42,7 +46,9 @@ public class RestaurantSearch {
           restaurant.getPhoneNumber(),
           restaurant.getLat(),
           restaurant.getLon(),
-          restaurant.getDescription()
+          restaurant.getDescription(),
+          restaurant.getRating(),
+          restaurant.getReviewCount()
         );
     }
 }

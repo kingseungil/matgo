@@ -10,7 +10,9 @@ public record RestaurantDetailResponse(
   String phoneNumber,
   Double lat,
   Double lon,
-  String description
+  String description,
+  Double rating,
+  Integer reviewCount
 ) {
 
     public static RestaurantDetailResponse from(Restaurant restaurant) {
@@ -22,7 +24,9 @@ public record RestaurantDetailResponse(
           restaurant.getPhoneNumber(),
           restaurant.getLat(),
           restaurant.getLon(),
-          restaurant.getDescription()
+          restaurant.getDescription(),
+          restaurant.getRating(),
+          restaurant.getReviewCount()
         );
     }
 
