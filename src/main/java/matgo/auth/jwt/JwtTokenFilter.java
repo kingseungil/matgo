@@ -32,7 +32,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
       "/api/member/signup",     // 회원가입
       "/api/auth/send-temporary-password", // 임시 비밀번호 발급
       "/api/restaurants", // 전체 식당 목록 조회
-      "/api/restaurants/address" // 주소로 식당 목록 조회
+      "/api/restaurants/address", // 주소로 식당 목록 조회
+      "/api/restaurants/detail/**" // 식당 상세 조회
     };
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer ";
