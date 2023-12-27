@@ -42,7 +42,7 @@ public enum ErrorCode {
     // Member
     ALREADY_EXISTED_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
     ALREADY_EXISTED_NICKNAME(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다."),
-    NOT_FOUND_MEMBER(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."),
+    NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
 
     // Region
     NOT_FOUND_REGION(HttpStatus.BAD_REQUEST, "존재하지 않는 지역입니다."),
@@ -54,7 +54,8 @@ public enum ErrorCode {
     CANT_PARSE_RESPONSE(HttpStatus.INTERNAL_SERVER_ERROR, "응답을 파싱할 수 없습니다."),
 
     // Restaurant
-    UPDATABLE_RESTAURANT_NOT_FOUND(HttpStatus.NOT_FOUND, "업데이트 가능한 식당이 존재하지 않습니다.");
+    UPDATABLE_RESTAURANT_NOT_FOUND(HttpStatus.NOT_FOUND, "업데이트 가능한 식당이 존재하지 않습니다."),
+    NOT_FOUND_RESTAURANT(HttpStatus.NOT_FOUND, "존재하지 않는 식당입니다.");
 
 
     private final HttpStatus status;
