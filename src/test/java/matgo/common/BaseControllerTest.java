@@ -25,6 +25,9 @@ import matgo.member.domain.repository.RegionRepository;
 import matgo.member.domain.type.UserRole;
 import matgo.member.dto.request.MemberUpdateRequest;
 import matgo.member.dto.request.SignUpRequest;
+import matgo.restaurant.domain.repository.RestaurantRepository;
+import matgo.restaurant.domain.repository.RestaurantSearchRepository;
+import matgo.restaurant.domain.repository.RestaurantSearchRepositoryImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,6 +67,12 @@ public abstract class BaseControllerTest {
     protected MemberRepository memberRepository;
     @Autowired
     protected PasswordEncoder passwordEncoder;
+    @Autowired
+    protected RestaurantRepository restaurantRepository;
+    @Autowired
+    protected RestaurantSearchRepository restaurantSearchRepository;
+    @Autowired
+    protected RestaurantSearchRepositoryImpl restaurantSearchRepositoryImpl;
     @LocalServerPort
     int port;
 

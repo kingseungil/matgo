@@ -5,6 +5,10 @@ import matgo.auth.domain.repository.EmailVerificationRepository;
 import matgo.global.filesystem.s3.S3Service;
 import matgo.member.domain.repository.MemberRepository;
 import matgo.member.domain.repository.RegionRepository;
+import matgo.restaurant.domain.repository.RestaurantRepository;
+import matgo.restaurant.domain.repository.RestaurantSearchRepository;
+import matgo.restaurant.domain.repository.RestaurantSearchRepositoryImpl;
+import matgo.restaurant.feignclient.JeonjuRestaurantClient;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,6 +25,14 @@ public abstract class BaseServiceTest {
     protected RegionRepository regionRepository;
     @Mock
     protected EmailVerificationRepository emailVerificationRepository;
+    @Mock
+    protected JeonjuRestaurantClient jeonjuRestaurantClient;
+    @Mock
+    protected RestaurantRepository restaurantRepository;
+    @Mock
+    protected RestaurantSearchRepository restaurantSearchRepository;
+    @Mock
+    protected RestaurantSearchRepositoryImpl restaurantSearchRepositoryImpl;
     @Mock
     protected S3Service s3Service;
     @Mock

@@ -109,8 +109,6 @@ public class RestaurantService {
     public RestaurantsSliceResponse getRestaurantsByAddress(String addressKeyword, Pageable pageable) {
         Slice<RestaurantSearch> slice = restaurantSearchRepository.findByAddressExactMatch(addressKeyword, pageable);
         List<RestaurantSliceResponse> restaurants = slice.map(RestaurantSliceResponse::from).toList();
-        int size = slice.getSize();
-        System.out.println("size = " + size);
 
         return new RestaurantsSliceResponse(restaurants, slice.hasNext());
     }
