@@ -71,6 +71,19 @@ public class Restaurant extends BaseEntity {
         this.description = description;
     }
 
+    public Restaurant(Long id, String name, String roadAddress, String address, String phoneNumber, Double lat,
+      Double lon,
+      String description) {
+        this.id = id;
+        this.name = name;
+        this.roadAddress = roadAddress;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.lat = lat;
+        this.lon = lon;
+        this.description = description;
+    }
+
     public static Restaurant from(RestaurantData data) {
         data = validate(data);
         return new Restaurant(
