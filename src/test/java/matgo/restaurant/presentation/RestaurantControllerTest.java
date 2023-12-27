@@ -8,28 +8,41 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import matgo.common.BaseControllerTest;
 import matgo.restaurant.domain.entity.Restaurant;
+import matgo.restaurant.dto.request.PageRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Sort.Direction;
 
 class RestaurantControllerTest extends BaseControllerTest {
 
+    PageRequest pageRequest = new PageRequest(0, 10, Optional.of(Direction.DESC),
+      Optional.of("rating"));
 
     @Test
     @DisplayName("[성공]전체 식당 목록 조회")
     void getRestaurants_success() {
-        // given,when
+        // given
+
+        // when
         Response response = customGivenWithDocs(getRestaurantsDocument())
           .accept(ContentType.JSON)
-          .queryParam("page", 0)
-          .queryParam("size", 10)
+          .queryParam("page", pageRequest.page())
+          .queryParam("size", pageRequest.size())
+          .queryParam("direction", pageRequest.direction().get())
+          .queryParam("sortBy", pageRequest.sortBy().get())
           .get("/api/restaurants");
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(response.statusCode()).isEqualTo(200);
             softly.assertThat(response.body().jsonPath().getList("restaurants").size()).isEqualTo(10);
+            List<Double> ratings = response.body().jsonPath().getList("restaurants.rating");
+            softly.assertThat(ratings).isSortedAccordingTo(Comparator.reverseOrder());
         });
     }
 
@@ -43,14 +56,18 @@ class RestaurantControllerTest extends BaseControllerTest {
         Response response = customGivenWithDocs(getRestaurantsByAddressDocument())
           .accept(ContentType.JSON)
           .queryParam("keyword", keyword)
-          .queryParam("page", 0)
-          .queryParam("size", 10)
+          .queryParam("page", pageRequest.page())
+          .queryParam("size", pageRequest.size())
+          .queryParam("direction", pageRequest.direction().get())
+          .queryParam("sortBy", pageRequest.sortBy().get())
           .get("/api/restaurants/address");
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(response.statusCode()).isEqualTo(200);
             softly.assertThat(response.body().jsonPath().getList("restaurants").size()).isEqualTo(10);
+            List<Double> ratings = response.body().jsonPath().getList("restaurants.rating");
+            softly.assertThat(ratings).isSortedAccordingTo(Comparator.reverseOrder());
         });
     }
 
@@ -61,14 +78,18 @@ class RestaurantControllerTest extends BaseControllerTest {
         Response response = customGivenWithDocs(getRestaurantsByRegionDocument())
           .accept(ContentType.JSON)
           .header("Authorization", "Bearer " + accessToken)
-          .queryParam("page", 0)
-          .queryParam("size", 10)
+          .queryParam("page", pageRequest.page())
+          .queryParam("size", pageRequest.size())
+          .queryParam("direction", pageRequest.direction().get())
+          .queryParam("sortBy", pageRequest.sortBy().get())
           .get("/api/restaurants/nearby");
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(response.statusCode()).isEqualTo(200);
             softly.assertThat(response.body().jsonPath().getList("restaurants").size()).isEqualTo(10);
+            List<Double> ratings = response.body().jsonPath().getList("restaurants.rating");
+            softly.assertThat(ratings).isSortedAccordingTo(Comparator.reverseOrder());
         });
     }
 

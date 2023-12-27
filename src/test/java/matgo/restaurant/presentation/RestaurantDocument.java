@@ -25,7 +25,9 @@ public class RestaurantDocument {
           resourceDetails().tag("Restaurant").description("식당 목록 조회"),
           queryParameters(
             parameterWithName("page").description("페이지 번호"),
-            parameterWithName("size").description("페이지 크기")
+            parameterWithName("size").description("페이지 크기"),
+            parameterWithName("direction").description("정렬 방향(DESC,ASC)").optional(),
+            parameterWithName("sortBy").description("정렬 기준(ration,reviewCount)").optional()
           )
         );
     }
@@ -36,7 +38,9 @@ public class RestaurantDocument {
           queryParameters(
             parameterWithName("keyword").description("주소 키워드"),
             parameterWithName("page").description("페이지 번호"),
-            parameterWithName("size").description("페이지 크기")
+            parameterWithName("size").description("페이지 크기"),
+            parameterWithName("direction").description("정렬 방향(DESC,ASC)").optional(),
+            parameterWithName("sortBy").description("정렬 기준(ration,reviewCount)").optional()
           )
         );
     }
@@ -46,7 +50,9 @@ public class RestaurantDocument {
           resourceDetails().tag("Restaurant").description("주변 식당 목록 조회"),
           queryParameters(
             parameterWithName("page").description("페이지 번호"),
-            parameterWithName("size").description("페이지 크기")
+            parameterWithName("size").description("페이지 크기"),
+            parameterWithName("direction").description("정렬 방향(DESC,ASC)").optional(),
+            parameterWithName("sortBy").description("정렬 기준(ration,reviewCount)").optional()
           )
         );
     }
