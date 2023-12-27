@@ -1,11 +1,13 @@
 package matgo.restaurant.presentation;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import matgo.auth.security.OnlyUser;
 import matgo.restaurant.application.RestaurantService;
+import matgo.restaurant.dto.request.PageRequest;
 import matgo.restaurant.dto.response.RestaurantDetailResponse;
 import matgo.restaurant.dto.response.RestaurantsSliceResponse;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,29 +25,41 @@ public class RestaurantController {
 
     @GetMapping
     public RestaurantsSliceResponse getRestaurants(
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "10") int size) {
-        return restaurantService.getRestaurants(PageRequest.of(page, size));
+      @Valid PageRequest pageRequest
+    ) {
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(
+          pageRequest.page(),
+          pageRequest.size(),
+          pageRequest.getSort()
+        );
+        return restaurantService.getRestaurants(pageable);
     }
 
     @GetMapping("/address")
     public RestaurantsSliceResponse getRestaurantsByAddress(
       @RequestParam String keyword,
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "10") int size
+      @Valid PageRequest pageRequest
     ) {
-        return restaurantService.getRestaurantsByAddress(keyword, PageRequest.of(page, size));
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(
+          pageRequest.page(),
+          pageRequest.size(),
+          pageRequest.getSort()
+        );
+        return restaurantService.getRestaurantsByAddress(keyword, pageable);
     }
 
     @GetMapping("/nearby")
     @OnlyUser
     public RestaurantsSliceResponse getRestaurantsByRegion(
       @AuthenticationPrincipal UserDetails userDetails,
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "10") int size
+      @Valid PageRequest pageRequest
     ) {
-        return restaurantService.getRestaurantsByRegion(Long.parseLong(userDetails.getUsername()),
-          PageRequest.of(page, size));
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(
+          pageRequest.page(),
+          pageRequest.size(),
+          pageRequest.getSort()
+        );
+        return restaurantService.getRestaurantsByRegion(Long.parseLong(userDetails.getUsername()), pageable);
     }
 
     @GetMapping("/detail/{restaurantId}")
