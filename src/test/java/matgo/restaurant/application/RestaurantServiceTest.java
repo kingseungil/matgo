@@ -134,9 +134,9 @@ class RestaurantServiceTest extends BaseServiceTest {
     class GetRestaurant {
 
         RestaurantSearch restaurantSearch1 = new RestaurantSearch("1", "test1", "test1", "test1", "test1", 1.0, 1.0,
-          "test1");
+          "test1", 0.0, 0);
         RestaurantSearch restaurantSearch2 = new RestaurantSearch("2", "test2", "test2", "test2", "test2", 1.0, 1.0,
-          "test2");
+          "test2", 0.0, 0);
 
         @Test
         @DisplayName("elasticsearch에 저장된 식당을 반환 (마지막 페이지)")
@@ -187,9 +187,9 @@ class RestaurantServiceTest extends BaseServiceTest {
     class GetRestaurantsByAddress {
 
         RestaurantSearch restaurantSearch1 = new RestaurantSearch("1", "test1", "test1", "완산구 효자동3가", "test1", 1.0, 1.0,
-          "test1");
+          "test1", 0.0, 0);
         RestaurantSearch restaurantSearch2 = new RestaurantSearch("2", "test2", "test2", "완산구 효자동3가", "test2", 1.0, 1.0,
-          "test2");
+          "test2", 0.0, 0);
 
         @Test
         @DisplayName("addressKeyword가 es에 저장된 address에 포함되어 있는 경우")
@@ -240,9 +240,9 @@ class RestaurantServiceTest extends BaseServiceTest {
     class GetRestaurantsByRegion {
 
         RestaurantSearch restaurantSearch1 = new RestaurantSearch("1", "test1", "test1", "완산구 효자동3가", "test1", 1.0, 1.0,
-          "test1");
+          "test1", 0.0, 0);
         RestaurantSearch restaurantSearch2 = new RestaurantSearch("2", "test2", "test2", "완산구 효자동3가", "test2", 1.0, 1.0,
-          "test2");
+          "test2", 0.0, 0);
 
         Member member = Member.builder()
                               .id(1L)
