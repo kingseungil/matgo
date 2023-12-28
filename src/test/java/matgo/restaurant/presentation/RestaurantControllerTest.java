@@ -1,19 +1,23 @@
 package matgo.restaurant.presentation;
 
+import static matgo.restaurant.presentation.RestaurantDocument.approveRestaurantDocument;
 import static matgo.restaurant.presentation.RestaurantDocument.getRestaurantDetailDocument;
 import static matgo.restaurant.presentation.RestaurantDocument.getRestaurantsByAddressDocument;
 import static matgo.restaurant.presentation.RestaurantDocument.getRestaurantsByRegionDocument;
 import static matgo.restaurant.presentation.RestaurantDocument.getRestaurantsDocument;
+import static matgo.restaurant.presentation.RestaurantDocument.requestNewRestaurantDocument;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import matgo.common.BaseControllerTest;
 import matgo.restaurant.domain.entity.Restaurant;
 import matgo.restaurant.dto.request.PageRequest;
+import matgo.restaurant.dto.request.RestaurantRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Sort.Direction;
@@ -97,12 +101,22 @@ class RestaurantControllerTest extends BaseControllerTest {
     @DisplayName("[성공]식당 상세 조회")
     void getRestaurantDetail_success() {
         // given
-        Restaurant restaurant1 = new Restaurant("1", "test1", "test1", "test1", "test1", 1.0, 1.0, "test1");
-        Restaurant restaurant2 = new Restaurant("2", "test2", "test2", "test2", "test2", 1.0, 1.0, "test2");
+        Restaurant restaurant1 = Restaurant.builder()
+                                           .name("test1")
+                                           .externalId("1")
+                                           .address("test1")
+                                           .roadAddress("test1")
+                                           .phoneNumber("test1")
+                                           .lat(1.0)
+                                           .lon(1.0)
+                                           .description("test1")
+                                           .approvedAt(LocalDateTime.now())
+                                           .rating(0.0)
+                                           .reviewCount(0)
+                                           .build();
 
         restaurantRepository.save(restaurant1);
-        restaurantRepository.save(restaurant2);
-        Long restaurantId = 2L;
+        Long restaurantId = 1L;
 
         // when
         Response response = customGivenWithDocs(getRestaurantDetailDocument())
@@ -114,8 +128,60 @@ class RestaurantControllerTest extends BaseControllerTest {
         assertSoftly(softly -> {
             softly.assertThat(response.statusCode()).isEqualTo(200);
             softly.assertThat(response.body().jsonPath().getLong("id")).isEqualTo(restaurantId);
-            softly.assertThat(response.body().jsonPath().getString("name")).isEqualTo("test2");
+            softly.assertThat(response.body().jsonPath().getString("name")).isEqualTo("test1");
         });
+    }
 
+    @Test
+    @DisplayName("[성공]새로운 식당 등록 요청")
+    void requestNewRestaurant_success() {
+        // given
+        RestaurantRequest restaurantRequest = new RestaurantRequest("test1", "test1", "test1", "test1", 1.0, 1.0,
+          "test1");
+
+        // when
+        Response response = customGivenWithDocs(requestNewRestaurantDocument())
+          .accept(ContentType.JSON)
+          .contentType(ContentType.JSON)
+          .header("Authorization", "Bearer " + accessToken)
+          .body(restaurantRequest)
+          .post("/api/restaurants/new");
+
+        System.out.println("response = " + response.asString());
+
+        // then
+        assertSoftly(softly -> softly.assertThat(response.statusCode()).isEqualTo(204));
+    }
+
+    @Test
+    @DisplayName("[성공]식당 등록 승인 - 관리자")
+    void approveRestaurant_success() {
+        // given
+        Restaurant restaurant1 = Restaurant.builder()
+                                           .name("test1")
+                                           .externalId("1")
+                                           .address("test1")
+                                           .roadAddress("test1")
+                                           .phoneNumber("test1")
+                                           .lat(1.0)
+                                           .lon(1.0)
+                                           .description("test1")
+                                           .approvedAt(null)
+                                           .rating(0.0)
+                                           .reviewCount(0)
+                                           .build();
+
+        restaurantRepository.save(restaurant1);
+        Long restaurantId = 1L;
+
+        // when
+        Response response = customGivenWithDocs(approveRestaurantDocument())
+          .accept(ContentType.JSON)
+          .header("Authorization", "Bearer " + adminAccessToken)
+          .pathParam("restaurantId", restaurantId)
+          .put("/api/restaurants/approve/{restaurantId}");
+
+        // then
+        assertSoftly(softly -> softly.assertThat(response.statusCode()).isEqualTo(204));
     }
 }

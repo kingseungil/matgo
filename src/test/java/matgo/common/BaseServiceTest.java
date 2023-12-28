@@ -5,6 +5,7 @@ import matgo.auth.domain.repository.EmailVerificationRepository;
 import matgo.global.filesystem.s3.S3Service;
 import matgo.member.domain.repository.MemberRepository;
 import matgo.member.domain.repository.RegionRepository;
+import matgo.restaurant.domain.repository.RestaurantQueryRepository;
 import matgo.restaurant.domain.repository.RestaurantRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepositoryImpl;
@@ -29,6 +30,8 @@ public abstract class BaseServiceTest {
     protected JeonjuRestaurantClient jeonjuRestaurantClient;
     @Mock
     protected RestaurantRepository restaurantRepository;
+    @Mock
+    protected RestaurantQueryRepository restaurantQueryRepository;
     @Mock
     protected RestaurantSearchRepository restaurantSearchRepository;
     @Mock

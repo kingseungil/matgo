@@ -50,11 +50,14 @@ public abstract class BaseControllerTest {
       "효자동");
     protected static final LoginRequest loginRequest = new LoginRequest("test@naver.com", "1!asdasd",
       UserRole.ROLE_USER);
+    protected static final LoginRequest adminLoginRequest = new LoginRequest("admin@admin.com", "1!asdasd",
+      UserRole.ROLE_ADMIN);
     protected static final MemberUpdateRequest memberUpdateRequest = new MemberUpdateRequest("updateTest", "효자동");
     protected static final SendTemporaryPasswordRequest sendTemporaryPasswordRequest = new SendTemporaryPasswordRequest(
       "test@naver.com");
     protected static RequestSpecification spec;
     protected static String accessToken;
+    protected static String adminAccessToken;
     @MockBean
     protected S3Service s3Service;
     @MockBean
@@ -112,7 +115,19 @@ public abstract class BaseControllerTest {
                                     .region(region)
                                     .isActive(true)
                                     .build());
+        memberRepository.save(Member.builder()
+                                    .email("admin@admin.com")
+                                    .nickname("admin")
+                                    .password(password)
+                                    .profileImage(
+                                      "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image")
+                                    .role(UserRole.ROLE_ADMIN)
+                                    .region(region)
+                                    .isActive(true)
+                                    .build());
         accessToken = loginMember(loginRequest).jsonPath().getString("accessToken");
+        adminAccessToken = loginMember(adminLoginRequest).jsonPath().getString("accessToken");
+
         doReturn("code").when(mailService).sendVerificationCode(anyString());
     }
 
