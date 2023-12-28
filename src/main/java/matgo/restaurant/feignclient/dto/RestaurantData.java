@@ -3,6 +3,7 @@ package matgo.restaurant.feignclient.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record RestaurantData(
+  @JsonProperty("식당(ID)") String externalId,
   @JsonProperty("식당명") String name,
   @JsonProperty("도로명주소") String roadAddress,
   @JsonProperty("지번주소") String address,

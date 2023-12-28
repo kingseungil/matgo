@@ -8,14 +8,12 @@ import feign.codec.Decoder;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import lombok.extern.slf4j.Slf4j;
-import matgo.restaurant.feignclient.dto.RestaurantDataResponse;
 import matgo.restaurant.feignclient.exception.FeignClientException;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.ResolvableType;
 
 @Configuration
 @Slf4j
@@ -36,10 +34,9 @@ public class RestaurantFeignClientConfig {
 
         @Override
         public Object decode(Response response, Type type) throws IOException, FeignException {
-            var forClass = ResolvableType.forClass(RestaurantDataResponse.class);
 
             try {
-                return ((RestaurantDataResponse) decoder.decode(response, forClass.getType())).data();
+                return decoder.decode(response, type);
             } catch (Exception e) {
                 log.error("Failed to decode response", e);
                 throw new FeignClientException(CANT_PARSE_RESPONSE);

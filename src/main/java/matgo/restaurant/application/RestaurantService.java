@@ -5,9 +5,9 @@ import static matgo.global.exception.ErrorCode.NOT_FOUND_RESTAURANT;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import matgo.member.domain.entity.Member;
@@ -24,6 +24,7 @@ import matgo.restaurant.dto.response.RestaurantsSliceResponse;
 import matgo.restaurant.exception.RestaurantException;
 import matgo.restaurant.feignclient.JeonjuRestaurantClient;
 import matgo.restaurant.feignclient.dto.RestaurantData;
+import matgo.restaurant.feignclient.dto.RestaurantDataResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -47,28 +48,28 @@ public class RestaurantService {
 
     @Transactional
     // 한달에 한번씩 실행
-    @Scheduled(cron = "0 0 0 1 * *")
+//    @Scheduled(cron = "0 0 0 1 * *")
+    @Scheduled(cron = "0 13 * * * *")
     public void fetchAndSaveRestaurants() {
         int page = 1;
-        while (true) {
-            List<RestaurantData> restaurantDataList = fetchRestaurantsFromAPI(page);
-            if (restaurantDataList.isEmpty()) {
-                break;
-            }
-            List<Restaurant> restaurants = convertToRestaurants(restaurantDataList);
+        int perPage = 100;
+
+        RestaurantDataResponse response;
+        do {
+            response = fetchRestaurantsFromAPI(page, perPage);
+            List<Restaurant> restaurants = convertToRestaurants(response.data());
             Map<String, Restaurant> existingRestaurantsMap = getExistingRestaurantsMap(restaurants);
             List<Restaurant> newRestaurants = getNewRestaurants(restaurants, existingRestaurantsMap);
-
             saveRestaurants(newRestaurants);
-            log.info("fetch and save restaurants success");
-            indexingToES();
-
             page++;
-        }
+        } while (response.page() * response.perPage() < response.totalCount());
+
+        log.info("fetch and save restaurants success");
+        indexingToES();
     }
 
-    private List<RestaurantData> fetchRestaurantsFromAPI(int page) {
-        return jeonjuRestaurantClient.getRestaurants(page, 1000, key);
+    private RestaurantDataResponse fetchRestaurantsFromAPI(int page, int perPage) {
+        return jeonjuRestaurantClient.getRestaurants(page, perPage, key);
     }
 
     private List<Restaurant> convertToRestaurants(List<RestaurantData> restaurantDataList) {
@@ -78,28 +79,20 @@ public class RestaurantService {
     }
 
     private Map<String, Restaurant> getExistingRestaurantsMap(List<Restaurant> restaurants) {
-        List<String> restaurantNames = restaurants.stream()
-                                                  .map(Restaurant::getName)
-                                                  .toList();
-        List<String> restaurantAddresses = restaurants.stream()
-                                                      .map(Restaurant::getAddress)
-                                                      .toList();
-        List<Restaurant> existingRestaurants = restaurantRepository.findByNameInAndAddressIn(restaurantNames,
-          restaurantAddresses);
-
-        Map<String, Restaurant> map = new HashMap<>();
-        for (Restaurant existingRestaurant : existingRestaurants) {
-            map.put(existingRestaurant.getName() + existingRestaurant.getAddress(), existingRestaurant);
-        }
-        return map;
+        List<String> restaurantExternalIds = restaurants.stream()
+                                                        .map(Restaurant::getExternalId)
+                                                        .toList();
+        List<Restaurant> existingRestaurants = restaurantRepository.findByExternalIdIn(restaurantExternalIds);
+        return existingRestaurants.stream()
+                                  .collect(Collectors.toMap(Restaurant::getExternalId, restaurant -> restaurant));
     }
 
     private List<Restaurant> getNewRestaurants(List<Restaurant> restaurants,
       Map<String, Restaurant> existingRestaurantsMap) {
         List<Restaurant> newRestaurants = new ArrayList<>();
         for (Restaurant restaurant : restaurants) {
-            String key = restaurant.getName() + restaurant.getAddress();
-            Restaurant existingRestaurant = existingRestaurantsMap.get(key);
+            String externalId = restaurant.getExternalId();
+            Restaurant existingRestaurant = existingRestaurantsMap.get(externalId);
             if (existingRestaurant != null) {
                 existingRestaurant.update(restaurant);
             } else {

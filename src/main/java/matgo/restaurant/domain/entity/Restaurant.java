@@ -5,9 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,17 +19,14 @@ import matgo.review.domain.entity.Review;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(
-  name = "restaurant",
-  indexes = {
-    @Index(name = "IDX_name_address", columnList = "name,address")
-  }
-)
 public class Restaurant extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "external_id", nullable = false)
+    private String externalId;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -66,8 +61,10 @@ public class Restaurant extends BaseEntity {
     @OneToMany(mappedBy = "restaurant")
     private List<Review> reviews = new ArrayList<>();
 
-    public Restaurant(String name, String roadAddress, String address, String phoneNumber, Double lat, Double lon,
+    public Restaurant(String externalId, String name, String roadAddress, String address, String phoneNumber,
+      Double lat, Double lon,
       String description) {
+        this.externalId = externalId;
         this.name = name;
         this.roadAddress = roadAddress;
         this.address = address;
@@ -93,6 +90,7 @@ public class Restaurant extends BaseEntity {
     public static Restaurant from(RestaurantData data) {
         data = validate(data);
         return new Restaurant(
+          data.externalId(),
           data.name(),
           data.roadAddress(),
           data.address(),
@@ -104,6 +102,7 @@ public class Restaurant extends BaseEntity {
     }
 
     private static RestaurantData validate(RestaurantData data) {
+        String externalId = data.externalId() != null ? data.externalId() : "아이디 없음";
         String name = data.name() != null ? data.name() : "이름 없음";
         String roadAddress = data.roadAddress() != null ? data.roadAddress() : "도로명 주소 없음";
         String address = data.address() != null ? data.address() : "주소 없음";
@@ -112,7 +111,7 @@ public class Restaurant extends BaseEntity {
         Double lon = data.lon() != null ? data.lon() : 0.0;
         String description = data.description() != null ? data.description() : "설명 없음";
 
-        return new RestaurantData(name, roadAddress, address, phoneNumber, lat, lon, description);
+        return new RestaurantData(externalId, name, roadAddress, address, phoneNumber, lat, lon, description);
     }
 
     public void update(Restaurant restaurant) {
