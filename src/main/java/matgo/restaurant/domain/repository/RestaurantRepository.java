@@ -12,6 +12,6 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
     List<Restaurant> findByModifiedAtAfter(LocalDateTime time);
 
-    @Query("SELECT r FROM Restaurant r WHERE r.name IN :names AND r.address IN :addresses")
-    List<Restaurant> findByNameInAndAddressIn(List<String> names, List<String> addresses);
+    @Query("SELECT r FROM Restaurant r WHERE r.externalId IN :externalIds")
+    List<Restaurant> findByExternalIdIn(List<String> externalIds);
 }
