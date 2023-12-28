@@ -2,11 +2,12 @@ package matgo.restaurant.application;
 
 import static matgo.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_RESTAURANT;
-import static matgo.global.exception.ErrorCode.UPDATABLE_RESTAURANT_NOT_FOUND;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import matgo.member.domain.entity.Member;
@@ -35,8 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class RestaurantService {
 
-    private static final int MAX_COUNT = 4000;
-
     private final JeonjuRestaurantClient jeonjuRestaurantClient;
     private final MemberRepository memberRepository;
     private final RestaurantRepository restaurantRepository;
@@ -50,11 +49,35 @@ public class RestaurantService {
     // 한달에 한번씩 실행
     @Scheduled(cron = "0 0 0 1 * *")
     public void fetchAndSaveRestaurants() {
-        List<RestaurantData> restaurantDataList = jeonjuRestaurantClient.getRestaurants(1, MAX_COUNT, key);
-        List<Restaurant> restaurants = restaurantDataList.stream()
-                                                         .map(Restaurant::from)
-                                                         .toList();
+        int page = 1;
+        while (true) {
+            List<RestaurantData> restaurantDataList = fetchRestaurantsFromAPI(page);
+            if (restaurantDataList.isEmpty()) {
+                break;
+            }
+            List<Restaurant> restaurants = convertToRestaurants(restaurantDataList);
+            Map<String, Restaurant> existingRestaurantsMap = getExistingRestaurantsMap(restaurants);
+            List<Restaurant> newRestaurants = getNewRestaurants(restaurants, existingRestaurantsMap);
 
+            saveRestaurants(newRestaurants);
+            log.info("fetch and save restaurants success");
+            indexingToES();
+
+            page++;
+        }
+    }
+
+    private List<RestaurantData> fetchRestaurantsFromAPI(int page) {
+        return jeonjuRestaurantClient.getRestaurants(page, 1000, key);
+    }
+
+    private List<Restaurant> convertToRestaurants(List<RestaurantData> restaurantDataList) {
+        return restaurantDataList.stream()
+                                 .map(Restaurant::from)
+                                 .toList();
+    }
+
+    private Map<String, Restaurant> getExistingRestaurantsMap(List<Restaurant> restaurants) {
         List<String> restaurantNames = restaurants.stream()
                                                   .map(Restaurant::getName)
                                                   .toList();
@@ -64,18 +87,30 @@ public class RestaurantService {
         List<Restaurant> existingRestaurants = restaurantRepository.findByNameInAndAddressIn(restaurantNames,
           restaurantAddresses);
 
-        for (Restaurant restaurant : restaurants) {
-            Optional<Restaurant> optionalRestaurant
-              = existingRestaurants.stream()
-                                   .filter(
-                                     r -> r.getName().equals(restaurant.getName()) &&
-                                       r.getAddress().equals(restaurant.getAddress()))
-                                   .findFirst();
-            optionalRestaurant.ifPresentOrElse(savedRestaurant -> savedRestaurant.update(restaurant),
-              () -> restaurantRepository.save(restaurant));
+        Map<String, Restaurant> map = new HashMap<>();
+        for (Restaurant existingRestaurant : existingRestaurants) {
+            map.put(existingRestaurant.getName() + existingRestaurant.getAddress(), existingRestaurant);
         }
+        return map;
+    }
 
-        log.info("fetch and save restaurants success");
+    private List<Restaurant> getNewRestaurants(List<Restaurant> restaurants,
+      Map<String, Restaurant> existingRestaurantsMap) {
+        List<Restaurant> newRestaurants = new ArrayList<>();
+        for (Restaurant restaurant : restaurants) {
+            String key = restaurant.getName() + restaurant.getAddress();
+            Restaurant existingRestaurant = existingRestaurantsMap.get(key);
+            if (existingRestaurant != null) {
+                existingRestaurant.update(restaurant);
+            } else {
+                newRestaurants.add(restaurant);
+            }
+        }
+        return newRestaurants;
+    }
+
+    private void saveRestaurants(List<Restaurant> newRestaurants) {
+        restaurantRepository.saveAll(newRestaurants);
     }
 
     @Transactional
@@ -86,14 +121,15 @@ public class RestaurantService {
         LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
         List<Restaurant> restaurants = restaurantRepository.findByModifiedAtAfter(oneHourAgo);
         if (restaurants.isEmpty()) {
-            throw new RestaurantException(UPDATABLE_RESTAURANT_NOT_FOUND);
+            log.info("No restaurants updated in the last hour");
+        } else {
+            List<RestaurantSearch> restaurantSearches = restaurants.stream()
+                                                                   .map(RestaurantSearch::from)
+                                                                   .toList();
+            restaurantSearchRepositoryImpl.bulkInsertOrUpdate(restaurantSearches);
+            log.info("elasticsearch indexing success");
         }
 
-        List<RestaurantSearch> restaurantSearches = restaurants.stream()
-                                                               .map(RestaurantSearch::from)
-                                                               .toList();
-        restaurantSearchRepositoryImpl.bulkInsertOrUpdate(restaurantSearches);
-        log.info("elasticsearch indexing success");
     }
 
 

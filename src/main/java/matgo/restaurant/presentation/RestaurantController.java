@@ -68,5 +68,4 @@ public class RestaurantController {
     ) {
         return restaurantService.getRestaurantDetail(restaurantId);
     }
-
 }
