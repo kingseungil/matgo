@@ -97,8 +97,8 @@ class RestaurantControllerTest extends BaseControllerTest {
     @DisplayName("[성공]식당 상세 조회")
     void getRestaurantDetail_success() {
         // given
-        Restaurant restaurant1 = new Restaurant("test1", "test1", "test1", "test1", 1.0, 1.0, "test1");
-        Restaurant restaurant2 = new Restaurant("test2", "test2", "test2", "test2", 1.0, 1.0, "test2");
+        Restaurant restaurant1 = new Restaurant("1", "test1", "test1", "test1", "test1", 1.0, 1.0, "test1");
+        Restaurant restaurant2 = new Restaurant("2", "test2", "test2", "test2", "test2", 1.0, 1.0, "test2");
 
         restaurantRepository.save(restaurant1);
         restaurantRepository.save(restaurant2);
