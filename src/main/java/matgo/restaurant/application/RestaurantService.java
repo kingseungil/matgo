@@ -1,5 +1,7 @@
 package matgo.restaurant.application;
 
+import static matgo.global.exception.ErrorCode.ELREADY_APPROVED_RESTAURANT;
+import static matgo.global.exception.ErrorCode.ELREADY_EXISTED_RESTAURANT;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_RESTAURANT;
 
@@ -15,9 +17,11 @@ import matgo.member.domain.repository.MemberRepository;
 import matgo.member.exception.MemberException;
 import matgo.restaurant.domain.entity.Restaurant;
 import matgo.restaurant.domain.entity.RestaurantSearch;
+import matgo.restaurant.domain.repository.RestaurantQueryRepository;
 import matgo.restaurant.domain.repository.RestaurantRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepositoryImpl;
+import matgo.restaurant.dto.request.RestaurantRequest;
 import matgo.restaurant.dto.response.RestaurantDetailResponse;
 import matgo.restaurant.dto.response.RestaurantSliceResponse;
 import matgo.restaurant.dto.response.RestaurantsSliceResponse;
@@ -40,6 +44,7 @@ public class RestaurantService {
     private final JeonjuRestaurantClient jeonjuRestaurantClient;
     private final MemberRepository memberRepository;
     private final RestaurantRepository restaurantRepository;
+    private final RestaurantQueryRepository restaurantQueryRepository;
     private final RestaurantSearchRepository restaurantSearchRepository;
     private final RestaurantSearchRepositoryImpl restaurantSearchRepositoryImpl;
 
@@ -48,8 +53,7 @@ public class RestaurantService {
 
     @Transactional
     // 한달에 한번씩 실행
-//    @Scheduled(cron = "0 0 0 1 * *")
-    @Scheduled(cron = "0 13 * * * *")
+    @Scheduled(cron = "0 0 0 1 * *")
     public void fetchAndSaveRestaurants() {
         int page = 1;
         int perPage = 100;
@@ -74,7 +78,7 @@ public class RestaurantService {
 
     private List<Restaurant> convertToRestaurants(List<RestaurantData> restaurantDataList) {
         return restaurantDataList.stream()
-                                 .map(Restaurant::from)
+                                 .map(Restaurant::fromRestaurantData)
                                  .toList();
     }
 
@@ -112,7 +116,7 @@ public class RestaurantService {
     public void indexingToES() {
         // 1시간 이내에 수정된 식당만 elasticsearch에 저장
         LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
-        List<Restaurant> restaurants = restaurantRepository.findByModifiedAtAfter(oneHourAgo);
+        List<Restaurant> restaurants = restaurantRepository.findByModifiedAtAfterAndApprovedAtIsNotNull(oneHourAgo);
         if (restaurants.isEmpty()) {
             log.info("No restaurants updated in the last hour");
         } else {
@@ -156,9 +160,36 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public RestaurantDetailResponse getRestaurantDetail(Long restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                                                    .filter(restaurants -> restaurants.getApprovedAt() != null)
                                                     .orElseThrow(() -> new RestaurantException(NOT_FOUND_RESTAURANT));
 
         return RestaurantDetailResponse.from(restaurant);
+    }
+
+    @Transactional
+    public void requestNewRestaurant(RestaurantRequest restaurantRequest) {
+        checkDuplicate(restaurantRequest);
+
+        restaurantRepository.save(Restaurant.fromRestaurantRequest(restaurantRequest));
+    }
+
+    private void checkDuplicate(RestaurantRequest restaurantRequest) {
+        if (restaurantQueryRepository.existsByDuplicateField(restaurantRequest)) {
+            throw new RestaurantException(ELREADY_EXISTED_RESTAURANT);
+        }
+    }
+
+    @Transactional
+    public void approveRestaurant(Long restaurantId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                                                    .orElseThrow(() -> new RestaurantException(NOT_FOUND_RESTAURANT));
+        if (restaurant.getApprovedAt() != null) {
+            throw new RestaurantException(ELREADY_APPROVED_RESTAURANT);
+        }
+
+        restaurant.approve();
+
+        restaurantSearchRepository.save(RestaurantSearch.from(restaurant));
     }
 
     // 리뷰 작성 후 호출되는 메서드 (maybe)
