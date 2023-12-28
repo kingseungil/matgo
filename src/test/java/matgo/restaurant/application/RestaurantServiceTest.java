@@ -1,13 +1,14 @@
 package matgo.restaurant.application;
 
 import static matgo.global.exception.ErrorCode.NOT_FOUND_RESTAURANT;
-import static matgo.global.exception.ErrorCode.UPDATABLE_RESTAURANT_NOT_FOUND;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -24,11 +25,10 @@ import matgo.restaurant.dto.response.RestaurantDetailResponse;
 import matgo.restaurant.dto.response.RestaurantsSliceResponse;
 import matgo.restaurant.exception.RestaurantException;
 import matgo.restaurant.feignclient.dto.RestaurantData;
+import matgo.restaurant.feignclient.dto.RestaurantDataResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -44,53 +44,62 @@ class RestaurantServiceTest extends BaseServiceTest {
     @DisplayName("fetchAndSaveRestaurants 메서드는")
     class FetchAndSaveRestaurants {
 
-        private static final int MAX_COUNT = 4000;
 
-        RestaurantData restaurantData1 = new RestaurantData("name", "roadAddress", "address", "phoneNumber", 1.0,
+        RestaurantData restaurantData1 = new RestaurantData("1", "name", "roadAddress", "address", "phoneNumber", 1.0,
           1.0, "description");
-        RestaurantData restaurantData2 = new RestaurantData("name", "roadAddress", "address", "phoneNumber", 1.0,
+        RestaurantData restaurantData2 = new RestaurantData("2", "name", "roadAddress", "address", "phoneNumber", 1.0,
           1.0, "description");
 
         Restaurant restaurant1 = Restaurant.from(restaurantData1);
         Restaurant restaurant2 = Restaurant.from(restaurantData2);
+        int page = 1;
+        int perPage = 100;
 
         @Test
         @DisplayName("성공하면 외부 API에서 받아온 데이터를 DB에 save (새로운 데이터)")
         void fetchAndSaveRestaurants_success_new_data() {
             // given
             List<RestaurantData> restaurantDataList = List.of(restaurantData1, restaurantData2);
-            doReturn(restaurantDataList).when(jeonjuRestaurantClient).getRestaurants(1, MAX_COUNT, null);
-            doReturn(List.of()).when(restaurantRepository).findByNameInAndAddressIn(anyList(), anyList());
+            RestaurantDataResponse response = new RestaurantDataResponse(page, perPage, 2, 0, 2,
+              restaurantDataList);
+
+            doReturn(response).when(jeonjuRestaurantClient).getRestaurants(anyInt(), anyInt(), isNull());
+            doReturn(List.of()).when(restaurantRepository).findByExternalIdIn(anyList());
 
             // when
             restaurantService.fetchAndSaveRestaurants();
 
             // then
-            verify(restaurantRepository, times(2)).save(ArgumentMatchers.any(Restaurant.class));
+            verify(jeonjuRestaurantClient, times(1)).getRestaurants(anyInt(), anyInt(), isNull());
+            verify(restaurantRepository, times(1)).findByExternalIdIn(anyList());
+            verify(restaurantRepository, times(1)).saveAll(anyList());
         }
 
         @Test
         @DisplayName("성공하면 외부 API에서 받아온 데이터를 DB에 update (기존 데이터)")
         void fetchAndSaveRestaurants_success_existing_data() {
             // given
-            RestaurantData newRestaurantData = new RestaurantData("newName", "roadAddress", "address", "phoneNumber",
-              1.0, 1.0, "description");
+            List<RestaurantData> restaurantDataList = List.of(restaurantData1, restaurantData2);
+            RestaurantDataResponse response = new RestaurantDataResponse(page, perPage, 2, 0, 2,
+              restaurantDataList);
 
-            List<RestaurantData> restaurantDataList = List.of(newRestaurantData);
-            doReturn(restaurantDataList).when(jeonjuRestaurantClient).getRestaurants(1, MAX_COUNT, null);
+            doReturn(response).when(jeonjuRestaurantClient).getRestaurants(anyInt(), anyInt(), isNull());
 
-            List<Restaurant> existingRestaurants = List.of(restaurant1, restaurant2);
-            doReturn(existingRestaurants).when(restaurantRepository).findByNameInAndAddressIn(anyList(), anyList());
+            // 모킹된 Restaurant 객체 생성
+            Restaurant mockRestaurant1 = mock(Restaurant.class);
+            Restaurant mockRestaurant2 = mock(Restaurant.class);
+            doReturn("1").when(mockRestaurant1).getExternalId();
+            doReturn("2").when(mockRestaurant2).getExternalId();
 
-            ArgumentCaptor<Restaurant> restaurantCaptor = ArgumentCaptor.forClass(Restaurant.class);
+            List<Restaurant> existingRestaurants = List.of(mockRestaurant1, mockRestaurant2);
+            doReturn(existingRestaurants).when(restaurantRepository).findByExternalIdIn(anyList());
 
             // when
             restaurantService.fetchAndSaveRestaurants();
 
             // then
-            verify(restaurantRepository, times(1)).save(restaurantCaptor.capture());
-            Restaurant updatedRestaurant = restaurantCaptor.getValue();
-            assertThat(updatedRestaurant.getName()).isEqualTo(newRestaurantData.name());
+            verify(mockRestaurant1, times(1)).update(any(Restaurant.class));
+            verify(mockRestaurant2, times(1)).update(any(Restaurant.class));
         }
     }
 
@@ -114,18 +123,6 @@ class RestaurantServiceTest extends BaseServiceTest {
 
             // then
             verify(restaurantSearchRepositoryImpl, times(1)).bulkInsertOrUpdate(anyList());
-        }
-
-        @Test
-        @DisplayName("1시간 이내에 수정된 식당이 없으면 RestaurantException 발생")
-        void indexingToES_fail() {
-            // given
-            doReturn(List.of()).when(restaurantRepository).findByModifiedAtAfter(any(LocalDateTime.class));
-
-            // when & then
-            assertThatThrownBy(() -> restaurantService.indexingToES())
-              .isInstanceOf(RestaurantException.class)
-              .hasMessageContaining(UPDATABLE_RESTAURANT_NOT_FOUND.getMessage());
         }
     }
 
