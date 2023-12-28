@@ -55,7 +55,9 @@ public enum ErrorCode {
 
     // Restaurant
     UPDATABLE_RESTAURANT_NOT_FOUND(HttpStatus.NOT_FOUND, "업데이트 가능한 식당이 존재하지 않습니다."),
-    NOT_FOUND_RESTAURANT(HttpStatus.NOT_FOUND, "존재하지 않는 식당입니다.");
+    NOT_FOUND_RESTAURANT(HttpStatus.NOT_FOUND, "존재하지 않는 식당입니다."),
+    ELREADY_EXISTED_RESTAURANT(HttpStatus.BAD_REQUEST, "이미 존재하는 식당입니다."),
+    ELREADY_APPROVED_RESTAURANT(HttpStatus.BAD_REQUEST, "이미 승인된 식당입니다.");
 
 
     private final HttpStatus status;

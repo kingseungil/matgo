@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import matgo.global.exception.dto.ErrorLogRequest;
 import matgo.global.exception.dto.ErrorResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -56,6 +57,13 @@ public class GlobalExceptionHandler {
         String errorMessage = String.format("요청 파라미터 %s(%s)가 누락되었습니다.", name, type);
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_REQUEST, errorMessage);
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    // SQL 무결성 제약 조건 위반 에러
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_REQUEST, e.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
