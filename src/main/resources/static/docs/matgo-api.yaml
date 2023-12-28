@@ -63,39 +63,6 @@ paths:
                   value: |-
                     {
                       "restaurants" : [ {
-                        "id" : "4",
-                        "name" : "가람나주곰탕",
-                        "roadAddress" : "전라북도 전주시 덕진구 떡전로 5",
-                        "address" : "전라북도 전주시 덕진구 금암동 794-7",
-                        "phoneNumber" : "063-227-3395",
-                        "lat" : 35.8357146,
-                        "lon" : 127.1282544,
-                        "description" : "어디 가야 할지 고민이시라고요? 그럼 전라북도 전주시 맛집, \"가람 나주곰탕\"을 추천합니다! 레드테이블에서 온라인 예약이 가능합니다! 배달 가능한 매장입니다. 주차공간, 다국어 메뉴판이 있는 매장입니다.",
-                        "rating" : 5.0,
-                        "reviewCount" : 0
-                      }, {
-                        "id" : "49",
-                        "name" : "연성국밥 전주대점",
-                        "roadAddress" : "전라북도 전주시 완산구 백마산길 21",
-                        "address" : "전라북도 전주시 완산구 효자동3가  1184-3",
-                        "phoneNumber" : "063-227-8808",
-                        "lat" : 35.8172807,
-                        "lon" : 127.0909038,
-                        "description" : "\"연성국밥(전주대점)\"을 전라북도 전주시의 가 볼 만한 식당으로 추천합니다! 레드테이블에서 온라인 예약이 가능합니다! 배달 가능한 매장입니다. 다국어 메뉴판이 있는 매장입니다.",
-                        "rating" : 5.0,
-                        "reviewCount" : 5
-                      }, {
-                        "id" : "5",
-                        "name" : "태봉집",
-                        "roadAddress" : "전라북도 전주시 완산구 전주객사5길 43-14",
-                        "address" : "전라북도 전주시 완산구 고사동 195-1",
-                        "phoneNumber" : "063-283-2458",
-                        "lat" : 35.8202607,
-                        "lon" : 127.1445302,
-                        "description" : "2019년 09월 27일 TV조선 식객허영만의백반기행 18회에서 소개되었던 맛집, \"태봉집\"입니다! 전라북도 전주시 근처라면 방문해보세요. 레드테이블에서 온라인 예약이 가능합니다! 다국어 메뉴판이 있는 매장입니다.",
-                        "rating" : 4.0,
-                        "reviewCount" : 0
-                      }, {
                         "id" : "3",
                         "name" : "PNB풍년제과 본점",
                         "roadAddress" : "전라북도 전주시 완산구 팔달로 180",
@@ -172,6 +139,39 @@ paths:
                         "description" : "전라북도 전주시에서 맛집을 찾으신다면 \"전주밥상\"을 추천합니다. 레드테이블에서 온라인 예약이 가능합니다! 다국어 메뉴판이 있는 매장입니다.",
                         "rating" : 0.0,
                         "reviewCount" : 0
+                      }, {
+                        "id" : "12",
+                        "name" : "시장집",
+                        "roadAddress" : "전라북도 전주시 완산구 전주객사1길 7",
+                        "address" : "전라북도 전주시 완산구 다가동3가 66-2",
+                        "phoneNumber" : "063-288-3802",
+                        "lat" : 35.8169677,
+                        "lon" : 127.140343,
+                        "description" : "\"시장골목집\"을 전라북도 전주시의 가 볼 만한 식당으로 추천합니다! 레드테이블에서 온라인 예약이 가능합니다! 다국어 메뉴판이 있는 매장입니다.",
+                        "rating" : 0.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "13",
+                        "name" : "일품향",
+                        "roadAddress" : "전라북도 전주시 완산구 전주객사3길 12-8",
+                        "address" : "전라북도 전주시 완산구 중앙동2가 31-1",
+                        "phoneNumber" : "063-284-1901",
+                        "lat" : 35.8177739,
+                        "lon" : 127.143221,
+                        "description" : "어디 가야 할지 고민이시라고요? 그럼 전라북도 전주시 맛집, \"일품향\"을 추천합니다! 레드테이블에서 온라인 예약이 가능합니다! 배달 가능한 매장입니다. 다국어 메뉴판이 있는 매장입니다.",
+                        "rating" : 0.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "14",
+                        "name" : "전라회관",
+                        "roadAddress" : "전라북도 전주시 완산구 안행4길 5",
+                        "address" : "전라북도 전주시 완산구 삼천동1가 751-8",
+                        "phoneNumber" : "063-228-3033",
+                        "lat" : 35.8005994,
+                        "lon" : 127.1320044,
+                        "description" : "무엇을 먹을지 고민되신다고요? 전라북도 전주시에 계시다면 \"전라회관\"을 추천합니다! 지방자치단체 인증을 받은 농림축산식품부 제공 안심식당입니다. 레드테이블에서 온라인 예약이 가능합니다! 다국어 메뉴판이 있는 매장입니다.",
+                        "rating" : 0.0,
+                        "reviewCount" : 0
                       } ],
                       "hasNext" : true
                     }
@@ -206,7 +206,7 @@ paths:
                 로그인:
                   value: |-
                     {
-                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwMzY4NDg5MCwiaXNzIjoibWF0Z28iLCJleHAiOjE3MDM2ODQ5NTB9.X2kUCJvXgOPRSX1Fdddu6fyWqR67mRFzhtwf3nBParQ"
+                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwMzc2NjM0NywiaXNzIjoibWF0Z28iLCJleHAiOjE3MDM3NjY0MDd9.wofjqPZXWcOs0tlium4NLWG6KyPFcTwcK_aYiyfCMDg"
                     }
   /api/auth/logout:
     delete:
@@ -354,17 +354,6 @@ paths:
                   value: |-
                     {
                       "restaurants" : [ {
-                        "id" : "49",
-                        "name" : "연성국밥 전주대점",
-                        "roadAddress" : "전라북도 전주시 완산구 백마산길 21",
-                        "address" : "전라북도 전주시 완산구 효자동3가  1184-3",
-                        "phoneNumber" : "063-227-8808",
-                        "lat" : 35.8172807,
-                        "lon" : 127.0909038,
-                        "description" : "\"연성국밥(전주대점)\"을 전라북도 전주시의 가 볼 만한 식당으로 추천합니다! 레드테이블에서 온라인 예약이 가능합니다! 배달 가능한 매장입니다. 다국어 메뉴판이 있는 매장입니다.",
-                        "rating" : 5.0,
-                        "reviewCount" : 5
-                      }, {
                         "id" : "58",
                         "name" : "전주대 한끼마을",
                         "roadAddress" : "전라북도 전주시 완산구 백마산길 38",
@@ -463,6 +452,17 @@ paths:
                         "description" : "전라북도 전주시에서 어디를 갈지 고민이라면! \"커피브레이크\"에 가보시는 건 어떨까요? 레드테이블에서 온라인 예약이 가능합니다! 다국어 메뉴판, 무선 인터넷이 있는 매장입니다.",
                         "rating" : 0.0,
                         "reviewCount" : 0
+                      }, {
+                        "id" : "145",
+                        "name" : "쿠우쿠우 전주효자점",
+                        "roadAddress" : "전라북도 전주시 완산구 홍산남로 73 3층",
+                        "address" : "전라북도 전주시 완산구 효자동3가 1539-2",
+                        "phoneNumber" : "063-222-6274",
+                        "lat" : 35.8159923,
+                        "lon" : 127.1099758,
+                        "description" : "무엇을 먹을지 고민되신다고요? 전라북도 전주시에 계시다면 \"쿠우쿠우 전주효자점\"을 추천합니다!",
+                        "rating" : 0.0,
+                        "reviewCount" : 0
                       } ],
                       "hasNext" : true
                     }
@@ -510,17 +510,6 @@ paths:
                   value: |-
                     {
                       "restaurants" : [ {
-                        "id" : "49",
-                        "name" : "연성국밥 전주대점",
-                        "roadAddress" : "전라북도 전주시 완산구 백마산길 21",
-                        "address" : "전라북도 전주시 완산구 효자동3가  1184-3",
-                        "phoneNumber" : "063-227-8808",
-                        "lat" : 35.8172807,
-                        "lon" : 127.0909038,
-                        "description" : "\"연성국밥(전주대점)\"을 전라북도 전주시의 가 볼 만한 식당으로 추천합니다! 레드테이블에서 온라인 예약이 가능합니다! 배달 가능한 매장입니다. 다국어 메뉴판이 있는 매장입니다.",
-                        "rating" : 5.0,
-                        "reviewCount" : 5
-                      }, {
                         "id" : "24",
                         "name" : "반야돌솥밥",
                         "roadAddress" : "전라북도 전주시 완산구 홍산1길 6",
@@ -619,9 +608,68 @@ paths:
                         "description" : "무엇을 먹을지 고민되신다고요? 전라북도 전주시에 계시다면 \"박가네해물칼국수\"를 추천합니다! 레드테이블에서 온라인 예약이 가능합니다! 다국어 메뉴판이 있는 매장입니다.",
                         "rating" : 0.0,
                         "reviewCount" : 0
+                      }, {
+                        "id" : "82",
+                        "name" : "팔공티전주대점",
+                        "roadAddress" : "전라북도 전주시 완산구 백마산길 19 (효자동3가)",
+                        "address" : "전라북도 전주시 완산구 효자동3가 1184-6",
+                        "phoneNumber" : "063-225-7191",
+                        "lat" : 35.8173821,
+                        "lon" : 127.0911674,
+                        "description" : "전라북도 전주시에 가신다면 \"팔공티(전주대점)\"에 방문해보세요~ 레드테이블에서 온라인 예약이 가능합니다! 배달 가능한 매장입니다. 키오스크, 다국어 메뉴판이 있는 매장입니다.",
+                        "rating" : 0.0,
+                        "reviewCount" : 0
                       } ],
                       "hasNext" : true
                     }
+      security:
+      - bearerAuthJWT: []
+  /api/restaurants/new:
+    post:
+      tags:
+      - Restaurant
+      summary: 식당 등록 요청
+      description: 식당 등록 요청
+      operationId: 식당 등록 요청
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-restaurants-new-818907071'
+            examples:
+              식당 등록 요청:
+                value: |-
+                  {
+                    "name" : "test1",
+                    "roadAddress" : "test1",
+                    "address" : "test1",
+                    "phoneNumber" : "test1",
+                    "lat" : 1.0,
+                    "lon" : 1.0,
+                    "description" : "test1"
+                  }
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+  /api/restaurants/approve/{restaurantId}:
+    put:
+      tags:
+      - Restaurant
+      summary: "[관리자]식당 등록 승인"
+      description: "[관리자]식당 등록 승인"
+      operationId: "[관리자]식당 등록 승인식당 등록 승인"
+      parameters:
+      - name: restaurantId
+        in: path
+        description: 식당 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
       security:
       - bearerAuthJWT: []
   /api/restaurants/detail/{restaurantId}:
@@ -649,19 +697,43 @@ paths:
                 식당 상세 조회:
                   value: |-
                     {
-                      "id" : 2,
-                      "name" : "test2",
-                      "roadAddress" : "test2",
-                      "address" : "test2",
-                      "phoneNumber" : "test2",
+                      "id" : 1,
+                      "name" : "test1",
+                      "roadAddress" : "test1",
+                      "address" : "test1",
+                      "phoneNumber" : "test1",
                       "lat" : 1.0,
                       "lon" : 1.0,
-                      "description" : "test2",
+                      "description" : "test1",
                       "rating" : 0.0,
                       "reviewCount" : 0
                     }
 components:
   schemas:
+    api-restaurants-new-818907071:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          description: 전화번호
+        address:
+          type: string
+          description: 지번 주소
+        roadAddress:
+          type: string
+          description: 도로명 주소
+        name:
+          type: string
+          description: 식당 이름
+        description:
+          type: string
+          description: 식당 설명
+        lon:
+          type: number
+          description: 경도
+        lat:
+          type: number
+          description: 위도
     api-auth-send-temporary-password-272417006:
       type: object
       properties:

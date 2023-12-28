@@ -1,6 +1,9 @@
 package matgo.restaurant.application;
 
+import static matgo.global.exception.ErrorCode.ELREADY_APPROVED_RESTAURANT;
+import static matgo.global.exception.ErrorCode.ELREADY_EXISTED_RESTAURANT;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_RESTAURANT;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,6 +24,7 @@ import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
 import matgo.restaurant.domain.entity.Restaurant;
 import matgo.restaurant.domain.entity.RestaurantSearch;
+import matgo.restaurant.dto.request.RestaurantRequest;
 import matgo.restaurant.dto.response.RestaurantDetailResponse;
 import matgo.restaurant.dto.response.RestaurantsSliceResponse;
 import matgo.restaurant.exception.RestaurantException;
@@ -49,9 +53,6 @@ class RestaurantServiceTest extends BaseServiceTest {
           1.0, "description");
         RestaurantData restaurantData2 = new RestaurantData("2", "name", "roadAddress", "address", "phoneNumber", 1.0,
           1.0, "description");
-
-        Restaurant restaurant1 = Restaurant.from(restaurantData1);
-        Restaurant restaurant2 = Restaurant.from(restaurantData2);
         int page = 1;
         int perPage = 100;
 
@@ -107,8 +108,8 @@ class RestaurantServiceTest extends BaseServiceTest {
     @DisplayName("indexingToES 메서드는")
     class IndexingToES {
 
-        Restaurant restaurant1 = new Restaurant(1L, "test1", "test1", "test1", "test1", 1.0, 1.0, "test1");
-        Restaurant restaurant2 = new Restaurant(2L, "test2", "test2", "test2", "test2", 1.0, 1.0, "test2");
+        Restaurant restaurant1 = mock(Restaurant.class);
+        Restaurant restaurant2 = mock(Restaurant.class);
 
         @Test
         @DisplayName("성공하면 1시간 이내에 수정된 식당만 elasticsearch에 저장")
@@ -116,7 +117,8 @@ class RestaurantServiceTest extends BaseServiceTest {
             // given
             List<Restaurant> restaurants = Arrays.asList(restaurant1, restaurant2);
 
-            doReturn(restaurants).when(restaurantRepository).findByModifiedAtAfter(any(LocalDateTime.class));
+            doReturn(restaurants).when(restaurantRepository)
+                                 .findByModifiedAtAfterAndApprovedAtIsNotNull(any(LocalDateTime.class));
 
             // when
             restaurantService.indexingToES();
@@ -297,26 +299,21 @@ class RestaurantServiceTest extends BaseServiceTest {
     @DisplayName("getRestaurantDetail 메서드는")
     class GetRestaurantDetail {
 
-        Restaurant restaurant = new Restaurant(1L, "test", "test", "test", "test", 1.0, 1.0, "test");
+        Restaurant restaurant = mock(Restaurant.class);
 
         @Test
         @DisplayName("식당 상세 정보를 반환")
         void getRestaurantDetail() {
             // given
+            doReturn(1L).when(restaurant).getId();
+            doReturn(LocalDateTime.now()).when(restaurant).getApprovedAt();
             doReturn(Optional.of(restaurant)).when(restaurantRepository).findById(any(Long.class));
 
             // when
             RestaurantDetailResponse response = restaurantService.getRestaurantDetail(1L);
 
             // then
-            assertSoftly(softly -> {
-                softly.assertThat(response.name()).isEqualTo("test");
-                softly.assertThat(response.address()).isEqualTo("test");
-                softly.assertThat(response.phoneNumber()).isEqualTo("test");
-                softly.assertThat(response.lat()).isEqualTo(1.0);
-                softly.assertThat(response.lon()).isEqualTo(1.0);
-                softly.assertThat(response.description()).isEqualTo("test");
-            });
+            assertThat(response.id()).isEqualTo(1L);
         }
 
         @Test
@@ -329,6 +326,86 @@ class RestaurantServiceTest extends BaseServiceTest {
             assertThatThrownBy(() -> restaurantService.getRestaurantDetail(1L))
               .isInstanceOf(RestaurantException.class)
               .hasMessageContaining(NOT_FOUND_RESTAURANT.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("requestNewRestaurant 메서드는")
+    class RequestNewRestaurant {
+
+        RestaurantRequest restaurantRequest = new RestaurantRequest("name", "roadAddress", "address", "phoneNumber",
+          1.0, 1.0, "description");
+
+        @Test
+        @DisplayName("성공하면 DB에 저장")
+        void requestNewRestaurant() {
+            // given
+            doReturn(false).when(restaurantQueryRepository).existsByDuplicateField(any(RestaurantRequest.class));
+            // when
+            restaurantService.requestNewRestaurant(restaurantRequest);
+
+            // then
+            verify(restaurantRepository, times(1)).save(any(Restaurant.class));
+        }
+
+        @Test
+        @DisplayName("주소가 중복되면 RestaurantException 발생")
+        void requestNewRestaurant_fail() {
+            // given
+            doReturn(true).when(restaurantQueryRepository).existsByDuplicateField(any(RestaurantRequest.class));
+
+            // when & then
+            assertThatThrownBy(() -> restaurantService.requestNewRestaurant(restaurantRequest))
+              .isInstanceOf(RestaurantException.class)
+              .hasMessageContaining(ELREADY_EXISTED_RESTAURANT.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("approveRestaurant 메서드는")
+    class ApproveRestaurant {
+
+        Restaurant mockRestaurant = mock(Restaurant.class);
+
+        @Test
+        @DisplayName("성공하면 DB와 ES에 저장")
+        void approveRestaurant() {
+            // given
+            doReturn(1L).when(mockRestaurant).getId();
+            doReturn(null).when(mockRestaurant).getApprovedAt();
+            doReturn(Optional.of(mockRestaurant)).when(restaurantRepository).findById(any(Long.class));
+
+            // when
+            restaurantService.approveRestaurant(1L);
+
+            // then
+            verify(mockRestaurant, times(1)).approve();
+            verify(restaurantSearchRepository, times(1)).save(any(RestaurantSearch.class));
+        }
+
+        @Test
+        @DisplayName("식당이 존재하지 않으면 RestaurantException 발생")
+        void approveRestaurant_fail() {
+            // given
+            doReturn(Optional.empty()).when(restaurantRepository).findById(any(Long.class));
+
+            // when & then
+            assertThatThrownBy(() -> restaurantService.approveRestaurant(1L))
+              .isInstanceOf(RestaurantException.class)
+              .hasMessageContaining(NOT_FOUND_RESTAURANT.getMessage());
+        }
+
+        @Test
+        @DisplayName("이미 승인된 식당이면 RestaurantException 발생")
+        void approveRestaurant_fail_already_approved() {
+            // given
+            doReturn(Optional.of(mockRestaurant)).when(restaurantRepository).findById(any(Long.class));
+            doReturn(LocalDateTime.now()).when(mockRestaurant).getApprovedAt();
+
+            // when & then
+            assertThatThrownBy(() -> restaurantService.approveRestaurant(1L))
+              .isInstanceOf(RestaurantException.class)
+              .hasMessageContaining(ELREADY_APPROVED_RESTAURANT.getMessage());
         }
     }
 }
