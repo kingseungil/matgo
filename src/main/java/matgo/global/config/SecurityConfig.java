@@ -57,13 +57,15 @@ public class SecurityConfig {
               "/api/auth/send-temporary-password", // 임시 비밀번호 발급
               "/api/restaurants", // 전체 식당 목록 조회
               "/api/restaurants/address", // 주소로 식당 목록 조회
-              "/api/restaurants/detail/**" // 식당 상세 조회
+              "/api/restaurants/detail/**", // 식당 상세 조회
+              "/api/reviews/detail/{reviewId}" // 리뷰 상세 조회
             ).permitAll()
             // 고객만 허용
             .requestMatchers(HttpMethod.PUT, "/api/member").hasRole("USER") // 회원 정보 수정
             .requestMatchers(HttpMethod.PUT, "/api/member/reset-password").hasRole("USER") // 비밀번호 재설정
             .requestMatchers(HttpMethod.GET, "/api/restaurants/nearby").hasRole("USER") // 내 주변 식당 목록 조회
             .requestMatchers(HttpMethod.POST, "/api/restaurants/new").hasRole("USER") // 식당 등록 요청
+            .requestMatchers(HttpMethod.POST, "/api/reviews/{restaurantId}").hasRole("USER") // 리뷰 작성
             // 관리자만 허용
             .requestMatchers(HttpMethod.PUT, "/api/restaurants/approve/{restaurantId}").hasRole("ADMIN") // 식당 등록 승인
             // 그 외는 인증 필요

@@ -14,16 +14,22 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import matgo.global.entity.BaseEntity;
 import matgo.member.domain.entity.Member;
 import matgo.restaurant.domain.entity.Restaurant;
+import matgo.review.dto.request.ReviewCreateRequest;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @Table(name = "review")
-public class Review {
+public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +42,7 @@ public class Review {
     private int rating;
 
     @Column(name = "image_url")
-    private String image_url;
+    private String imageUrl;
 
     @Column(name = "revisit", nullable = false)
     private boolean revisit;
@@ -51,4 +57,16 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", foreignKey = @ForeignKey(name = "fk_review_restaurant"), nullable = false)
     private Restaurant restaurant;
+
+    public static Review from(Member member, Restaurant restaurant, ReviewCreateRequest request, String imageUrl) {
+        return Review.builder()
+                     .member(member)
+                     .restaurant(restaurant)
+                     .content(request.content())
+                     .rating(request.rating())
+                     .imageUrl(imageUrl)
+                     .revisit(request.revisit())
+                     .build();
+    }
+
 }
