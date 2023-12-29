@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import matgo.common.BaseControllerTest;
 import matgo.restaurant.domain.entity.Restaurant;
-import matgo.restaurant.dto.request.PageRequest;
+import matgo.restaurant.dto.request.CustomPageRequest;
 import matgo.restaurant.dto.request.RestaurantRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 class RestaurantControllerTest extends BaseControllerTest {
 
-    PageRequest pageRequest = new PageRequest(0, 10, Optional.of(Direction.DESC),
+    CustomPageRequest customPageRequest = new CustomPageRequest(0, 10, Optional.of(Direction.DESC),
       Optional.of("rating"));
 
     @Test
@@ -35,10 +35,10 @@ class RestaurantControllerTest extends BaseControllerTest {
         // when
         Response response = customGivenWithDocs(getRestaurantsDocument())
           .accept(ContentType.JSON)
-          .queryParam("page", pageRequest.page())
-          .queryParam("size", pageRequest.size())
-          .queryParam("direction", pageRequest.direction().get())
-          .queryParam("sortBy", pageRequest.sortBy().get())
+          .queryParam("page", customPageRequest.page())
+          .queryParam("size", customPageRequest.size())
+          .queryParam("direction", customPageRequest.direction().get())
+          .queryParam("sortBy", customPageRequest.sortBy().get())
           .get("/api/restaurants");
 
         // then
@@ -60,10 +60,10 @@ class RestaurantControllerTest extends BaseControllerTest {
         Response response = customGivenWithDocs(getRestaurantsByAddressDocument())
           .accept(ContentType.JSON)
           .queryParam("keyword", keyword)
-          .queryParam("page", pageRequest.page())
-          .queryParam("size", pageRequest.size())
-          .queryParam("direction", pageRequest.direction().get())
-          .queryParam("sortBy", pageRequest.sortBy().get())
+          .queryParam("page", customPageRequest.page())
+          .queryParam("size", customPageRequest.size())
+          .queryParam("direction", customPageRequest.direction().get())
+          .queryParam("sortBy", customPageRequest.sortBy().get())
           .get("/api/restaurants/address");
 
         // then
@@ -82,10 +82,10 @@ class RestaurantControllerTest extends BaseControllerTest {
         Response response = customGivenWithDocs(getRestaurantsByRegionDocument())
           .accept(ContentType.JSON)
           .header("Authorization", "Bearer " + accessToken)
-          .queryParam("page", pageRequest.page())
-          .queryParam("size", pageRequest.size())
-          .queryParam("direction", pageRequest.direction().get())
-          .queryParam("sortBy", pageRequest.sortBy().get())
+          .queryParam("page", customPageRequest.page())
+          .queryParam("size", customPageRequest.size())
+          .queryParam("direction", customPageRequest.direction().get())
+          .queryParam("sortBy", customPageRequest.sortBy().get())
           .get("/api/restaurants/nearby");
 
         // then

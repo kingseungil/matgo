@@ -5,10 +5,11 @@ import lombok.RequiredArgsConstructor;
 import matgo.auth.security.OnlyAdmin;
 import matgo.auth.security.OnlyUser;
 import matgo.restaurant.application.RestaurantService;
-import matgo.restaurant.dto.request.PageRequest;
+import matgo.restaurant.dto.request.CustomPageRequest;
 import matgo.restaurant.dto.request.RestaurantRequest;
 import matgo.restaurant.dto.response.RestaurantDetailResponse;
 import matgo.restaurant.dto.response.RestaurantsSliceResponse;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,12 +32,12 @@ public class RestaurantController {
 
     @GetMapping
     public RestaurantsSliceResponse getRestaurants(
-      @Valid PageRequest pageRequest
+      @Valid CustomPageRequest customPageRequest
     ) {
-        Pageable pageable = org.springframework.data.domain.PageRequest.of(
-          pageRequest.page(),
-          pageRequest.size(),
-          pageRequest.getSort()
+        Pageable pageable = PageRequest.of(
+          customPageRequest.page(),
+          customPageRequest.size(),
+          customPageRequest.getSort()
         );
         return restaurantService.getRestaurants(pageable);
     }
@@ -44,12 +45,12 @@ public class RestaurantController {
     @GetMapping("/address")
     public RestaurantsSliceResponse getRestaurantsByAddress(
       @RequestParam String keyword,
-      @Valid PageRequest pageRequest
+      @Valid CustomPageRequest customPageRequest
     ) {
-        Pageable pageable = org.springframework.data.domain.PageRequest.of(
-          pageRequest.page(),
-          pageRequest.size(),
-          pageRequest.getSort()
+        Pageable pageable = PageRequest.of(
+          customPageRequest.page(),
+          customPageRequest.size(),
+          customPageRequest.getSort()
         );
         return restaurantService.getRestaurantsByAddress(keyword, pageable);
     }
@@ -58,12 +59,12 @@ public class RestaurantController {
     @OnlyUser
     public RestaurantsSliceResponse getRestaurantsByRegion(
       @AuthenticationPrincipal UserDetails userDetails,
-      @Valid PageRequest pageRequest
+      @Valid CustomPageRequest customPageRequest
     ) {
-        Pageable pageable = org.springframework.data.domain.PageRequest.of(
-          pageRequest.page(),
-          pageRequest.size(),
-          pageRequest.getSort()
+        Pageable pageable = PageRequest.of(
+          customPageRequest.page(),
+          customPageRequest.size(),
+          customPageRequest.getSort()
         );
         return restaurantService.getRestaurantsByRegion(Long.parseLong(userDetails.getUsername()), pageable);
     }
