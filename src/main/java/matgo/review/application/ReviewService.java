@@ -45,6 +45,7 @@ public class ReviewService {
     @Transactional
     public ReviewCreateResponse createReview(Long memberId, Long restaurantId,
       ReviewCreateRequest reviewCreateRequest, MultipartFile reviewImage) {
+        // 비관적 락을 걸어서 동시에 같은 식당에 리뷰를 작성하는 것을 방지
         Restaurant restaurant = restaurantRepository.findByIdWithPessimisticWriteLock(restaurantId)
                                                     .orElseThrow(() -> new RestaurantException(NOT_FOUND_RESTAURANT));
 
@@ -64,6 +65,7 @@ public class ReviewService {
     }
 
     private void updateRestaurantInfoInES(Long restaurantId, Restaurant restaurant) {
+        // ES에 실시간 동기화
         restaurantSearchRepositoryImpl.updateRatingAndReviewCount(String.valueOf(restaurantId), restaurant.getRating(),
           restaurant.getReviewCount());
         log.info("Updated restaurant info in ES. restaurantId: {}, rating: {}, reviewCount: {}", restaurantId,
