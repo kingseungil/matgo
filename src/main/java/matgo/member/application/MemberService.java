@@ -8,7 +8,6 @@ import static matgo.global.exception.ErrorCode.WRONG_PASSWORD;
 import static matgo.member.domain.type.UserRole.ROLE_USER;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import matgo.auth.application.MailService;
@@ -16,6 +15,8 @@ import matgo.auth.domain.entity.EmailVerification;
 import matgo.auth.domain.repository.EmailVerificationRepository;
 import matgo.auth.exception.AuthException;
 import matgo.global.filesystem.s3.S3Service;
+import matgo.global.type.S3Directory;
+import matgo.global.util.S3Util;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
 import matgo.member.domain.repository.MemberRepository;
@@ -25,7 +26,6 @@ import matgo.member.dto.request.ResetPasswordRequest;
 import matgo.member.dto.request.SignUpRequest;
 import matgo.member.dto.response.SignUpResponse;
 import matgo.member.exception.MemberException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +37,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class MemberService {
 
-    private static final String S3_DIRECTORY = "member";
-
     private final MemberRepository memberRepository;
     private final RegionRepository regionRepository;
     private final EmailVerificationRepository emailVerificationRepository;
@@ -46,9 +44,8 @@ public class MemberService {
     private final S3Service s3Service;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
+    private final S3Util s3Util;
 
-    @Value("${images.default-profile-image}")
-    private String defaultProfileImage;
 
     public SignUpResponse saveMember(SignUpRequest signUpRequest, MultipartFile profileImage) {
         validateDuplicateEmail(signUpRequest.email());
@@ -56,7 +53,7 @@ public class MemberService {
 
         Region region = getRegion(signUpRequest.region());
         String password = passwordEncoder.encode(signUpRequest.password());
-        String imageUrl = uploadAndGetImageURL(profileImage);
+        String imageUrl = s3Util.uploadAndGetImageURL(profileImage, S3Directory.MEMBER);
         Member member = Member.builder()
                               .email(signUpRequest.email())
                               .nickname(signUpRequest.nickname())
@@ -90,13 +87,6 @@ public class MemberService {
                                .orElseThrow(() -> new MemberException(NOT_FOUND_REGION));
     }
 
-    private String uploadAndGetImageURL(MultipartFile profileImage) {
-        if (profileImage == null || profileImage.isEmpty()) {
-            return defaultProfileImage;
-        }
-        return s3Service.upload(profileImage, S3_DIRECTORY, String.valueOf(UUID.randomUUID()),
-          profileImage.getOriginalFilename());
-    }
 
     private void saveEmailVerification(String verificationCode, Member member) {
         EmailVerification emailVerification = new EmailVerification(verificationCode,
@@ -121,7 +111,7 @@ public class MemberService {
 
     private void updateProfileImageIfPresent(Member member, MultipartFile profileImage) {
         if (profileImage != null && !profileImage.isEmpty()) {
-            String newImageURL = uploadAndGetImageURL(profileImage);
+            String newImageURL = s3Util.uploadAndGetImageURL(profileImage, S3Directory.MEMBER);
             String oldImageURL = member.getProfileImage();
             member.changeProfileImage(newImageURL);
             s3Service.delete(oldImageURL);
