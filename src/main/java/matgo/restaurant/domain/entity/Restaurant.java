@@ -137,8 +137,19 @@ public class Restaurant extends BaseEntity {
         this.approvedAt = LocalDateTime.now();
     }
 
-    public void updateRatingAndReviewCount(Double rating, Integer reviewCount) {
-        this.rating = rating;
-        this.reviewCount = reviewCount;
+    public void addReview(Review review) {
+        this.reviews.add(review);
+        this.reviewCount++;
+        updateRating(review);
+    }
+
+    private void updateRating(Review review) {
+        if (this.rating == 0) {
+            this.rating = (double) review.getRating(); // 첫 리뷰인 경우
+        } else {
+            // 기존 평균 평점과 개수, 새로운 평점을 이용해 새로운 평균 평점을 계산
+            double newRating = ((this.rating * (this.reviewCount - 1)) + review.getRating()) / this.reviewCount;
+            this.rating = Math.round(newRating * 10) / 10.0;
+        }
     }
 }

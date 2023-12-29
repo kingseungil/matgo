@@ -6,13 +6,15 @@ import static matgo.global.exception.ErrorCode.NOT_FOUND_RESTAURANT;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_REVIEW;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import matgo.global.filesystem.s3.S3Service;
 import matgo.global.type.S3Directory;
-import matgo.global.util.S3Util;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.repository.MemberRepository;
 import matgo.member.exception.MemberException;
 import matgo.restaurant.domain.entity.Restaurant;
 import matgo.restaurant.domain.repository.RestaurantRepository;
+import matgo.restaurant.domain.repository.RestaurantSearchRepositoryImpl;
 import matgo.restaurant.exception.RestaurantException;
 import matgo.review.domain.entity.Review;
 import matgo.review.domain.repository.ReviewQueryRepository;
@@ -27,29 +29,45 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
 
 
     private final ReviewRepository reviewRepository;
     private final ReviewQueryRepository reviewQueryRepository;
     private final RestaurantRepository restaurantRepository;
+    private final RestaurantSearchRepositoryImpl restaurantSearchRepositoryImpl;
     private final MemberRepository memberRepository;
-    private final S3Util s3Util;
+
+    private final S3Service s3Service;
+
 
     @Transactional
     public ReviewCreateResponse createReview(Long memberId, Long restaurantId,
       ReviewCreateRequest reviewCreateRequest, MultipartFile reviewImage) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+        Restaurant restaurant = restaurantRepository.findByIdWithPessimisticWriteLock(restaurantId)
                                                     .orElseThrow(() -> new RestaurantException(NOT_FOUND_RESTAURANT));
-        checkCanWriteReview(memberId, restaurant);
 
+        checkCanWriteReview(memberId, restaurant);
         Member member = memberRepository.findById(memberId)
                                         .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
-        String imageUrl = s3Util.uploadAndGetImageURL(reviewImage, S3Directory.REVIEW);
+
+        String imageUrl = s3Service.uploadAndGetImageURL(reviewImage, S3Directory.REVIEW);
         Review review = Review.from(member, restaurant, reviewCreateRequest, imageUrl);
+        restaurant.addReview(review);
+        member.addReview(review);
         reviewRepository.save(review);
 
+        updateRestaurantInfoInES(restaurantId, restaurant);
+
         return new ReviewCreateResponse(review.getId());
+    }
+
+    private void updateRestaurantInfoInES(Long restaurantId, Restaurant restaurant) {
+        restaurantSearchRepositoryImpl.updateRatingAndReviewCount(String.valueOf(restaurantId), restaurant.getRating(),
+          restaurant.getReviewCount());
+        log.info("Updated restaurant info in ES. restaurantId: {}, rating: {}, reviewCount: {}", restaurantId,
+          restaurant.getRating(), restaurant.getReviewCount());
     }
 
     private void checkCanWriteReview(Long memberId, Restaurant restaurant) {

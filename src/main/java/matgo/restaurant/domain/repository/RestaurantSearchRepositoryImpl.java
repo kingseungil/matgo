@@ -1,6 +1,7 @@
 package matgo.restaurant.domain.repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import matgo.restaurant.domain.entity.RestaurantSearch;
@@ -22,5 +23,14 @@ public class RestaurantSearchRepositoryImpl {
                      .build()).toList();
 
         operations.bulkUpdate(updates, operations.getIndexCoordinatesFor(RestaurantSearch.class));
+    }
+
+    public void updateRatingAndReviewCount(String id, double rating, int reviewCount) {
+        Map<String, Object> updates = Map.of("rating", rating, "reviewCount", reviewCount);
+        UpdateQuery updateQuery = UpdateQuery.builder(id)
+                                             .withDocument(operations.getElasticsearchConverter().mapObject(updates))
+                                             .build();
+
+        operations.update(updateQuery, operations.getIndexCoordinatesFor(RestaurantSearch.class));
     }
 }

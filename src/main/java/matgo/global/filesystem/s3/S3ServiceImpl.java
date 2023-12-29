@@ -7,10 +7,12 @@ import static matgo.global.exception.ErrorCode.NOT_IMAGE_EXTENSION;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import matgo.global.filesystem.FileException;
 import matgo.global.filesystem.s3.exception.S3Exception;
+import matgo.global.type.S3Directory;
 import matgo.global.util.FileUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -33,6 +35,8 @@ public class S3ServiceImpl implements S3Service {
     private String bucket;
     @Value("${aws.s3.directory}")
     private String rootDirectory;
+    @Value("${images.default-profile-image}")
+    private String defaultProfileImage;
 
     @Override
     public String upload(MultipartFile multipartFile, String directoryName, String saveFileName,
@@ -84,6 +88,18 @@ public class S3ServiceImpl implements S3Service {
             log.error("S3 삭제 에러", e);
             throw new S3Exception(FILE_DELETE_ERROR);
         }
+    }
+
+    @Override
+    public String uploadAndGetImageURL(MultipartFile file, S3Directory directory) {
+        if (file == null || file.isEmpty()) {
+            if (S3Directory.MEMBER.equals(directory)) {
+                return defaultProfileImage;
+            }
+            return null;
+        }
+        return this.upload(file, directory.getDirectory(), String.valueOf(UUID.randomUUID()),
+          file.getOriginalFilename());
     }
 
     private String extractKeyFromUrl(String imageUrl) {
