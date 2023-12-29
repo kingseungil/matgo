@@ -16,7 +16,6 @@ import matgo.auth.domain.repository.EmailVerificationRepository;
 import matgo.auth.exception.AuthException;
 import matgo.global.filesystem.s3.S3Service;
 import matgo.global.type.S3Directory;
-import matgo.global.util.S3Util;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
 import matgo.member.domain.repository.MemberRepository;
@@ -44,8 +43,6 @@ public class MemberService {
     private final S3Service s3Service;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
-    private final S3Util s3Util;
-
 
     public SignUpResponse saveMember(SignUpRequest signUpRequest, MultipartFile profileImage) {
         validateDuplicateEmail(signUpRequest.email());
@@ -53,7 +50,7 @@ public class MemberService {
 
         Region region = getRegion(signUpRequest.region());
         String password = passwordEncoder.encode(signUpRequest.password());
-        String imageUrl = s3Util.uploadAndGetImageURL(profileImage, S3Directory.MEMBER);
+        String imageUrl = s3Service.uploadAndGetImageURL(profileImage, S3Directory.MEMBER);
         Member member = Member.builder()
                               .email(signUpRequest.email())
                               .nickname(signUpRequest.nickname())
@@ -111,7 +108,7 @@ public class MemberService {
 
     private void updateProfileImageIfPresent(Member member, MultipartFile profileImage) {
         if (profileImage != null && !profileImage.isEmpty()) {
-            String newImageURL = s3Util.uploadAndGetImageURL(profileImage, S3Directory.MEMBER);
+            String newImageURL = s3Service.uploadAndGetImageURL(profileImage, S3Directory.MEMBER);
             String oldImageURL = member.getProfileImage();
             member.changeProfileImage(newImageURL);
             s3Service.delete(oldImageURL);
