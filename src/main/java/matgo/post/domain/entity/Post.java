@@ -39,6 +39,12 @@ public class Post extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "like_count", nullable = false, columnDefinition = "int default 0")
+    private int likeCount;
+
+    @Column(name = "dislike_count", nullable = false, columnDefinition = "int default 0")
+    private int dislikeCount;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", foreignKey = @ForeignKey(name = "fk_post_region"), nullable = false)
     private Region region;

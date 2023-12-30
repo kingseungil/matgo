@@ -47,6 +47,12 @@ public class Review extends BaseEntity {
     @Column(name = "revisit", nullable = false)
     private boolean revisit;
 
+    @Column(name = "like_count", nullable = false, columnDefinition = "int default 0")
+    private int likeCount;
+
+    @Column(name = "dislike_count", nullable = false, columnDefinition = "int default 0")
+    private int dislikeCount;
+
     @OneToMany(mappedBy = "review")
     private List<ReviewReaction> reviewReactions = new ArrayList<>();
 
