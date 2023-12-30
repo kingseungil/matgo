@@ -1,5 +1,6 @@
 package matgo.review.domain.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -53,7 +54,7 @@ public class Review extends BaseEntity {
     @Column(name = "dislike_count", nullable = false, columnDefinition = "int default 0")
     private int dislikeCount;
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ReviewReaction> reviewReactions = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -75,4 +76,32 @@ public class Review extends BaseEntity {
                      .build();
     }
 
+    public boolean hasReaction(Member member) {
+        return reviewReactions.stream()
+                              .anyMatch(reviewReaction -> reviewReaction.getMember().equals(member));
+    }
+
+    public void addReviewReaction(ReviewReaction reviewReaction) {
+        this.reviewReactions.add(reviewReaction);
+    }
+
+    public void removeReviewReaction(ReviewReaction reviewReaction) {
+        this.reviewReactions.remove(reviewReaction);
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        this.likeCount--;
+    }
+
+    public void increaseDislikeCount() {
+        this.dislikeCount++;
+    }
+
+    public void decreaseDislikeCount() {
+        this.dislikeCount--;
+    }
 }
