@@ -13,16 +13,21 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import matgo.global.entity.BaseEntity;
 import matgo.global.type.Reaction;
 import matgo.member.domain.entity.Member;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @Table(name = "review_reaction")
-public class ReviewReaction {
+public class ReviewReaction extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,4 +44,16 @@ public class ReviewReaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "fk_review_reaction_member"), nullable = false)
     private Member member;
+
+    public static ReviewReaction from(Review review, Member member, Reaction reaction) {
+        return ReviewReaction.builder()
+                             .review(review)
+                             .member(member)
+                             .reaction(reaction)
+                             .build();
+    }
+
+    public void changeReaction(Reaction reaction) {
+        this.reaction = reaction;
+    }
 }

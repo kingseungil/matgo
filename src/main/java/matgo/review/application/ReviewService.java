@@ -4,10 +4,12 @@ import static matgo.global.exception.ErrorCode.ALREADY_WRITTEN_REVIEW;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_RESTAURANT;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_REVIEW;
+import static matgo.global.exception.ErrorCode.NOT_FOUND_REVIEW_REACTION;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import matgo.global.filesystem.s3.S3Service;
+import matgo.global.type.Reaction;
 import matgo.global.type.S3Directory;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.repository.MemberRepository;
@@ -17,7 +19,9 @@ import matgo.restaurant.domain.repository.RestaurantRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepositoryImpl;
 import matgo.restaurant.exception.RestaurantException;
 import matgo.review.domain.entity.Review;
+import matgo.review.domain.entity.ReviewReaction;
 import matgo.review.domain.repository.ReviewQueryRepository;
+import matgo.review.domain.repository.ReviewReactionRepository;
 import matgo.review.domain.repository.ReviewRepository;
 import matgo.review.dto.request.ReviewCreateRequest;
 import matgo.review.dto.response.ReviewCreateResponse;
@@ -38,6 +42,7 @@ public class ReviewService {
     private final RestaurantRepository restaurantRepository;
     private final RestaurantSearchRepositoryImpl restaurantSearchRepositoryImpl;
     private final MemberRepository memberRepository;
+    private final ReviewReactionRepository reviewReactionRepository;
 
     private final S3Service s3Service;
 
@@ -82,5 +87,63 @@ public class ReviewService {
     public ReviewResponse getReviewDetail(Long reviewId) {
         return reviewQueryRepository.findReviewResponseByIdWithMemberAndRestaurant(reviewId)
                                     .orElseThrow(() -> new ReviewException(NOT_FOUND_REVIEW));
+    }
+
+    @Transactional
+    public void addReviewReaction(Long memberId, Long reviewId, Reaction reactionType) {
+        // 비관적 락을 걸어서 동시에 같은 리뷰에 반응하는 것을 방지
+        Review review = reviewRepository.findByIdWithPessimisticLock(reviewId)
+                                        .orElseThrow(() -> new ReviewException(NOT_FOUND_REVIEW));
+        Member member = memberRepository.findById(memberId)
+                                        .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+
+        // 이미 반응이 있다면 기존 반응 삭제 후 새로운 반응으로 업데이트
+        if (review.hasReaction(member)) {
+            updateReaction(review, member, reactionType);
+        } else {
+            addReaction(review, member, reactionType);
+        }
+
+        reviewRepository.save(review);
+    }
+
+    private void updateReaction(Review review, Member member, Reaction reaction) {
+        ReviewReaction reviewReaction = review.getReviewReactions()
+                                              .stream()
+                                              .filter(r -> r.getMember().getId().equals(member.getId()))
+                                              .findFirst()
+                                              .orElseThrow(
+                                                () -> new ReviewException(NOT_FOUND_REVIEW_REACTION));
+
+        // 기존 반응과 같다면 반응 삭제 (아무것도 안누른 상태로 변경)
+        if (reviewReaction.getReaction() == reaction) {
+            reviewReactionRepository.delete(reviewReaction);
+            review.removeReviewReaction(reviewReaction);
+            if (reaction == Reaction.LIKE) {
+                review.decreaseLikeCount();
+            } else {
+                review.decreaseDislikeCount();
+            }
+        } else { // 기존 반응과 다르다면 반응 업데이트
+            reviewReaction.changeReaction(reaction);
+            if (reaction == Reaction.LIKE) {
+                review.increaseLikeCount();
+                review.decreaseDislikeCount();
+            } else {
+                review.increaseDislikeCount();
+                review.decreaseLikeCount();
+            }
+        }
+    }
+
+    private void addReaction(Review review, Member member, Reaction reaction) {
+        ReviewReaction reviewReaction = ReviewReaction.from(review, member, reaction);
+        review.addReviewReaction(reviewReaction);
+        reviewReactionRepository.save(reviewReaction);
+        if (reaction == Reaction.LIKE) {
+            review.increaseLikeCount();
+        } else {
+            review.increaseDislikeCount();
+        }
     }
 }

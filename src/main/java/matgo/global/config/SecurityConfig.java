@@ -66,6 +66,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/restaurants/nearby").hasRole("USER") // 내 주변 식당 목록 조회
             .requestMatchers(HttpMethod.POST, "/api/restaurants/new").hasRole("USER") // 식당 등록 요청
             .requestMatchers(HttpMethod.POST, "/api/reviews/{restaurantId}").hasRole("USER") // 리뷰 작성
+            .requestMatchers(HttpMethod.POST, "/api/reviews/{reviewId}/reactions").hasRole("USER") // 리뷰 좋아요/싫어요
             // 관리자만 허용
             .requestMatchers(HttpMethod.PUT, "/api/restaurants/approve/{restaurantId}").hasRole("ADMIN") // 식당 등록 승인
             // 그 외는 인증 필요
