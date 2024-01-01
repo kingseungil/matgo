@@ -3,6 +3,7 @@ package matgo.review.presentation;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import matgo.auth.security.BothAdminAndUser;
 import matgo.auth.security.OnlyUser;
 import matgo.global.type.Reaction;
 import matgo.review.application.ReviewService;
@@ -12,6 +13,7 @@ import matgo.review.dto.response.ReviewResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,5 +68,15 @@ public class ReviewController {
     }
 
     // 리뷰 삭제
+    @DeleteMapping("/{restaurantId}/{reviewId}")
+    @BothAdminAndUser
+    public ResponseEntity<Void> deleteReview(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @PathVariable Long restaurantId,
+      @PathVariable Long reviewId
+    ) {
+        reviewService.deleteReview(Long.parseLong(userDetails.getUsername()), restaurantId, reviewId);
+        return ResponseEntity.noContent().build();
+    }
 
 }

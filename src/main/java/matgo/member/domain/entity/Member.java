@@ -119,4 +119,8 @@ public class Member extends BaseEntity {
     public void addReview(Review review) {
         this.reviews.add(review);
     }
+
+    public void removeReview(Review review) {
+        this.reviews.remove(review);
+    }
 }

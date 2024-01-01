@@ -104,4 +104,8 @@ public class Review extends BaseEntity {
     public void decreaseDislikeCount() {
         this.dislikeCount--;
     }
+
+    public Long getMemberId() {
+        return member.getId();
+    }
 }

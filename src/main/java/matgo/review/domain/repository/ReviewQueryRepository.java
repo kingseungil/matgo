@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import matgo.member.dto.response.MemberResponse;
 import matgo.restaurant.dto.response.RestaurantResponse;
 import matgo.review.domain.entity.QReview;
+import matgo.review.domain.entity.Review;
 import matgo.review.dto.response.ReviewResponse;
 import org.springframework.stereotype.Repository;
 
@@ -52,5 +53,20 @@ public class ReviewQueryRepository {
           qReview.restaurant.id,
           qReview.restaurant.name,
           qReview.restaurant.roadAddress);
+    }
+
+    public Boolean existsByMemberIdAndRestaurantId(Long memberId, Long restaurantId) {
+        return jpaQueryFactory.selectOne()
+                              .from(qReview)
+                              .where(qReview.member.id.eq(memberId),
+                                qReview.restaurant.id.eq(restaurantId))
+                              .fetchFirst() != null;
+    }
+
+    public Optional<Review> findByIdWithReactions(Long reviewId) {
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(qReview)
+                                                  .leftJoin(qReview.reviewReactions).fetchJoin()
+                                                  .where(qReview.id.eq(reviewId))
+                                                  .fetchOne());
     }
 }

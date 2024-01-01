@@ -5,6 +5,7 @@ import static matgo.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_RESTAURANT;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_REVIEW;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_REVIEW_REACTION;
+import static matgo.global.exception.ErrorCode.NOT_OWNER_REVIEW;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +79,7 @@ public class ReviewService {
     }
 
     private void checkCanWriteReview(Long memberId, Restaurant restaurant) {
-        if (reviewRepository.existsByMemberIdAndRestaurantId(memberId, restaurant.getId())) {
+        if (reviewQueryRepository.existsByMemberIdAndRestaurantId(memberId, restaurant.getId())) {
             throw new ReviewException(ALREADY_WRITTEN_REVIEW);
         }
     }
@@ -144,6 +145,31 @@ public class ReviewService {
             review.increaseLikeCount();
         } else {
             review.increaseDislikeCount();
+        }
+    }
+
+    @Transactional
+    public void deleteReview(Long memberId, Long restaurantId, Long reviewId) {
+        Review review = reviewQueryRepository.findByIdWithReactions(reviewId)
+                                             .orElseThrow(() -> new ReviewException(NOT_FOUND_REVIEW));
+        checkCanDeleteReview(memberId, review);
+
+        // 비관적 락을 걸어서 동시에 같은 식당의 리뷰를 삭제하는 것을 방지
+        Restaurant restaurant = restaurantRepository.findByIdWithPessimisticWriteLock(restaurantId)
+                                                    .orElseThrow(() -> new RestaurantException(NOT_FOUND_RESTAURANT));
+        Member member = memberRepository.findById(memberId)
+                                        .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+
+        restaurant.removeReview(review);
+        member.removeReview(review);
+        reviewRepository.delete(review);
+
+        updateRestaurantInfoInES(restaurantId, restaurant);
+    }
+
+    private void checkCanDeleteReview(Long memberId, Review review) {
+        if (!review.getMemberId().equals(memberId)) {
+            throw new ReviewException(NOT_OWNER_REVIEW);
         }
     }
 }
