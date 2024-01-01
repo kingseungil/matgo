@@ -140,16 +140,27 @@ public class Restaurant extends BaseEntity {
     public void addReview(Review review) {
         this.reviews.add(review);
         this.reviewCount++;
-        updateRating(review);
+        updateRating(review, false);
     }
 
-    private void updateRating(Review review) {
-        if (this.rating == 0) {
-            this.rating = (double) review.getRating(); // 첫 리뷰인 경우
-        } else {
-            // 기존 평균 평점과 개수, 새로운 평점을 이용해 새로운 평균 평점을 계산
-            double newRating = ((this.rating * (this.reviewCount - 1)) + review.getRating()) / this.reviewCount;
-            this.rating = Math.round(newRating * 10) / 10.0;
-        }
+    public void removeReview(Review review) {
+        this.reviews.remove(review);
+        this.reviewCount--;
+        updateRating(review, true);
     }
+
+    private void updateRating(Review review, boolean isRemoved) {
+        if (isRemoved) {
+            if (this.reviewCount == 0) {
+                this.rating = 0.0;
+            } else {
+                this.rating = ((this.rating * (this.reviewCount + 1)) - review.getRating()) / this.reviewCount;
+            }
+        } else {
+            this.rating = ((this.rating * (this.reviewCount - 1)) + review.getRating()) / this.reviewCount;
+        }
+
+        this.rating = Math.round(this.rating * 100) / 100.0;
+    }
+
 }
