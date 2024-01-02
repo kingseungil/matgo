@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 
 import java.nio.charset.StandardCharsets;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import matgo.auth.domain.entity.EmailVerification;
 import matgo.auth.exception.AuthException;
 import matgo.common.BaseServiceTest;
+import matgo.global.type.S3Directory;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
 import matgo.member.domain.type.UserRole;
@@ -71,7 +73,8 @@ class MemberServiceTest extends BaseServiceTest {
             doReturn(false).when(memberRepository).existsByEmail(anyString());
             doReturn(false).when(memberRepository).existsByNickname(anyString());
             doReturn(Optional.of(region)).when(regionRepository).findByName(anyString());
-            doReturn("mocked_url").when(s3Service).upload(any(), anyString(), anyString(), anyString());
+            doReturn("mocked_url").when(s3Service)
+                                  .uploadAndGetImageURL(any(MultipartFile.class), eq(S3Directory.MEMBER));
             doReturn("encoded_password").when(passwordEncoder).encode(anyString());
             doReturn(null).when(memberRepository).save(any(Member.class));
             doReturn("mocked_code").when(mailService).sendVerificationCode(anyString());
@@ -160,7 +163,8 @@ class MemberServiceTest extends BaseServiceTest {
             doReturn(Optional.of(member)).when(memberRepository).findById(anyLong());
             doReturn(false).when(memberRepository).existsByNickname(anyString());
             doReturn(Optional.of(updatedRegion)).when(regionRepository).findByName(anyString());
-            doReturn("new_mocked_url").when(s3Service).upload(any(), anyString(), anyString(), anyString());
+            doReturn("new_mocked_url").when(s3Service)
+                                      .uploadAndGetImageURL(any(MultipartFile.class), eq(S3Directory.MEMBER));
 
             // when
             memberService.updateMember(member.getId(), memberUpdateRequest, newProfileImage);
