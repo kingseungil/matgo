@@ -6,12 +6,14 @@ import static matgo.member.presentation.MemberDocument.updateMemberDocument;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import matgo.common.BaseControllerTest;
+import matgo.global.type.S3Directory;
 import matgo.member.dto.request.ResetPasswordRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,8 +31,7 @@ class MemberControllerTest extends BaseControllerTest {
         request.controlName("signUpRequest");
         request.mimeType("application/json");
         doReturn("mocked_url").when(s3Service)
-                              .upload(any(MultipartFile.class), any(String.class), any(String.class),
-                                any(String.class));
+                              .uploadAndGetImageURL(any(MultipartFile.class), eq(S3Directory.MEMBER));
 
         // when
         Response response = customGivenWithDocs(registerMemberDocument())
@@ -56,8 +57,7 @@ class MemberControllerTest extends BaseControllerTest {
         request.controlName("memberUpdateRequest");
         request.mimeType("application/json");
         doReturn("mocked_url").when(s3Service)
-                              .upload(any(MultipartFile.class), any(String.class), any(String.class),
-                                any(String.class));
+                              .uploadAndGetImageURL(any(MultipartFile.class), eq(S3Directory.MEMBER));
 
         // when
         Response response = customGivenWithDocs(updateMemberDocument())

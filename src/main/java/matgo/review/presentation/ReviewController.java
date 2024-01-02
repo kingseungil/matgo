@@ -35,7 +35,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     // 리뷰 작성
-    @PostMapping("/{restaurantId}")
+    @PostMapping("/new/{restaurantId}")
     @OnlyUser
     public ResponseEntity<Void> createReview(
       @AuthenticationPrincipal UserDetails userDetails,

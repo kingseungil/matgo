@@ -29,7 +29,7 @@ public class RestaurantDocument {
             parameterWithName("page").description("페이지 번호"),
             parameterWithName("size").description("페이지 크기"),
             parameterWithName("direction").description("정렬 방향(DESC,ASC)").optional(),
-            parameterWithName("sortBy").description("정렬 기준(ration,reviewCount)").optional()
+            parameterWithName("sortBy").description("정렬 기준(rating,reviewCount)").optional()
           )
         );
     }
@@ -42,7 +42,7 @@ public class RestaurantDocument {
             parameterWithName("page").description("페이지 번호"),
             parameterWithName("size").description("페이지 크기"),
             parameterWithName("direction").description("정렬 방향(DESC,ASC)").optional(),
-            parameterWithName("sortBy").description("정렬 기준(ration,reviewCount)").optional()
+            parameterWithName("sortBy").description("정렬 기준(rating,reviewCount)").optional()
           )
         );
     }
@@ -54,7 +54,7 @@ public class RestaurantDocument {
             parameterWithName("page").description("페이지 번호"),
             parameterWithName("size").description("페이지 크기"),
             parameterWithName("direction").description("정렬 방향(DESC,ASC)").optional(),
-            parameterWithName("sortBy").description("정렬 기준(ration,reviewCount)").optional()
+            parameterWithName("sortBy").description("정렬 기준(rating,reviewCount)").optional()
           )
         );
     }

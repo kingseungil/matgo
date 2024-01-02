@@ -28,6 +28,10 @@ import matgo.member.dto.request.SignUpRequest;
 import matgo.restaurant.domain.repository.RestaurantRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepositoryImpl;
+import matgo.review.application.ReviewService;
+import matgo.review.domain.repository.ReviewQueryRepository;
+import matgo.review.domain.repository.ReviewRepository;
+import matgo.review.dto.request.ReviewCreateRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,9 +59,11 @@ public abstract class BaseControllerTest {
     protected static final MemberUpdateRequest memberUpdateRequest = new MemberUpdateRequest("updateTest", "효자동");
     protected static final SendTemporaryPasswordRequest sendTemporaryPasswordRequest = new SendTemporaryPasswordRequest(
       "test@naver.com");
+    protected static final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("test", 5, true);
     protected static RequestSpecification spec;
     protected static String accessToken;
     protected static String adminAccessToken;
+    protected Member member;
     @MockBean
     protected S3Service s3Service;
     @MockBean
@@ -65,9 +71,15 @@ public abstract class BaseControllerTest {
     @Autowired
     protected AuthService authService;
     @Autowired
+    protected ReviewService reviewService;
+    @Autowired
     protected RegionRepository regionRepository;
     @Autowired
     protected MemberRepository memberRepository;
+    @Autowired
+    protected ReviewRepository reviewRepository;
+    @Autowired
+    protected ReviewQueryRepository reviewQueryRepository;
     @Autowired
     protected PasswordEncoder passwordEncoder;
     @Autowired
@@ -105,16 +117,17 @@ public abstract class BaseControllerTest {
 
         Region region = regionRepository.save(new Region("효자동"));
         String password = passwordEncoder.encode("1!asdasd");
-        memberRepository.save(Member.builder()
-                                    .email("test@naver.com")
-                                    .nickname("testnick")
-                                    .password(password)
-                                    .profileImage(
-                                      "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image")
-                                    .role(UserRole.ROLE_USER)
-                                    .region(region)
-                                    .isActive(true)
-                                    .build());
+        member = Member.builder()
+                       .email("test@naver.com")
+                       .nickname("testnick")
+                       .password(password)
+                       .profileImage(
+                         "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image")
+                       .role(UserRole.ROLE_USER)
+                       .region(region)
+                       .isActive(true)
+                       .build();
+        memberRepository.save(member);
         memberRepository.save(Member.builder()
                                     .email("admin@admin.com")
                                     .nickname("admin")
