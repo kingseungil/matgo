@@ -10,6 +10,9 @@ import matgo.restaurant.domain.repository.RestaurantRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepositoryImpl;
 import matgo.restaurant.feignclient.JeonjuRestaurantClient;
+import matgo.review.domain.repository.ReviewQueryRepository;
+import matgo.review.domain.repository.ReviewReactionRepository;
+import matgo.review.domain.repository.ReviewRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -36,6 +39,12 @@ public abstract class BaseServiceTest {
     protected RestaurantSearchRepository restaurantSearchRepository;
     @Mock
     protected RestaurantSearchRepositoryImpl restaurantSearchRepositoryImpl;
+    @Mock
+    protected ReviewRepository reviewRepository;
+    @Mock
+    protected ReviewReactionRepository reviewReactionRepository;
+    @Mock
+    protected ReviewQueryRepository reviewQueryRepository;
     @Mock
     protected S3Service s3Service;
     @Mock
