@@ -191,19 +191,4 @@ public class RestaurantService {
 
         restaurantSearchRepository.save(RestaurantSearch.from(restaurant));
     }
-
-    // 리뷰 작성 후 호출되는 메서드 (maybe)
-    @Transactional
-    public void updateRestaurantRatingAndReviewCount(Long restaurantId) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                                                    .orElseThrow(() -> new RestaurantException(NOT_FOUND_RESTAURANT));
-
-        // TODO : 매장 평점, 리뷰 개수 업데이트 (db, es 실시간 동기화)
-
-        // 별점과 리뷰 개수 계산 로직
-
-        // db 업데이트
-
-        // es 업데이트
-    }
 }
