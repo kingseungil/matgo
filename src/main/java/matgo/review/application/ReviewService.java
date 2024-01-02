@@ -159,13 +159,13 @@ public class ReviewService {
     public void deleteReview(Long memberId, Long restaurantId, Long reviewId) {
         Review review = reviewQueryRepository.findByIdWithReactions(reviewId)
                                              .orElseThrow(() -> new ReviewException(NOT_FOUND_REVIEW));
-        checkCanDeleteReview(memberId, review);
+        Member member = memberRepository.findById(memberId)
+                                        .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+        checkCanDeleteReview(member, review);
 
         // 비관적 락을 걸어서 동시에 같은 식당의 리뷰를 삭제하는 것을 방지
         Restaurant restaurant = restaurantRepository.findByIdWithPessimisticWriteLock(restaurantId)
                                                     .orElseThrow(() -> new RestaurantException(NOT_FOUND_RESTAURANT));
-        Member member = memberRepository.findById(memberId)
-                                        .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
 
         restaurant.removeReview(review);
         member.removeReview(review);
@@ -174,8 +174,8 @@ public class ReviewService {
         updateRestaurantInfoInES(restaurantId, restaurant);
     }
 
-    private void checkCanDeleteReview(Long memberId, Review review) {
-        if (!review.getMemberId().equals(memberId)) {
+    private void checkCanDeleteReview(Member member, Review review) {
+        if (!reviewRepository.existsByIdAndMemberId(review.getId(), member.getId())) {
             throw new ReviewException(NOT_OWNER_REVIEW);
         }
     }

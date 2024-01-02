@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
+    boolean existsByIdAndMemberId(Long reviewId, Long memberId);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select r from Review r where r.id = :reviewId")
     Optional<Review> findByIdWithPessimisticLock(Long reviewId);
