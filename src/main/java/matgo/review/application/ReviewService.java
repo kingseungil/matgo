@@ -27,7 +27,9 @@ import matgo.review.domain.repository.ReviewRepository;
 import matgo.review.dto.request.ReviewCreateRequest;
 import matgo.review.dto.response.ReviewCreateResponse;
 import matgo.review.dto.response.ReviewResponse;
+import matgo.review.dto.response.ReviewSliceResponse;
 import matgo.review.exception.ReviewException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -88,6 +90,11 @@ public class ReviewService {
     public ReviewResponse getReviewDetail(Long reviewId) {
         return reviewQueryRepository.findReviewResponseByIdWithMemberAndRestaurant(reviewId)
                                     .orElseThrow(() -> new ReviewException(NOT_FOUND_REVIEW));
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewSliceResponse getReviews(Long restaurantId, Pageable pageable) {
+        return reviewQueryRepository.findAllReviewSliceByRestaurantId(restaurantId, pageable);
     }
 
     @Transactional

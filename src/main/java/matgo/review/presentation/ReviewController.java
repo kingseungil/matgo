@@ -6,10 +6,14 @@ import lombok.RequiredArgsConstructor;
 import matgo.auth.security.BothAdminAndUser;
 import matgo.auth.security.OnlyUser;
 import matgo.global.type.Reaction;
+import matgo.restaurant.dto.request.CustomPageRequest;
 import matgo.review.application.ReviewService;
 import matgo.review.dto.request.ReviewCreateRequest;
 import matgo.review.dto.response.ReviewCreateResponse;
 import matgo.review.dto.response.ReviewResponse;
+import matgo.review.dto.response.ReviewSliceResponse;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,6 +61,20 @@ public class ReviewController {
     }
 
     // 리뷰 조회 (페이징)
+    @GetMapping("/{restaurantId}")
+    public ResponseEntity<ReviewSliceResponse> getReviews(
+      @PathVariable Long restaurantId,
+      @Valid CustomPageRequest customPageRequest
+    ) {
+        Pageable pageable = PageRequest.of(
+          customPageRequest.page(),
+          customPageRequest.size(),
+          customPageRequest.getSort()
+        );
+
+        ReviewSliceResponse response = reviewService.getReviews(restaurantId, pageable);
+        return ResponseEntity.ok().body(response);
+    }
 
     // 리뷰 상세 보기
     @GetMapping("/detail/{reviewId}")
