@@ -35,6 +35,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
       "/api/restaurants/address", // 주소로 식당 목록 조회
       "/api/restaurants/detail/**", // 식당 상세 조회
       "/api/reviews/detail/{reviewId}", // 리뷰 상세 조회
+      "/api/reviews/{restaurantId}", // 식당 리뷰 목록 조회
     };
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer ";
