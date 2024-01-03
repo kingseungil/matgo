@@ -4,7 +4,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import matgo.restaurant.domain.entity.QRestaurant;
-import matgo.restaurant.dto.request.RestaurantRequest;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -14,12 +13,12 @@ public class RestaurantQueryRepository {
     private final JPAQueryFactory queryFactory;
     private final QRestaurant qRestaurant = QRestaurant.restaurant;
 
-    public boolean existsByDuplicateField(RestaurantRequest request) {
+    public boolean existsByDuplicateField(String roadAddress, String address) {
         return queryFactory.selectOne()
                            .from(qRestaurant)
                            .where(
-                             eqRoadAddress(request.roadAddress())
-                               .or(eqAddress(request.address()))
+                             eqRoadAddress(roadAddress)
+                               .or(eqAddress(address))
                            )
                            .fetchFirst() != null;
     }

@@ -9,6 +9,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -340,7 +341,7 @@ class RestaurantServiceTest extends BaseServiceTest {
         @DisplayName("성공하면 DB에 저장")
         void requestNewRestaurant() {
             // given
-            doReturn(false).when(restaurantQueryRepository).existsByDuplicateField(any(RestaurantRequest.class));
+            doReturn(false).when(restaurantQueryRepository).existsByDuplicateField(anyString(), anyString());
             // when
             restaurantService.requestNewRestaurant(restaurantRequest);
 
@@ -352,7 +353,7 @@ class RestaurantServiceTest extends BaseServiceTest {
         @DisplayName("주소가 중복되면 RestaurantException 발생")
         void requestNewRestaurant_fail() {
             // given
-            doReturn(true).when(restaurantQueryRepository).existsByDuplicateField(any(RestaurantRequest.class));
+            doReturn(true).when(restaurantQueryRepository).existsByDuplicateField(anyString(), anyString());
 
             // when & then
             assertThatThrownBy(() -> restaurantService.requestNewRestaurant(restaurantRequest))

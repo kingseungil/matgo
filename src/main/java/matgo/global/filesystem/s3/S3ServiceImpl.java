@@ -39,6 +39,15 @@ public class S3ServiceImpl implements S3Service {
     private String defaultProfileImage;
 
     @Override
+    public String uploadAndGetImageURL(MultipartFile file, S3Directory directory) {
+        if (file == null || file.isEmpty()) {
+            return S3Directory.MEMBER == directory ? defaultProfileImage : null;
+        }
+        return this.upload(file, directory.getDirectory(), String.valueOf(UUID.randomUUID()),
+          file.getOriginalFilename());
+    }
+
+    @Override
     public String upload(MultipartFile multipartFile, String directoryName, String saveFileName,
       String originFileName) {
         try {
@@ -88,18 +97,6 @@ public class S3ServiceImpl implements S3Service {
             log.error("S3 삭제 에러", e);
             throw new S3Exception(FILE_DELETE_ERROR);
         }
-    }
-
-    @Override
-    public String uploadAndGetImageURL(MultipartFile file, S3Directory directory) {
-        if (file == null || file.isEmpty()) {
-            if (S3Directory.MEMBER.equals(directory)) {
-                return defaultProfileImage;
-            }
-            return null;
-        }
-        return this.upload(file, directory.getDirectory(), String.valueOf(UUID.randomUUID()),
-          file.getOriginalFilename());
     }
 
     private String extractKeyFromUrl(String imageUrl) {

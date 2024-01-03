@@ -168,13 +168,13 @@ public class RestaurantService {
 
     @Transactional
     public void requestNewRestaurant(RestaurantRequest restaurantRequest) {
-        checkDuplicate(restaurantRequest);
+        checkDuplicate(restaurantRequest.roadAddress(), restaurantRequest.address());
 
         restaurantRepository.save(Restaurant.fromRestaurantRequest(restaurantRequest));
     }
 
-    private void checkDuplicate(RestaurantRequest restaurantRequest) {
-        if (restaurantQueryRepository.existsByDuplicateField(restaurantRequest)) {
+    private void checkDuplicate(String roadAddress, String address) {
+        if (restaurantQueryRepository.existsByDuplicateField(roadAddress, address)) {
             throw new RestaurantException(ELREADY_EXISTED_RESTAURANT);
         }
     }
