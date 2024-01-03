@@ -1,5 +1,7 @@
 package matgo.review.domain.entity;
 
+import static matgo.global.exception.ErrorCode.CANNOT_DECREASE_LIKE_COUNT;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,6 +25,7 @@ import matgo.global.entity.BaseEntity;
 import matgo.member.domain.entity.Member;
 import matgo.restaurant.domain.entity.Restaurant;
 import matgo.review.dto.request.ReviewCreateRequest;
+import matgo.review.exception.ReviewException;
 
 @Entity
 @Getter
@@ -94,7 +97,14 @@ public class Review extends BaseEntity {
     }
 
     public void decreaseLikeCount() {
+        validationLikeCount();
         this.likeCount--;
+    }
+
+    private void validationLikeCount() {
+        if (this.likeCount <= 0) {
+            throw new ReviewException(CANNOT_DECREASE_LIKE_COUNT);
+        }
     }
 
     public void increaseDislikeCount() {
@@ -102,7 +112,13 @@ public class Review extends BaseEntity {
     }
 
     public void decreaseDislikeCount() {
+        validationDislikeCount();
         this.dislikeCount--;
     }
 
+    private void validationDislikeCount() {
+        if (this.dislikeCount <= 0) {
+            throw new ReviewException(CANNOT_DECREASE_LIKE_COUNT);
+        }
+    }
 }
