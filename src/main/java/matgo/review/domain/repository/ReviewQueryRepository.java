@@ -102,10 +102,11 @@ public class ReviewQueryRepository {
                               .fetchFirst() != null;
     }
 
-    public Optional<Review> findByIdWithReactions(Long reviewId) {
+    public Optional<Review> findByIdWithReactions(Long reviewId, Long restaurantId) {
         return Optional.ofNullable(jpaQueryFactory.selectFrom(qReview)
                                                   .leftJoin(qReview.reviewReactions).fetchJoin()
-                                                  .where(qReview.id.eq(reviewId))
+                                                  .where(qReview.id.eq(reviewId),
+                                                    qReview.restaurant.id.eq(restaurantId))
                                                   .fetchOne());
     }
 }

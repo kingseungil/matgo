@@ -10,6 +10,7 @@ import static matgo.global.exception.ErrorCode.NOT_OWNER_REVIEW;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import matgo.global.filesystem.s3.S3Service;
+import matgo.global.lock.annotation.DistributedLock;
 import matgo.global.type.Reaction;
 import matgo.global.type.S3Directory;
 import matgo.member.domain.entity.Member;
@@ -50,11 +51,10 @@ public class ReviewService {
     private final S3Service s3Service;
 
 
-    @Transactional
+    @DistributedLock(key = "'createReview-' + #restaurantId")
     public ReviewCreateResponse createReview(Long memberId, Long restaurantId,
       ReviewCreateRequest reviewCreateRequest, MultipartFile reviewImage) {
-        // 비관적 락을 걸어서 동시에 같은 식당에 리뷰를 작성하는 것을 방지
-        Restaurant restaurant = restaurantRepository.findByIdWithPessimisticWriteLock(restaurantId)
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
                                                     .orElseThrow(() -> new RestaurantException(NOT_FOUND_RESTAURANT));
 
         checkCanWriteReview(memberId, restaurant);
@@ -97,10 +97,9 @@ public class ReviewService {
         return reviewQueryRepository.findAllReviewSliceByRestaurantId(restaurantId, pageable);
     }
 
-    @Transactional
+    @DistributedLock(key = "'addReviewReaction-' + #reviewId")
     public void addReviewReaction(Long memberId, Long reviewId, Reaction reactionType) {
-        // 비관적 락을 걸어서 동시에 같은 리뷰에 반응하는 것을 방지
-        Review review = reviewRepository.findByIdWithPessimisticLock(reviewId)
+        Review review = reviewRepository.findById(reviewId)
                                         .orElseThrow(() -> new ReviewException(NOT_FOUND_REVIEW));
         Member member = memberRepository.findById(memberId)
                                         .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
@@ -155,16 +154,15 @@ public class ReviewService {
         }
     }
 
-    @Transactional
+    @DistributedLock(key = "'deleteReview-' + #reviewId")
     public void deleteReview(Long memberId, Long restaurantId, Long reviewId) {
-        Review review = reviewQueryRepository.findByIdWithReactions(reviewId)
+        Review review = reviewQueryRepository.findByIdWithReactions(reviewId, restaurantId)
                                              .orElseThrow(() -> new ReviewException(NOT_FOUND_REVIEW));
         Member member = memberRepository.findById(memberId)
                                         .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
         checkCanDeleteReview(member, review);
 
-        // 비관적 락을 걸어서 동시에 같은 식당의 리뷰를 삭제하는 것을 방지
-        Restaurant restaurant = restaurantRepository.findByIdWithPessimisticWriteLock(restaurantId)
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
                                                     .orElseThrow(() -> new RestaurantException(NOT_FOUND_RESTAURANT));
 
         restaurant.removeReview(review);

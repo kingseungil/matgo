@@ -98,7 +98,7 @@ class ReviewServiceTest extends BaseServiceTest {
         void createReviewSuccess() {
             // given
             doReturn(Optional.of(restaurant)).when(restaurantRepository)
-                                             .findByIdWithPessimisticWriteLock(anyLong());
+                                             .findById(anyLong());
             doReturn(false).when(reviewQueryRepository).existsByMemberIdAndRestaurantId(anyLong(), anyLong());
             doReturn(Optional.of(member)).when(memberRepository).findById(anyLong());
             doReturn("mocked_url").when(s3Service)
@@ -124,7 +124,7 @@ class ReviewServiceTest extends BaseServiceTest {
         @DisplayName("restaurantId에 해당하는 식당이 없으면 RestaurantException을 던진다.")
         void createReviewFailBecauseNotFoundRestaurant() {
             // given
-            doReturn(Optional.empty()).when(restaurantRepository).findByIdWithPessimisticWriteLock(anyLong());
+            doReturn(Optional.empty()).when(restaurantRepository).findById(anyLong());
 
             // when & then
             assertThatThrownBy(() -> reviewService.createReview(member.getId(), 1L, reviewCreateRequest, reviewImage))
@@ -137,7 +137,7 @@ class ReviewServiceTest extends BaseServiceTest {
         void createReviewFailBecauseAlreadyWrittenReview() {
             // given
             doReturn(Optional.of(restaurant)).when(restaurantRepository)
-                                             .findByIdWithPessimisticWriteLock(anyLong());
+                                             .findById(anyLong());
             doReturn(true).when(reviewQueryRepository).existsByMemberIdAndRestaurantId(anyLong(), anyLong());
 
             // when & then
@@ -243,7 +243,7 @@ class ReviewServiceTest extends BaseServiceTest {
         @DisplayName("리뷰에 좋아요 누르면 리뷰의 좋아요 수를 1 증가시킨다.")
         void addReviewReactionSuccess() {
             // given
-            doReturn(Optional.of(review)).when(reviewRepository).findByIdWithPessimisticLock(anyLong());
+            doReturn(Optional.of(review)).when(reviewRepository).findById(anyLong());
             doReturn(Optional.of(member)).when(memberRepository).findById(anyLong());
             doReturn(null).when(reviewRepository).save(any(Review.class));
             doReturn(null).when(reviewReactionRepository).save(any());
@@ -270,7 +270,7 @@ class ReviewServiceTest extends BaseServiceTest {
             review.addReviewReaction(reviewReaction);
             review.increaseLikeCount();
 
-            doReturn(Optional.of(review)).when(reviewRepository).findByIdWithPessimisticLock(anyLong());
+            doReturn(Optional.of(review)).when(reviewRepository).findById(anyLong());
             doReturn(Optional.of(member)).when(memberRepository).findById(anyLong());
             doReturn(null).when(reviewRepository).save(any(Review.class));
             doNothing().when(reviewReactionRepository).delete(any());
@@ -297,7 +297,7 @@ class ReviewServiceTest extends BaseServiceTest {
             review.addReviewReaction(reviewReaction);
             review.increaseLikeCount();
 
-            doReturn(Optional.of(review)).when(reviewRepository).findByIdWithPessimisticLock(anyLong());
+            doReturn(Optional.of(review)).when(reviewRepository).findById(anyLong());
             doReturn(Optional.of(member)).when(memberRepository).findById(anyLong());
             doReturn(null).when(reviewRepository).save(any(Review.class));
 
@@ -335,10 +335,10 @@ class ReviewServiceTest extends BaseServiceTest {
         void deleteReviewSuccess() {
             // given
             restaurant.addReview(review);
-            doReturn(Optional.of(review)).when(reviewQueryRepository).findByIdWithReactions(anyLong());
+            doReturn(Optional.of(review)).when(reviewQueryRepository).findByIdWithReactions(anyLong(), anyLong());
             doReturn(Optional.of(member)).when(memberRepository).findById(anyLong());
             doReturn(true).when(reviewRepository).existsByIdAndMemberId(anyLong(), anyLong());
-            doReturn(Optional.of(restaurant)).when(restaurantRepository).findByIdWithPessimisticWriteLock(anyLong());
+            doReturn(Optional.of(restaurant)).when(restaurantRepository).findById(anyLong());
             doNothing().when(reviewRepository).delete(any(Review.class));
             doNothing().when(restaurantSearchRepositoryImpl)
                        .updateRatingAndReviewCount(any(String.class), any(Double.class), any(Integer.class));
@@ -357,7 +357,7 @@ class ReviewServiceTest extends BaseServiceTest {
         @DisplayName("review가 존재하지 않으면 ReviewException을 던진다.")
         void deleteReviewFailBecauseNotFoundReview() {
             // given
-            doReturn(Optional.empty()).when(reviewQueryRepository).findByIdWithReactions(anyLong());
+            doReturn(Optional.empty()).when(reviewQueryRepository).findByIdWithReactions(anyLong(), anyLong());
 
             // when & then
             assertThatThrownBy(() -> reviewService.deleteReview(member.getId(), restaurant.getId(), review.getId()))
@@ -369,7 +369,7 @@ class ReviewServiceTest extends BaseServiceTest {
         @DisplayName("리뷰 작성자가 아니면 ReviewException을 던진다.")
         void deleteReviewFailBecauseNotWriter() {
             // given
-            doReturn(Optional.of(review)).when(reviewQueryRepository).findByIdWithReactions(anyLong());
+            doReturn(Optional.of(review)).when(reviewQueryRepository).findByIdWithReactions(anyLong(), anyLong());
             doReturn(Optional.of(member)).when(memberRepository).findById(anyLong());
             doReturn(false).when(reviewRepository).existsByIdAndMemberId(anyLong(), anyLong());
 
