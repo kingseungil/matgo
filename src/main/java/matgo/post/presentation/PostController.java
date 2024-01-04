@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import matgo.auth.security.OnlyUser;
+import matgo.global.type.Reaction;
 import matgo.post.application.PostService;
 import matgo.post.dto.request.PostCreateRequest;
 import matgo.post.dto.request.PostUpdateRequest;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -103,5 +105,14 @@ public class PostController {
     }
 
     // 게시글 좋아요/싫어요
-
+    @PostMapping("/{postId}/reactions")
+    @OnlyUser
+    public ResponseEntity<Void> addPostReaction(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @PathVariable Long postId,
+      @RequestParam Reaction reactionType
+    ) {
+        postService.addPostReaction(Long.parseLong(userDetails.getUsername()), postId, reactionType);
+        return ResponseEntity.noContent().build();
+    }
 }

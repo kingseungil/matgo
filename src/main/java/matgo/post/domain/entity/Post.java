@@ -1,5 +1,8 @@
 package matgo.post.domain.entity;
 
+import static matgo.global.exception.ErrorCode.CANNOT_DECREASE_DISLIKE_COUNT;
+import static matgo.global.exception.ErrorCode.CANNOT_DECREASE_LIKE_COUNT;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,6 +26,7 @@ import matgo.comment.domain.entity.Comment;
 import matgo.global.entity.BaseEntity;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
+import matgo.review.exception.ReviewException;
 
 @Entity
 @Getter
@@ -61,7 +65,7 @@ public class Post extends BaseEntity {
     private List<PostImage> postImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<PostReaction> postReaction = new ArrayList<>();
+    private List<PostReaction> postReactions = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
     private List<Comment> comment = new ArrayList<>();
@@ -76,5 +80,48 @@ public class Post extends BaseEntity {
 
     public void updateContent(String content) {
         this.content = content;
+    }
+
+    public boolean hasReaction(Member member) {
+        return postReactions.stream()
+                            .anyMatch(postReaction -> postReaction.getMember().equals(member));
+    }
+
+    public void addPostReaction(PostReaction postReaction) {
+        this.postReactions.add(postReaction);
+    }
+
+    public void removePostReaction(PostReaction postReaction) {
+        this.postReactions.remove(postReaction);
+    }
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        validationLikeCount();
+        this.likeCount--;
+    }
+
+    private void validationLikeCount() {
+        if (this.likeCount <= 0) {
+            throw new ReviewException(CANNOT_DECREASE_LIKE_COUNT);
+        }
+    }
+
+    public void increaseDislikeCount() {
+        this.dislikeCount++;
+    }
+
+    public void decreaseDislikeCount() {
+        validationDislikeCount();
+        this.dislikeCount--;
+    }
+
+    private void validationDislikeCount() {
+        if (this.dislikeCount <= 0) {
+            throw new ReviewException(CANNOT_DECREASE_DISLIKE_COUNT);
+        }
     }
 }

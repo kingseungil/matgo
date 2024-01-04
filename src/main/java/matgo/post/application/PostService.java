@@ -3,6 +3,7 @@ package matgo.post.application;
 import static matgo.global.exception.ErrorCode.IMAGES_SIZE_EXCEED;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static matgo.global.exception.ErrorCode.NOT_FOUND_POST;
+import static matgo.global.exception.ErrorCode.NOT_FOUND_POST_REACTION;
 import static matgo.global.exception.ErrorCode.NOT_OWNER_POST;
 
 import java.util.ArrayList;
@@ -10,14 +11,18 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import matgo.global.filesystem.s3.S3Service;
+import matgo.global.lock.annotation.DistributedLock;
+import matgo.global.type.Reaction;
 import matgo.global.type.S3Directory;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.repository.MemberRepository;
 import matgo.member.exception.MemberException;
 import matgo.post.domain.entity.Post;
 import matgo.post.domain.entity.PostImage;
+import matgo.post.domain.entity.PostReaction;
 import matgo.post.domain.repository.PostImageRepository;
 import matgo.post.domain.repository.PostQueryRepository;
+import matgo.post.domain.repository.PostReactionRepository;
 import matgo.post.domain.repository.PostRepository;
 import matgo.post.dto.request.PostCreateRequest;
 import matgo.post.dto.request.PostUpdateRequest;
@@ -39,6 +44,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostQueryRepository postQueryRepository;
     private final PostImageRepository postImageRepository;
+    private final PostReactionRepository postReactionRepository;
     private final S3Service s3Service;
 
     @Transactional
@@ -154,5 +160,60 @@ public class PostService {
     public PostSliceResponse getPostsByRegion(Long memberId, Pageable pageable) {
         Member member = getMemberById(memberId);
         return postQueryRepository.findAllPostSliceByRegionId(member.getRegion().getId(), pageable);
+    }
+
+    @DistributedLock(key = "'addPostReaction-' + #postId")
+    public void addPostReaction(Long memberId, Long postId, Reaction reactionType) {
+        Post post = getPostById(postId);
+        Member member = getMemberById(memberId);
+
+        // 이미 반응이 있다면 기존 반응 삭제 후 새로운 반응으로 업데이트
+        if (post.hasReaction(member)) {
+            updateReaction(post, member, reactionType);
+        } else {
+            addReaction(post, member, reactionType);
+        }
+
+        postRepository.save(post);
+    }
+
+    private void updateReaction(Post post, Member member, Reaction reaction) {
+        PostReaction postReaction = post.getPostReactions()
+                                        .stream()
+                                        .filter(r -> r.getMember().getId().equals(member.getId()))
+                                        .findFirst()
+                                        .orElseThrow(
+                                          () -> new PostException(NOT_FOUND_POST_REACTION));
+
+        // 기존 반응과 같다면 반응 삭제 (아무것도 안누른 상태로 변경)
+        if (postReaction.getReaction() == reaction) {
+            postReactionRepository.delete(postReaction);
+            post.removePostReaction(postReaction);
+            if (reaction == Reaction.LIKE) {
+                post.decreaseLikeCount();
+            } else {
+                post.decreaseDislikeCount();
+            }
+        } else { // 기존 반응과 다르다면 반응 업데이트
+            postReaction.changeReaction(reaction);
+            if (reaction == Reaction.LIKE) {
+                post.increaseLikeCount();
+                post.decreaseDislikeCount();
+            } else {
+                post.increaseDislikeCount();
+                post.decreaseLikeCount();
+            }
+        }
+    }
+
+    private void addReaction(Post post, Member member, Reaction reaction) {
+        PostReaction postReaction = PostReaction.from(post, member, reaction);
+        post.addPostReaction(postReaction);
+        postReactionRepository.save(postReaction);
+        if (reaction == Reaction.LIKE) {
+            post.increaseLikeCount();
+        } else {
+            post.increaseDislikeCount();
+        }
     }
 }

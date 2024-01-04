@@ -5,6 +5,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QList;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,6 @@ public class PostQueryRepository {
     private final QPost qPost = QPost.post;
     private final QPostImage qPostImage = QPostImage.postImage;
 
-
     public Optional<PostDetailResponse> findPostDetailResponseById(Long regionId, Long postId) {
         List<PostDetailResponse> postDetailResponses = jpaQueryFactory.select(postDetailProjection())
                                                                       .from(qPost)
@@ -42,19 +42,13 @@ public class PostQueryRepository {
             return Optional.empty();
         }
 
-        // 이미지 URL들을 하나의 리스트로 합칩니다.
-        List<String> allImages = postDetailResponses.stream()
-                                                    .flatMap(response -> response.postImages().stream())
-                                                    .toList();
+        List<String> allImages = mergeImages(postDetailResponses);
+        PostDetailResponse response = postDetailResponses.get(0);
 
-        // 첫 번째 PostDetailResponse를 가져옵니다.
-        PostDetailResponse firstResponse = postDetailResponses.get(0);
-
-        // 모든 이미지 URL들을 포함하는 새로운 PostDetailResponse를 생성합니다.
         PostDetailResponse mergedResponse = new PostDetailResponse(
-          firstResponse.post(),
+          response.post(),
           allImages,
-          firstResponse.member()
+          response.member()
         );
 
         return Optional.of(mergedResponse);
@@ -71,17 +65,14 @@ public class PostQueryRepository {
                                                                       .limit(pageable.getPageSize())
                                                                       .fetch();
 
-        // 각 PostDetailResponse에서 이미지 URL들을 하나의 리스트로 합칩니다.
         List<PostDetailResponse> responses = postDetailResponses.stream()
                                                                 .map(response -> {
-                                                                    List<String> allImages = response.postImages()
-                                                                                                     .stream()
-                                                                                                     .toList();
+                                                                    List<String> allImages = mergeImages(
+                                                                      Collections.singletonList(response));
                                                                     return new PostDetailResponse(
                                                                       response.post(),
                                                                       allImages,
-                                                                      response.member()
-                                                                    );
+                                                                      response.member());
                                                                 })
                                                                 .toList();
 
@@ -127,11 +118,16 @@ public class PostQueryRepository {
         return Projections.list(qPostImage.imageUrl);
     }
 
-
     private ConstructorExpression<MemberResponse> memberProjection() {
         return Projections.constructor(MemberResponse.class,
           qPost.member.id,
           qPost.member.profileImage,
           qPost.member.nickname);
+    }
+
+    private List<String> mergeImages(List<PostDetailResponse> responses) {
+        return responses.stream()
+                        .flatMap(response -> response.postImages().stream())
+                        .toList();
     }
 }
