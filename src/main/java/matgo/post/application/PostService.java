@@ -17,11 +17,15 @@ import matgo.member.exception.MemberException;
 import matgo.post.domain.entity.Post;
 import matgo.post.domain.entity.PostImage;
 import matgo.post.domain.repository.PostImageRepository;
+import matgo.post.domain.repository.PostQueryRepository;
 import matgo.post.domain.repository.PostRepository;
 import matgo.post.dto.request.PostCreateRequest;
 import matgo.post.dto.request.PostUpdateRequest;
 import matgo.post.dto.response.PostCreateResponse;
+import matgo.post.dto.response.PostDetailResponse;
+import matgo.post.dto.response.PostSliceResponse;
 import matgo.post.exception.PostException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +37,7 @@ public class PostService {
 
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final PostQueryRepository postQueryRepository;
     private final PostImageRepository postImageRepository;
     private final S3Service s3Service;
 
@@ -136,5 +141,18 @@ public class PostService {
 
         deletePostImages(post);
         postRepository.delete(post);
+    }
+
+    @Transactional(readOnly = true)
+    public PostDetailResponse getPostDetailByRegion(Long memberId, Long postId) {
+        Member member = getMemberById(memberId);
+        return postQueryRepository.findPostDetailResponseById(member.getRegion().getId(), postId)
+                                  .orElseThrow(() -> new PostException(NOT_FOUND_POST));
+    }
+
+    @Transactional(readOnly = true)
+    public PostSliceResponse getPostsByRegion(Long memberId, Pageable pageable) {
+        Member member = getMemberById(memberId);
+        return postQueryRepository.findAllPostSliceByRegionId(member.getRegion().getId(), pageable);
     }
 }
