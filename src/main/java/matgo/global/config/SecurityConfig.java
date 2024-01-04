@@ -70,6 +70,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/api/reviews/{reviewId}/reactions").hasRole("USER") // 리뷰 좋아요/싫어요
             .requestMatchers(HttpMethod.DELETE, "/api/reviews/{restaurantId}/{reviewId}")
             .hasAnyRole("USER", "ADMIN") // 리뷰 삭제
+            .requestMatchers(HttpMethod.POST, "/api/posts/new").hasRole("USER") // 게시글 작성
             // 관리자만 허용
             .requestMatchers(HttpMethod.PUT, "/api/restaurants/approve/{restaurantId}").hasRole("ADMIN") // 식당 등록 승인
             // 그 외는 인증 필요

@@ -17,8 +17,8 @@ public @interface DistributedLock {
     TimeUnit timeUnit() default TimeUnit.SECONDS;
 
     // 락을 기다리는 시간 (기본값 5s)
-    long waitTime() default 7L;
+    long waitTime() default 5L;
 
     // 락을 유지하는 시간 (기본값 3s)
-    long leaseTime() default 5L;
+    long leaseTime() default 3L;
 }
