@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 import matgo.global.entity.BaseEntity;
 import matgo.member.domain.entity.Member;
 import matgo.restaurant.domain.entity.Restaurant;
-import matgo.review.dto.request.ReviewCreateRequest;
 import matgo.review.exception.ReviewException;
 
 @Entity
@@ -67,17 +66,6 @@ public class Review extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", foreignKey = @ForeignKey(name = "fk_review_restaurant"), nullable = false)
     private Restaurant restaurant;
-
-    public static Review from(Member member, Restaurant restaurant, ReviewCreateRequest request, String imageUrl) {
-        return Review.builder()
-                     .member(member)
-                     .restaurant(restaurant)
-                     .content(request.content())
-                     .rating(request.rating())
-                     .imageUrl(imageUrl)
-                     .revisit(request.revisit())
-                     .build();
-    }
 
     public boolean hasReaction(Member member) {
         return reviewReactions.stream()

@@ -62,7 +62,7 @@ public class ReviewService {
                                         .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
 
         String imageUrl = s3Service.uploadAndGetImageURL(reviewImage, S3Directory.REVIEW);
-        Review review = Review.from(member, restaurant, reviewCreateRequest, imageUrl);
+        Review review = ReviewCreateRequest.toEntity(member, restaurant, reviewCreateRequest, imageUrl);
         restaurant.addReview(review);
         member.addReview(review);
         reviewRepository.save(review);

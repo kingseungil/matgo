@@ -65,7 +65,10 @@ public enum ErrorCode {
     NOT_FOUND_REVIEW_REACTION(HttpStatus.NOT_FOUND, "존재하지 않는 리뷰 반응입니다."),
     NOT_OWNER_REVIEW(HttpStatus.BAD_REQUEST, "본인의 리뷰만 삭제할 수 있습니다."),
     CANNOT_DECREASE_LIKE_COUNT(HttpStatus.BAD_REQUEST, "좋아요 개수는 0보다 작을 수 없습니다."),
-    CANNOT_DECREASE_DISLIKE_COUNT(HttpStatus.BAD_REQUEST, "싫어요 개수는 0보다 작을 수 없습니다.");
+    CANNOT_DECREASE_DISLIKE_COUNT(HttpStatus.BAD_REQUEST, "싫어요 개수는 0보다 작을 수 없습니다."),
+
+    // Post
+    IMAGES_SIZE_EXCEED(HttpStatus.BAD_REQUEST, "게시글 이미지는 최대 3개까지 업로드할 수 있습니다.");
 
 
     private final HttpStatus status;
