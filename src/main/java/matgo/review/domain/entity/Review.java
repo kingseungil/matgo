@@ -1,5 +1,6 @@
 package matgo.review.domain.entity;
 
+import static matgo.global.exception.ErrorCode.CANNOT_DECREASE_DISLIKE_COUNT;
 import static matgo.global.exception.ErrorCode.CANNOT_DECREASE_LIKE_COUNT;
 
 import jakarta.persistence.CascadeType;
@@ -106,7 +107,7 @@ public class Review extends BaseEntity {
 
     private void validationDislikeCount() {
         if (this.dislikeCount <= 0) {
-            throw new ReviewException(CANNOT_DECREASE_LIKE_COUNT);
+            throw new ReviewException(CANNOT_DECREASE_DISLIKE_COUNT);
         }
     }
 }
