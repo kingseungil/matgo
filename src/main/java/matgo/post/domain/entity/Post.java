@@ -69,4 +69,12 @@ public class Post extends BaseEntity {
     public void addPostImages(List<PostImage> postImages) {
         this.postImages.addAll(postImages);
     }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }

@@ -7,11 +7,15 @@ import lombok.RequiredArgsConstructor;
 import matgo.auth.security.OnlyUser;
 import matgo.post.application.PostService;
 import matgo.post.dto.request.PostCreateRequest;
+import matgo.post.dto.request.PostUpdateRequest;
 import matgo.post.dto.response.PostCreateResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,8 +42,29 @@ public class PostController {
     }
 
     // 게시글 수정
+    @PutMapping("/{postId}")
+    @OnlyUser
+    public ResponseEntity<Void> updatePost(
+      @PathVariable Long postId,
+      @AuthenticationPrincipal UserDetails userDetails,
+      @Valid @RequestPart PostUpdateRequest postUpdateRequest,
+      @RequestPart(required = false) List<MultipartFile> postImages
+    ) {
+        System.out.println("postImages = " + postImages);
+        postService.updatePost(postId, Long.parseLong(userDetails.getUsername()), postUpdateRequest, postImages);
+        return ResponseEntity.noContent().build();
+    }
 
     // 게시글 삭제
+    @DeleteMapping("/{postId}")
+    @OnlyUser
+    public ResponseEntity<Void> deletePost(
+      @PathVariable Long postId,
+      @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        postService.deletePost(postId, Long.parseLong(userDetails.getUsername()));
+        return ResponseEntity.noContent().build();
+    }
 
     // 게시글 조회
 
