@@ -9,10 +9,16 @@ import matgo.post.application.PostService;
 import matgo.post.dto.request.PostCreateRequest;
 import matgo.post.dto.request.PostUpdateRequest;
 import matgo.post.dto.response.PostCreateResponse;
+import matgo.post.dto.response.PostDetailResponse;
+import matgo.post.dto.response.PostSliceResponse;
+import matgo.restaurant.dto.request.CustomPageRequest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -38,7 +44,7 @@ public class PostController {
     ) {
         PostCreateResponse postCreateResponse = postService.createPost(
           Long.parseLong(userDetails.getUsername()), postCreateRequest, postImages);
-        return ResponseEntity.created(URI.create("/api/post/detail/" + postCreateResponse.postId())).build();
+        return ResponseEntity.created(URI.create("/api/posts/detail/" + postCreateResponse.postId())).build();
     }
 
     // 게시글 수정
@@ -66,7 +72,35 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    // 게시글 조회
+    // 게시글 상세 조회
+    @GetMapping("/detail/{postId}")
+    @OnlyUser
+    public ResponseEntity<PostDetailResponse> getPostDetail(
+      @PathVariable Long postId,
+      @AuthenticationPrincipal UserDetails userDetails
+
+    ) {
+        PostDetailResponse postDetail = postService.getPostDetailByRegion(
+          Long.parseLong(userDetails.getUsername()), postId);
+        return ResponseEntity.ok().body(postDetail);
+    }
+
+    // 게시글 목록 조회 (페이징)
+    @GetMapping
+    @OnlyUser
+    public ResponseEntity<PostSliceResponse> getPosts(
+      @Valid CustomPageRequest customPageRequest,
+      @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        Pageable pageable = PageRequest.of(
+          customPageRequest.page(),
+          customPageRequest.size(),
+          customPageRequest.getSort()
+        );
+
+        PostSliceResponse response = postService.getPostsByRegion(Long.parseLong(userDetails.getUsername()), pageable);
+        return ResponseEntity.ok().body(response);
+    }
 
     // 게시글 좋아요/싫어요
 
