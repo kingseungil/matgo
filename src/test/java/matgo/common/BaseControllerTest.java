@@ -13,6 +13,7 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.Filter;
 import io.restassured.specification.RequestSpecification;
 import java.io.File;
+import java.util.concurrent.CompletableFuture;
 import matgo.auth.application.AuthService;
 import matgo.auth.application.MailService;
 import matgo.auth.dto.request.LoginRequest;
@@ -152,7 +153,7 @@ public abstract class BaseControllerTest {
         accessToken = loginMember(loginRequest).jsonPath().getString("accessToken");
         adminAccessToken = loginMember(adminLoginRequest).jsonPath().getString("accessToken");
 
-        doReturn("code").when(mailService).sendVerificationCode(anyString());
+        doReturn(CompletableFuture.completedFuture("mocked_code")).when(mailService).sendVerificationCode(anyString());
     }
 
     @AfterEach
