@@ -19,6 +19,71 @@ paths:
           description: "204"
       security:
       - bearerAuthJWT: []
+  /api/posts:
+    get:
+      tags:
+      - Post
+      summary: 게시글 조회(페이징)
+      description: 게시글 조회(페이징)
+      operationId: 게시글 조회(페이징)
+      parameters:
+      - name: page
+        in: query
+        description: 페이지 번호
+        required: true
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기
+        required: true
+        schema:
+          type: string
+      - name: direction
+        in: query
+        description: "정렬 방향(DESC,ASC)"
+        required: false
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: "정렬 기준(createdAt,likeCount,dislikeCount)"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                게시글 조회(페이징):
+                  value: |-
+                    {
+                      "posts" : [ {
+                        "post" : {
+                          "postId" : 1,
+                          "title" : "title",
+                          "content" : "content",
+                          "likeCount" : 0,
+                          "dislikeCount" : 0,
+                          "regionName" : "효자동",
+                          "createdAt" : "2024-01-05T13:40:05.936561",
+                          "modifiedAt" : "2024-01-05T13:40:05.938654"
+                        },
+                        "postImages" : [ null ],
+                        "member" : {
+                          "id" : 1,
+                          "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",
+                          "nickname" : "testnick"
+                        }
+                      } ],
+                      "hasNext" : false
+                    }
+      security:
+      - bearerAuthJWT: []
   /api/restaurants:
     get:
       tags:
@@ -107,6 +172,50 @@ paths:
                         "rating" : 5.0,
                         "reviewCount" : 586
                       }, {
+                        "id" : "16",
+                        "name" : "신한성원",
+                        "roadAddress" : "전라북도 전주시 완산구 태평3길 86",
+                        "address" : "전라북도 전주시 완산구 태평동 8-98",
+                        "phoneNumber" : "063-254-0002",
+                        "lat" : 35.8260139,
+                        "lon" : 127.1415561,
+                        "description" : "2013년 06월 05일 SBS 생방송투데이 977회, 2013년 01월 23일 KBS2 굿모닝대한민국 433회 등 많은 방송에 등장한 바로 그 곳! 전라북도 전주시에 가시면 소문난 맛집 \"신한성원\"을 방문해보세요! 레드테이블에서 온라인 예약이 가능합니다! 배달 가능한 매장입니다. 다국어 메뉴판이 있는 매장입니다.",
+                        "rating" : 5.0,
+                        "reviewCount" : 1
+                      }, {
+                        "id" : "15",
+                        "name" : "메르밀 진미집",
+                        "roadAddress" : "전라북도 전주시 완산구 전주천동로 94",
+                        "address" : "전라북도 전주시 완산구 전동 237 진미집",
+                        "phoneNumber" : "063-288-4020",
+                        "lat" : 35.8111945,
+                        "lon" : 127.1504161,
+                        "description" : "2019년 06월 10일 MBC 생방송오늘저녁 1085회, 2013년 06월 14일 KBS2 VJ특공대 669회, 2014년 09월 20일 Y STAR 식신로드1 200회 등 여러 방송에서 다룬 바로 그 곳! 전라북도 전주시 인기 맛집 \"메르밀진미집(본점)\"을 방문해보세요! 레드테이블에서 온라인 예약이 가능합니다! 남녀 화장실이 구분되어 있는 매장입니다. 배달 가능한 매장입니다. 주차공간, 다국어 메뉴판이 있는 매장입니다.",
+                        "rating" : 5.0,
+                        "reviewCount" : 1
+                      }, {
+                        "id" : "17",
+                        "name" : "짬뽕명가",
+                        "roadAddress" : "전라북도 전주시 덕진구 권삼득로 385 2층",
+                        "address" : "전라북도 전주시 덕진구 덕진동2가 189-25",
+                        "phoneNumber" : "050-4054-4655",
+                        "lat" : 35.8467369,
+                        "lon" : 127.1209415,
+                        "description" : "전라북도 전주시에서 맛집을 찾으신다면 \"짬뽕명가\"를 추천합니다. 남녀 화장실이 구분되어 있는 매장입니다. 배달 가능한 매장입니다. 주차공간, 다국어 메뉴판이 있는 매장입니다.",
+                        "rating" : 5.0,
+                        "reviewCount" : 1
+                      }, {
+                        "id" : "14",
+                        "name" : "전라회관",
+                        "roadAddress" : "전라북도 전주시 완산구 안행4길 5",
+                        "address" : "전라북도 전주시 완산구 삼천동1가 751-8",
+                        "phoneNumber" : "063-228-3033",
+                        "lat" : 35.8005994,
+                        "lon" : 127.1320044,
+                        "description" : "무엇을 먹을지 고민되신다고요? 전라북도 전주시에 계시다면 \"전라회관\"을 추천합니다! 지방자치단체 인증을 받은 농림축산식품부 제공 안심식당입니다. 레드테이블에서 온라인 예약이 가능합니다! 다국어 메뉴판이 있는 매장입니다.",
+                        "rating" : 4.51,
+                        "reviewCount" : -2
+                      }, {
                         "id" : "7",
                         "name" : "피자브릭",
                         "roadAddress" : "전라북도 전주시 완산구 전주객사5길 43-12",
@@ -126,52 +235,8 @@ paths:
                         "lat" : 35.8177739,
                         "lon" : 127.143221,
                         "description" : "어디 가야 할지 고민이시라고요? 그럼 전라북도 전주시 맛집, \"일품향\"을 추천합니다! 레드테이블에서 온라인 예약이 가능합니다! 배달 가능한 매장입니다. 다국어 메뉴판이 있는 매장입니다.",
-                        "rating" : 3.3333333333333335,
-                        "reviewCount" : 3
-                      }, {
-                        "id" : "2",
-                        "name" : "한국식당",
-                        "roadAddress" : "전라북도 전주시 완산구 전라감영로 48-1",
-                        "address" : "전라북도 전주시 완산구 중앙동4가 34",
-                        "phoneNumber" : "063-284-6932",
-                        "lat" : 35.8154343,
-                        "lon" : 127.1444954,
-                        "description" : "전라북도 전주시에 가신다면 \"한국식당\"에 방문해보세요~ 지방자치단체 인증을 받은 농림축산식품부 제공 안심식당입니다. 레드테이블에서 온라인 예약이 가능합니다! 다국어 메뉴판이 있는 매장입니다.",
-                        "rating" : 3.3,
-                        "reviewCount" : 3
-                      }, {
-                        "id" : "3",
-                        "name" : "PNB풍년제과 본점",
-                        "roadAddress" : "전라북도 전주시 완산구 팔달로 180",
-                        "address" : "전라북도 전주시 완산구 경원동1가 40-5",
-                        "phoneNumber" : "063-285-6666",
-                        "lat" : 35.8184347,
-                        "lon" : 127.1471961,
-                        "description" : "2014년 09월 20일 Ystar 식신로드 200회, 2014년 05월 12일 SBS 생활의달인 429회, 2013년 09월 20일 KBS2 VJ특공대 683회 등 여러 방송에서 다룬 바로 그 곳! 전라북도 전주시 인기 맛집 \"피엔비풍년제과(경원동본점)\"를 방문해보세요! 레드테이블에서 온라인 예약이 가능합니다! 배달 가능한 매장입니다. 다국어 메뉴판이 있는 매장입니다.",
-                        "rating" : 3.3,
-                        "reviewCount" : 3
-                      }, {
-                        "id" : "4",
-                        "name" : "가람나주곰탕",
-                        "roadAddress" : "전라북도 전주시 덕진구 떡전로 5",
-                        "address" : "전라북도 전주시 덕진구 금암동 794-7",
-                        "phoneNumber" : "063-227-3395",
-                        "lat" : 35.8357146,
-                        "lon" : 127.1282544,
-                        "description" : "어디 가야 할지 고민이시라고요? 그럼 전라북도 전주시 맛집, \"가람 나주곰탕\"을 추천합니다! 레드테이블에서 온라인 예약이 가능합니다! 배달 가능한 매장입니다. 주차공간, 다국어 메뉴판이 있는 매장입니다.",
-                        "rating" : 3.0,
-                        "reviewCount" : 2
-                      }, {
-                        "id" : "9",
-                        "name" : "신한양불고기",
-                        "roadAddress" : "전라북도 전주시 완산구 전주객사3길 11",
-                        "address" : "전라북도 전주시 완산구 중앙동1가 1-4",
-                        "phoneNumber" : "063-284-7331",
-                        "lat" : 35.8177412,
-                        "lon" : 127.1425177,
-                        "description" : "전라북도 전주시에 가신다면 \"신한양불고기\"에 방문해보세요~ 레드테이블에서 온라인 예약이 가능합니다! 다국어 메뉴판이 있는 매장입니다.",
-                        "rating" : 3.0,
-                        "reviewCount" : 2
+                        "rating" : 4.17,
+                        "reviewCount" : 6
                       } ],
                       "hasNext" : true
                     }
@@ -206,7 +271,7 @@ paths:
                 로그인:
                   value: |-
                     {
-                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwNDE3MzI0MywiaXNzIjoibWF0Z28iLCJleHAiOjE3MDQxNzMzMDN9.Q7F0bsSvZaebNbxmjeYusvBeReOFuqcrz6yiIowL9uQ"
+                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwNDQyOTU5NiwiaXNzIjoibWF0Z28iLCJleHAiOjE3MDQ0Mjk2NTZ9.XsPqOFsZJ6knxo3IEyzNXT-kNtvUsepPZfGsgNB7Olw"
                     }
   /api/auth/logout:
     delete:
@@ -304,6 +369,55 @@ paths:
               examples:
                 회원가입:
                   value: signup@naver.com
+  /api/posts/new:
+    post:
+      tags:
+      - Post
+      summary: 게시글 작성
+      description: 게시글 작성
+      operationId: 게시글 작성
+      responses:
+        "201":
+          description: "201"
+      security:
+      - bearerAuthJWT: []
+  /api/posts/{postId}:
+    put:
+      tags:
+      - Post
+      summary: 게시글 수정
+      description: 게시글 수정
+      operationId: 게시글 수정
+      parameters:
+      - name: postId
+        in: path
+        description: 게시글 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+    delete:
+      tags:
+      - Post
+      summary: 게시글 삭제
+      description: 게시글 삭제
+      operationId: 게시글 삭제
+      parameters:
+      - name: postId
+        in: path
+        description: 게시글 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
   /api/restaurants/address:
     get:
       tags:
@@ -710,7 +824,7 @@ paths:
                         "revisit" : true,
                         "likeCount" : 0,
                         "dislikeCount" : 0,
-                        "createdAt" : "2024-01-02T14:27:34.355469",
+                        "createdAt" : "2024-01-05T13:40:15.2934",
                         "member" : {
                           "id" : 1,
                           "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",
@@ -724,6 +838,50 @@ paths:
                       } ],
                       "hasNext" : false
                     }
+  /api/posts/detail/{postId}:
+    get:
+      tags:
+      - Post
+      summary: 게시글 상세 조회
+      description: 게시글 상세 조회
+      operationId: 게시글 상세 조회
+      parameters:
+      - name: postId
+        in: path
+        description: 게시글 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                게시글 상세 조회:
+                  value: |-
+                    {
+                      "post" : {
+                        "postId" : 1,
+                        "title" : "title",
+                        "content" : "content",
+                        "likeCount" : 0,
+                        "dislikeCount" : 0,
+                        "regionName" : "효자동",
+                        "createdAt" : "2024-01-05T13:40:02.93583",
+                        "modifiedAt" : "2024-01-05T13:40:02.938863"
+                      },
+                      "postImages" : [ null ],
+                      "member" : {
+                        "id" : 1,
+                        "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",
+                        "nickname" : "testnick"
+                      }
+                    }
+      security:
+      - bearerAuthJWT: []
   /api/restaurants/approve/{restaurantId}:
     put:
       tags:
@@ -811,7 +969,7 @@ paths:
                       "revisit" : true,
                       "likeCount" : 0,
                       "dislikeCount" : 0,
-                      "createdAt" : "2024-01-02T14:27:33.825301",
+                      "createdAt" : "2024-01-05T13:40:14.715119",
                       "member" : {
                         "id" : 1,
                         "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",

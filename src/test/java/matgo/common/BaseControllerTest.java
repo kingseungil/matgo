@@ -25,6 +25,10 @@ import matgo.member.domain.repository.RegionRepository;
 import matgo.member.domain.type.UserRole;
 import matgo.member.dto.request.MemberUpdateRequest;
 import matgo.member.dto.request.SignUpRequest;
+import matgo.post.domain.repository.PostQueryRepository;
+import matgo.post.domain.repository.PostRepository;
+import matgo.post.dto.request.PostCreateRequest;
+import matgo.post.dto.request.PostUpdateRequest;
 import matgo.restaurant.domain.repository.RestaurantRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepositoryImpl;
@@ -60,10 +64,13 @@ public abstract class BaseControllerTest {
     protected static final SendTemporaryPasswordRequest sendTemporaryPasswordRequest = new SendTemporaryPasswordRequest(
       "test@naver.com");
     protected static final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("test", 5, true);
+    protected static final PostCreateRequest postCreateRequest = new PostCreateRequest("title", "content");
+    protected static final PostUpdateRequest postUpdateRequest = new PostUpdateRequest("updateTitle", "updateContent");
     protected static RequestSpecification spec;
     protected static String accessToken;
     protected static String adminAccessToken;
     protected Member member;
+    protected Region region;
     @MockBean
     protected S3Service s3Service;
     @MockBean
@@ -88,6 +95,10 @@ public abstract class BaseControllerTest {
     protected RestaurantSearchRepository restaurantSearchRepository;
     @Autowired
     protected RestaurantSearchRepositoryImpl restaurantSearchRepositoryImpl;
+    @Autowired
+    protected PostRepository postRepository;
+    @Autowired
+    protected PostQueryRepository postQueryRepository;
     @LocalServerPort
     int port;
 
@@ -115,7 +126,7 @@ public abstract class BaseControllerTest {
 
         spec = new RequestSpecBuilder().addFilter(documentConfig).build();
 
-        Region region = regionRepository.save(new Region("효자동"));
+        region = regionRepository.save(new Region("효자동"));
         String password = passwordEncoder.encode("1!asdasd");
         member = Member.builder()
                        .email("test@naver.com")
