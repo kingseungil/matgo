@@ -8,6 +8,7 @@ import static matgo.global.exception.ErrorCode.WRONG_PASSWORD;
 import static matgo.member.domain.type.UserRole.ROLE_USER;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import matgo.auth.application.MailService;
@@ -60,8 +61,10 @@ public class MemberService {
                               .region(region)
                               .build();
         memberRepository.save(member);
-        String verificationCode = mailService.sendVerificationCode(member.getEmail());
-        saveEmailVerification(verificationCode, member);
+
+        CompletableFuture<String> code = mailService.sendVerificationCode(member.getEmail());
+        code.thenAcceptAsync(
+          verificationCode -> saveEmailVerification(verificationCode, member)); // 비동기 처리해서 코드를 받아오면 저장
 
         return SignUpResponse.from(member.getId(), member.getEmail());
     }

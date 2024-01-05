@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import jakarta.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import matgo.auth.domain.entity.EmailVerification;
 import matgo.auth.dto.request.EmailVerificationRequest;
 import matgo.auth.exception.AuthException;
@@ -60,11 +61,11 @@ class JavaMailServiceImplTest extends BaseServiceTest {
         doNothing().when(javaMailSender).send(any(MimeMessage.class));
 
         // when
-        String verificationCode = javaMailService.sendVerificationCode("test@naver.com");
+        CompletableFuture<String> code = javaMailService.sendVerificationCode("test@naver.com");
 
         // then
         verify(javaMailSender).send(any(MimeMessage.class));
-        assertNotNull(verificationCode);
+        assertNotNull(code);
     }
 
 

@@ -14,6 +14,7 @@ import static org.mockito.Mockito.doReturn;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import matgo.auth.domain.entity.EmailVerification;
 import matgo.auth.exception.AuthException;
 import matgo.common.BaseServiceTest;
@@ -77,7 +78,8 @@ class MemberServiceTest extends BaseServiceTest {
                                   .uploadAndGetImageURL(any(MultipartFile.class), eq(S3Directory.MEMBER));
             doReturn("encoded_password").when(passwordEncoder).encode(anyString());
             doReturn(null).when(memberRepository).save(any(Member.class));
-            doReturn("mocked_code").when(mailService).sendVerificationCode(anyString());
+            doReturn(CompletableFuture.completedFuture("mocked_code")).when(mailService)
+                                                                      .sendVerificationCode(anyString());
             doReturn(null).when(emailVerificationRepository).save(any(EmailVerification.class));
 
             // when
@@ -96,7 +98,8 @@ class MemberServiceTest extends BaseServiceTest {
             doReturn(Optional.of(region)).when(regionRepository).findByName(anyString());
             doReturn("encoded_password").when(passwordEncoder).encode(anyString());
             doReturn(null).when(memberRepository).save(any(Member.class));
-            doReturn("mocked_code").when(mailService).sendVerificationCode(anyString());
+            doReturn(CompletableFuture.completedFuture("mocked_code")).when(mailService)
+                                                                      .sendVerificationCode(anyString());
             doReturn(null).when(emailVerificationRepository).save(any(EmailVerification.class));
 
             // when

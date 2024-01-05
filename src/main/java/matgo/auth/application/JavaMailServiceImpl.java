@@ -8,6 +8,7 @@ import static matgo.global.exception.ErrorCode.UNMATCHED_VERIFICATION_CODE;
 
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import matgo.auth.dto.request.EmailVerificationRequest;
@@ -19,6 +20,7 @@ import matgo.member.exception.MemberException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,7 +33,8 @@ public class JavaMailServiceImpl implements MailService {
     private final JavaMailSender javaMailSender;
 
     @Override
-    public String sendVerificationCode(String email) {
+    @Async
+    public CompletableFuture<String> sendVerificationCode(String email) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         String verificationCode = generateVerificationCode();
         try {
@@ -45,7 +48,7 @@ public class JavaMailServiceImpl implements MailService {
         }
         log.info("Sent a verification code: {} to {}", verificationCode, email);
 
-        return verificationCode;
+        return CompletableFuture.completedFuture(verificationCode);
     }
 
     private String generateVerificationCode() {
@@ -80,6 +83,7 @@ public class JavaMailServiceImpl implements MailService {
     }
 
     @Override
+    @Async
     public void sendTemporaryPassword(String email, String password) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
