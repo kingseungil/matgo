@@ -33,7 +33,7 @@ public class JavaMailServiceImpl implements MailService {
     private final JavaMailSender javaMailSender;
 
     @Override
-    @Async
+    @Async("mailSenderExecutor")
     public CompletableFuture<String> sendVerificationCode(String email) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         String verificationCode = generateVerificationCode();
@@ -83,7 +83,7 @@ public class JavaMailServiceImpl implements MailService {
     }
 
     @Override
-    @Async
+    @Async("mailSenderExecutor")
     public void sendTemporaryPassword(String email, String password) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {

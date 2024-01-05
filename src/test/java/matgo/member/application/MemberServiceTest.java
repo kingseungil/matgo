@@ -15,7 +15,6 @@ import static org.mockito.Mockito.doReturn;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import matgo.auth.domain.entity.EmailVerification;
 import matgo.auth.exception.AuthException;
 import matgo.common.BaseServiceTest;
 import matgo.global.type.S3Directory;
@@ -80,7 +79,6 @@ class MemberServiceTest extends BaseServiceTest {
             doReturn(null).when(memberRepository).save(any(Member.class));
             doReturn(CompletableFuture.completedFuture("mocked_code")).when(mailService)
                                                                       .sendVerificationCode(anyString());
-            doReturn(null).when(emailVerificationRepository).save(any(EmailVerification.class));
 
             // when
             SignUpResponse result = memberService.saveMember(signUpRequest, profileImage);
@@ -100,7 +98,6 @@ class MemberServiceTest extends BaseServiceTest {
             doReturn(null).when(memberRepository).save(any(Member.class));
             doReturn(CompletableFuture.completedFuture("mocked_code")).when(mailService)
                                                                       .sendVerificationCode(anyString());
-            doReturn(null).when(emailVerificationRepository).save(any(EmailVerification.class));
 
             // when
             SignUpResponse result = memberService.saveMember(signUpRequest, null);
