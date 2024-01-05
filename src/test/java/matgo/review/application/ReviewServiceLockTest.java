@@ -28,13 +28,13 @@ public class ReviewServiceLockTest {
     @Test
     void addReviewReaction_concurrency() throws InterruptedException {
         // given
-        int numberOfThreads = 4;
+        int numberOfThreads = 5;
         ExecutorService service = Executors.newFixedThreadPool(numberOfThreads);
         CountDownLatch latch = new CountDownLatch(numberOfThreads);
 
-        Long reviewId = 3104L;
-        Reaction reactionType = Reaction.LIKE;
-        Long[] memberIds = new Long[]{4L, 6L, 7L, 8L};
+        Long reviewId = 1L;
+        Reaction reactionType = Reaction.DISLIKE;
+        Long[] memberIds = new Long[]{1L, 4L, 5L, 6L, 7L};
         // when
         for (int i = 0; i < numberOfThreads; i++) {
             int idx = i;
@@ -61,8 +61,9 @@ public class ReviewServiceLockTest {
         Review review = reviewRepository.findById(reviewId).get();
 
         assertSoftly(softly -> {
-            softly.assertThat(reactions.size()).isEqualTo(4);
-            softly.assertThat(review.getLikeCount()).isEqualTo(4);
+            softly.assertThat(reactions.size()).isEqualTo(5);
+            softly.assertThat(review.getLikeCount()).isEqualTo(0);
+            softly.assertThat(review.getDislikeCount()).isEqualTo(5);
         });
 
     }

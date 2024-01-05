@@ -58,7 +58,6 @@ public class PostController {
       @Valid @RequestPart PostUpdateRequest postUpdateRequest,
       @RequestPart(required = false) List<MultipartFile> postImages
     ) {
-        System.out.println("postImages = " + postImages);
         postService.updatePost(postId, Long.parseLong(userDetails.getUsername()), postUpdateRequest, postImages);
         return ResponseEntity.noContent().build();
     }

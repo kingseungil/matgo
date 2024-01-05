@@ -105,7 +105,7 @@ class ReviewServiceTest extends BaseServiceTest {
                                   .uploadAndGetImageURL(any(MultipartFile.class), eq(S3Directory.REVIEW));
             doNothing().when(restaurantSearchRepositoryImpl)
                        .updateRatingAndReviewCount(any(String.class), any(Double.class), any(Integer.class));
-            Review review = Review.from(member, restaurant, reviewCreateRequest, "mocked_url");
+            Review review = ReviewCreateRequest.toEntity(member, restaurant, reviewCreateRequest, "mocked_url");
             doReturn(review).when(reviewRepository).save(any(Review.class));
 
             // when
