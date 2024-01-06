@@ -2,8 +2,8 @@ package matgo.review.dto.response;
 
 import java.util.List;
 
-public record ReviewSliceResponse(
-  List<ReviewDetailResponse> reviews,
+public record MyReviewSliceResponse(
+  List<MyReviewResponse> reviews,
   boolean hasNext
 ) {
 

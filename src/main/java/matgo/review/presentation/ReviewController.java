@@ -9,8 +9,9 @@ import matgo.global.type.Reaction;
 import matgo.restaurant.dto.request.CustomPageRequest;
 import matgo.review.application.ReviewService;
 import matgo.review.dto.request.ReviewCreateRequest;
+import matgo.review.dto.response.MyReviewSliceResponse;
 import matgo.review.dto.response.ReviewCreateResponse;
-import matgo.review.dto.response.ReviewResponse;
+import matgo.review.dto.response.ReviewDetailResponse;
 import matgo.review.dto.response.ReviewSliceResponse;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -78,10 +79,10 @@ public class ReviewController {
 
     // 리뷰 상세 보기
     @GetMapping("/detail/{reviewId}")
-    public ResponseEntity<ReviewResponse> getReview(
+    public ResponseEntity<ReviewDetailResponse> getReview(
       @PathVariable Long reviewId
     ) {
-        ReviewResponse response = reviewService.getReviewDetail(reviewId);
+        ReviewDetailResponse response = reviewService.getReviewDetail(reviewId);
         return ResponseEntity.ok().body(response);
     }
 
@@ -97,4 +98,21 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
+    // 내가 쓴 리뷰 조회
+    @GetMapping("/my/writable-reviews")
+    @OnlyUser
+    public ResponseEntity<MyReviewSliceResponse> getMyReviews(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @Valid CustomPageRequest customPageRequest
+    ) {
+        Pageable pageable = PageRequest.of(
+          customPageRequest.page(),
+          customPageRequest.size(),
+          customPageRequest.getSort()
+        );
+
+        MyReviewSliceResponse response = reviewService.getMyReviews(Long.parseLong(userDetails.getUsername()),
+          pageable);
+        return ResponseEntity.ok().body(response);
+    }
 }

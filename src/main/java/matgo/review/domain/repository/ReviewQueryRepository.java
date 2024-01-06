@@ -11,6 +11,9 @@ import matgo.member.dto.response.MemberResponse;
 import matgo.restaurant.dto.response.RestaurantResponse;
 import matgo.review.domain.entity.QReview;
 import matgo.review.domain.entity.Review;
+import matgo.review.dto.response.MyReviewResponse;
+import matgo.review.dto.response.MyReviewSliceResponse;
+import matgo.review.dto.response.ReviewDetailResponse;
 import matgo.review.dto.response.ReviewResponse;
 import matgo.review.dto.response.ReviewSliceResponse;
 import org.springframework.data.domain.Pageable;
@@ -24,27 +27,27 @@ public class ReviewQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private final QReview qReview = QReview.review;
 
-    public Optional<ReviewResponse> findReviewResponseByIdWithMemberAndRestaurant(Long reviewId) {
-        ReviewResponse reviewResponse = jpaQueryFactory.select(reviewProjection())
+    public Optional<ReviewDetailResponse> findReviewResponseByIdWithMemberAndRestaurant(Long reviewId) {
+        ReviewDetailResponse response = jpaQueryFactory.select(reviewDetailProjection())
                                                        .from(qReview)
                                                        .join(qReview.member)
                                                        .join(qReview.restaurant)
                                                        .where(qReview.id.eq(reviewId))
                                                        .fetchOne();
 
-        return Optional.ofNullable(reviewResponse);
+        return Optional.ofNullable(response);
     }
 
     public ReviewSliceResponse findAllReviewSliceByRestaurantId(Long restaurantId, Pageable pageable) {
-        List<ReviewResponse> responses = jpaQueryFactory.select(reviewProjection())
-                                                        .from(qReview)
-                                                        .join(qReview.member)
-                                                        .join(qReview.restaurant)
-                                                        .where(qReview.restaurant.id.eq(restaurantId))
-                                                        .orderBy(getOrderSpecifier(pageable.getSort()))
-                                                        .offset(pageable.getOffset())
-                                                        .limit(pageable.getPageSize())
-                                                        .fetch();
+        List<ReviewDetailResponse> responses = jpaQueryFactory.select(reviewDetailProjection())
+                                                              .from(qReview)
+                                                              .join(qReview.member)
+                                                              .join(qReview.restaurant)
+                                                              .where(qReview.restaurant.id.eq(restaurantId))
+                                                              .orderBy(getOrderSpecifier(pageable.getSort()))
+                                                              .offset(pageable.getOffset())
+                                                              .limit(pageable.getPageSize())
+                                                              .fetch();
 
         return new ReviewSliceResponse(responses, responses.size() == pageable.getPageSize());
     }
@@ -65,6 +68,12 @@ public class ReviewQueryRepository {
                    .toArray(OrderSpecifier[]::new);
     }
 
+    private ConstructorExpression<ReviewDetailResponse> reviewDetailProjection() {
+        return Projections.constructor(ReviewDetailResponse.class,
+          reviewProjection(),
+          memberProjection(),
+          restaurantProjection());
+    }
 
     private ConstructorExpression<ReviewResponse> reviewProjection() {
         return Projections.constructor(ReviewResponse.class,
@@ -75,9 +84,8 @@ public class ReviewQueryRepository {
           qReview.revisit,
           qReview.likeCount,
           qReview.dislikeCount,
-          qReview.createdAt,
-          memberProjection(),
-          restaurantProjection());
+          qReview.createdAt
+        );
     }
 
     private ConstructorExpression<MemberResponse> memberProjection() {
@@ -109,4 +117,24 @@ public class ReviewQueryRepository {
                                                     qReview.restaurant.id.eq(restaurantId))
                                                   .fetchOne());
     }
+
+    public MyReviewSliceResponse findAllReviewSliceByMemberId(Long memberId, Pageable pageable) {
+        List<MyReviewResponse> responses = jpaQueryFactory.select(myReviewProjection())
+                                                          .from(qReview)
+                                                          .join(qReview.restaurant)
+                                                          .where(qReview.member.id.eq(memberId))
+                                                          .orderBy(getOrderSpecifier(pageable.getSort()))
+                                                          .offset(pageable.getOffset())
+                                                          .limit(pageable.getPageSize())
+                                                          .fetch();
+
+        return new MyReviewSliceResponse(responses, responses.size() == pageable.getPageSize());
+    }
+
+    private ConstructorExpression<MyReviewResponse> myReviewProjection() {
+        return Projections.constructor(MyReviewResponse.class,
+          reviewProjection(),
+          restaurantProjection());
+    }
 }
+

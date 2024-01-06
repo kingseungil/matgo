@@ -24,6 +24,7 @@ import matgo.member.domain.repository.RegionRepository;
 import matgo.member.dto.request.MemberUpdateRequest;
 import matgo.member.dto.request.ResetPasswordRequest;
 import matgo.member.dto.request.SignUpRequest;
+import matgo.member.dto.response.MemberResponse;
 import matgo.member.dto.response.SignUpResponse;
 import matgo.member.exception.MemberException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -141,5 +142,10 @@ public class MemberService {
 
         String newPassword = passwordEncoder.encode(resetPasswordRequest.newPassword());
         member.changePassword(newPassword);
+    }
+
+    public MemberResponse getMember(Long memberId) {
+        Member member = getMemberById(memberId);
+        return MemberResponse.from(member);
     }
 }

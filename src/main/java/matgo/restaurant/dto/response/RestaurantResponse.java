@@ -3,7 +3,7 @@ package matgo.restaurant.dto.response;
 import matgo.restaurant.domain.entity.Restaurant;
 
 public record RestaurantResponse(
-  Long restaurantId,
+  Long id,
   String name,
   String roadAddress
 ) {
