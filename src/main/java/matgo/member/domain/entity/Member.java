@@ -25,10 +25,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import matgo.auth.domain.entity.EmailVerification;
-import matgo.comment.domain.entity.Comment;
 import matgo.global.entity.BaseEntity;
 import matgo.member.domain.type.UserRole;
 import matgo.post.domain.entity.Post;
+import matgo.post.domain.entity.PostComment;
 import matgo.post.domain.entity.PostReaction;
 import matgo.review.domain.entity.Review;
 
@@ -85,7 +85,7 @@ public class Member extends BaseEntity {
     private List<PostReaction> postReactions = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<Comment> comments = new ArrayList<>();
+    private List<PostComment> postComments = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<Review> reviews = new ArrayList<>();
@@ -123,5 +123,13 @@ public class Member extends BaseEntity {
 
     public void removeReview(Review review) {
         this.reviews.remove(review);
+    }
+
+    public void addPostComment(PostComment postComment) {
+        this.postComments.add(postComment);
+    }
+
+    public void removePostComment(PostComment postComment) {
+        this.postComments.remove(postComment);
     }
 }

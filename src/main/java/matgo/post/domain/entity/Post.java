@@ -22,7 +22,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import matgo.comment.domain.entity.Comment;
 import matgo.global.entity.BaseEntity;
 import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
@@ -53,6 +52,9 @@ public class Post extends BaseEntity {
     @Column(name = "dislike_count", nullable = false, columnDefinition = "int default 0")
     private int dislikeCount;
 
+    @Column(name = "comment_count", nullable = false, columnDefinition = "int default 0")
+    private int commentCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", foreignKey = @ForeignKey(name = "fk_post_region"), nullable = false)
     private Region region;
@@ -68,7 +70,7 @@ public class Post extends BaseEntity {
     private List<PostReaction> postReactions = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<Comment> comment = new ArrayList<>();
+    private List<PostComment> postComments = new ArrayList<>();
 
     public void addPostImages(List<PostImage> postImages) {
         this.postImages.addAll(postImages);
@@ -123,5 +125,15 @@ public class Post extends BaseEntity {
         if (this.dislikeCount <= 0) {
             throw new ReviewException(CANNOT_DECREASE_DISLIKE_COUNT);
         }
+    }
+
+    public void addPostComment(PostComment postComment) {
+        this.postComments.add(postComment);
+        this.commentCount++;
+    }
+
+    public void removePostComment(PostComment postComment) {
+        this.postComments.remove(postComment);
+        this.commentCount--;
     }
 }

@@ -67,11 +67,6 @@ public class PostService {
         }
     }
 
-    private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                               .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
-    }
-
     private List<PostImage> uploadPostImages(List<MultipartFile> postImages, Post post) {
         List<PostImage> postImageList = new ArrayList<>();
         if (postImages != null && !postImages.isEmpty()) {
@@ -175,6 +170,11 @@ public class PostService {
         }
 
         postRepository.save(post);
+    }
+
+    private Member getMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                               .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
     }
 
     private void updateReaction(Post post, Member member, Reaction reaction) {
