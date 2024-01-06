@@ -1,5 +1,6 @@
 package matgo.restaurant.domain.repository;
 
+import java.util.List;
 import matgo.restaurant.domain.entity.RestaurantSearch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,4 +13,7 @@ public interface RestaurantSearchRepository extends ElasticsearchRepository<Rest
 
     @Query("{\"match_phrase\": {\"address\": \"?0\"}}")
     Page<RestaurantSearch> findByAddressExactMatch(String addressKeyword, Pageable pageable);
+
+    @Query("{\"match_phrase\": {\"name\": \"?0\"}}")
+    List<RestaurantSearch> findByName(String nameKeyword);
 }

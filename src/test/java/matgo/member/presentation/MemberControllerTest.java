@@ -68,6 +68,8 @@ class MemberControllerTest extends BaseControllerTest {
           .accept(ContentType.JSON)
           .put("/api/member");
 
+        System.out.println("response = " + response.asString());
+
         // then
         assertThat(response.statusCode()).isEqualTo(204);
     }

@@ -56,12 +56,12 @@ public abstract class BaseControllerTest {
 
     protected static final File image = new File("src/test/resources/img.jpeg");
     protected static final SignUpRequest signUpRequest = new SignUpRequest("signup@naver.com", "signup", "1!asdasd",
-      "효자동");
+      "효자동3가");
     protected static final LoginRequest loginRequest = new LoginRequest("test@naver.com", "1!asdasd",
       UserRole.ROLE_USER);
     protected static final LoginRequest adminLoginRequest = new LoginRequest("admin@admin.com", "1!asdasd",
       UserRole.ROLE_ADMIN);
-    protected static final MemberUpdateRequest memberUpdateRequest = new MemberUpdateRequest("updateTest", "효자동");
+    protected static final MemberUpdateRequest memberUpdateRequest = new MemberUpdateRequest("updateTest", "효자동3가");
     protected static final SendTemporaryPasswordRequest sendTemporaryPasswordRequest = new SendTemporaryPasswordRequest(
       "test@naver.com");
     protected static final ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest("test", 5, true);
@@ -92,7 +92,7 @@ public abstract class BaseControllerTest {
     protected PasswordEncoder passwordEncoder;
     @Autowired
     protected RestaurantRepository restaurantRepository;
-    @Autowired
+    @MockBean
     protected RestaurantSearchRepository restaurantSearchRepository;
     @Autowired
     protected RestaurantSearchRepositoryImpl restaurantSearchRepositoryImpl;
@@ -127,7 +127,7 @@ public abstract class BaseControllerTest {
 
         spec = new RequestSpecBuilder().addFilter(documentConfig).build();
 
-        region = regionRepository.save(new Region("효자동"));
+        region = regionRepository.save(new Region("효자동3가"));
         String password = passwordEncoder.encode("1!asdasd");
         member = Member.builder()
                        .email("test@naver.com")
