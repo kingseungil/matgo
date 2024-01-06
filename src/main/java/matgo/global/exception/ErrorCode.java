@@ -70,6 +70,8 @@ public enum ErrorCode {
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다."),
     NOT_OWNER_POST(HttpStatus.BAD_REQUEST, "본인의 게시글만 수정/삭제할 수 있습니다."),
     NOT_FOUND_POST_REACTION(HttpStatus.NOT_FOUND, "존재하지 않는 게시글 반응입니다."),
+    NOT_FOUND_POST_COMMENT(HttpStatus.NOT_FOUND, "존재하지 않는 게시글 댓글입니다."),
+    NOT_OWNER_POST_COMMENT(HttpStatus.BAD_REQUEST, "본인의 게시글 댓글만 수정/삭제할 수 있습니다."),
 
     // Like
     CANNOT_DECREASE_LIKE_COUNT(HttpStatus.BAD_REQUEST, "좋아요 개수는 0보다 작을 수 없습니다."),

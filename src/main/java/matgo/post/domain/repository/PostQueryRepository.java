@@ -10,7 +10,9 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import matgo.member.dto.response.MemberResponse;
 import matgo.post.domain.entity.QPost;
+import matgo.post.domain.entity.QPostComment;
 import matgo.post.domain.entity.QPostImage;
+import matgo.post.dto.response.PostCommentResponse;
 import matgo.post.dto.response.PostDetailResponse;
 import matgo.post.dto.response.PostListResponse;
 import matgo.post.dto.response.PostResponse;
@@ -26,12 +28,14 @@ public class PostQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private final QPost qPost = QPost.post;
     private final QPostImage qPostImage = QPostImage.postImage;
+    private final QPostComment qPostComment = QPostComment.postComment;
 
     public Optional<PostDetailResponse> findPostDetailResponseById(Long regionId, Long postId) {
         List<PostDetailResponse> postDetailResponses = jpaQueryFactory.select(postDetailProjection())
                                                                       .from(qPost)
                                                                       .join(qPost.member)
                                                                       .leftJoin(qPost.postImages, qPostImage)
+                                                                      .leftJoin(qPost.postComments, qPostComment)
                                                                       .where(
                                                                         qPost.id.eq(postId),
                                                                         qPost.region.id.eq(regionId)
@@ -47,26 +51,38 @@ public class PostQueryRepository {
 
     private PostDetailResponse mergePostDetailResponse(List<PostDetailResponse> postDetailResponses) {
         List<String> allImages = mergeImages(postDetailResponses);
+        List<PostCommentResponse> allComments = mergeComments(postDetailResponses);
         PostDetailResponse response = postDetailResponses.get(0);
 
         return new PostDetailResponse(
           response.post(),
           allImages,
-          response.member()
+          response.member(),
+          allComments
         );
     }
 
     private List<String> mergeImages(List<PostDetailResponse> responses) {
         return responses.stream()
                         .flatMap(response -> response.postImages().stream())
+                        .distinct()
                         .toList();
     }
+
+    private List<PostCommentResponse> mergeComments(List<PostDetailResponse> responses) {
+        return responses.stream()
+                        .flatMap(response -> response.postComments().stream())
+                        .distinct()
+                        .toList();
+    }
+
 
     private ConstructorExpression<PostDetailResponse> postDetailProjection() {
         return Projections.constructor(PostDetailResponse.class,
           postProjection(),
           postImagesProjection(),
-          memberProjection()
+          memberProjection(),
+          Projections.list(postCommentProjection())
         );
     }
 
@@ -77,9 +93,19 @@ public class PostQueryRepository {
           qPost.content,
           qPost.likeCount,
           qPost.dislikeCount,
+          qPost.commentCount,
           qPost.region.name,
           qPost.createdAt,
           qPost.modifiedAt
+        );
+    }
+
+    private ConstructorExpression<PostCommentResponse> postCommentProjection() {
+        return Projections.constructor(PostCommentResponse.class,
+          qPostComment.id,
+          qPostComment.content,
+          qPostComment.createdAt,
+          qPostComment.modifiedAt
         );
     }
 
