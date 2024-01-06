@@ -69,6 +69,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/api/restaurants/new").hasRole("USER") // 식당 등록 요청
             .requestMatchers(HttpMethod.POST, "/api/reviews/new/{restaurantId}").hasRole("USER") // 리뷰 작성
             .requestMatchers(HttpMethod.POST, "/api/reviews/{reviewId}/reactions").hasRole("USER") // 리뷰 좋아요/싫어요
+            .requestMatchers(HttpMethod.GET, "/api/reviews/my/writable-reviews").hasRole("USER") // 내가 작성한 리뷰 목록 조회
             .requestMatchers(HttpMethod.DELETE, "/api/reviews/{restaurantId}/{reviewId}")
             .hasAnyRole("USER", "ADMIN") // 리뷰 삭제
             .requestMatchers(HttpMethod.POST, "/api/posts/new").hasRole("USER") // 게시글 작성
