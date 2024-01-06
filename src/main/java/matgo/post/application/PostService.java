@@ -97,7 +97,7 @@ public class PostService {
         Post post = getPostById(postId);
         checkPostOwner(member, post);
 
-        updatePostImagesIfPresent(postImages, member, post);
+        updatePostImagesIfPresent(postImages, post);
         updatePostIfChanged(postUpdateRequest, post);
     }
 
@@ -112,7 +112,7 @@ public class PostService {
         }
     }
 
-    private void updatePostImagesIfPresent(List<MultipartFile> postImages, Member member, Post post) {
+    private void updatePostImagesIfPresent(List<MultipartFile> postImages, Post post) {
         if (postImages != null && !postImages.isEmpty()) {
             // 기존 이미지 삭제
             deletePostImages(post);
