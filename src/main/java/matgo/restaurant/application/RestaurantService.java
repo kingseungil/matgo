@@ -23,6 +23,7 @@ import matgo.restaurant.domain.repository.RestaurantSearchRepository;
 import matgo.restaurant.domain.repository.RestaurantSearchRepositoryImpl;
 import matgo.restaurant.dto.request.RestaurantRequest;
 import matgo.restaurant.dto.response.RestaurantDetailResponse;
+import matgo.restaurant.dto.response.RestaurantSearchResponse;
 import matgo.restaurant.dto.response.RestaurantSliceResponse;
 import matgo.restaurant.dto.response.RestaurantsSliceResponse;
 import matgo.restaurant.exception.RestaurantException;
@@ -164,6 +165,16 @@ public class RestaurantService {
                                                     .orElseThrow(() -> new RestaurantException(NOT_FOUND_RESTAURANT));
 
         return RestaurantDetailResponse.from(restaurant);
+    }
+
+    @Transactional(readOnly = true)
+    public RestaurantSearchResponse getSearchedRestaurantByName(String name) {
+        List<RestaurantDetailResponse> restaurants = restaurantSearchRepository.findByName(name)
+                                                                               .stream()
+                                                                               .map(RestaurantDetailResponse::from)
+                                                                               .toList();
+
+        return new RestaurantSearchResponse(restaurants);
     }
 
     @Transactional

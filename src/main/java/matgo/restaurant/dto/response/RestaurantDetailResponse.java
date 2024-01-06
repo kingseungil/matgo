@@ -1,6 +1,7 @@
 package matgo.restaurant.dto.response;
 
 import matgo.restaurant.domain.entity.Restaurant;
+import matgo.restaurant.domain.entity.RestaurantSearch;
 
 public record RestaurantDetailResponse(
   Long id,
@@ -27,6 +28,21 @@ public record RestaurantDetailResponse(
           restaurant.getDescription(),
           restaurant.getRating(),
           restaurant.getReviewCount()
+        );
+    }
+
+    public static RestaurantDetailResponse from(RestaurantSearch restaurantSearch) {
+        return new RestaurantDetailResponse(
+          Long.parseLong(restaurantSearch.getId()),
+          restaurantSearch.getName(),
+          restaurantSearch.getRoadAddress(),
+          restaurantSearch.getAddress(),
+          restaurantSearch.getPhoneNumber(),
+          restaurantSearch.getLat(),
+          restaurantSearch.getLon(),
+          restaurantSearch.getDescription(),
+          restaurantSearch.getRating(),
+          restaurantSearch.getReviewCount()
         );
     }
 

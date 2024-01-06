@@ -8,6 +8,7 @@ import matgo.restaurant.application.RestaurantService;
 import matgo.restaurant.dto.request.CustomPageRequest;
 import matgo.restaurant.dto.request.RestaurantRequest;
 import matgo.restaurant.dto.response.RestaurantDetailResponse;
+import matgo.restaurant.dto.response.RestaurantSearchResponse;
 import matgo.restaurant.dto.response.RestaurantsSliceResponse;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -75,6 +76,14 @@ public class RestaurantController {
     ) {
         return restaurantService.getRestaurantDetail(restaurantId);
     }
+
+    @GetMapping("/search")
+    public RestaurantSearchResponse getSearchedRestaurantByName(
+      @RequestParam String name
+    ) {
+        return restaurantService.getSearchedRestaurantByName(name);
+    }
+
 
     @PostMapping("/new")
     @OnlyUser

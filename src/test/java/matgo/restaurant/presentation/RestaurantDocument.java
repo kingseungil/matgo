@@ -59,6 +59,15 @@ public class RestaurantDocument {
         );
     }
 
+    public static RestDocumentationFilter searchRestaurantsDocument() {
+        return document("식당 검색",
+          resourceDetails().tag("Restaurant").description("이름으로 식당 검색"),
+          queryParameters(
+            parameterWithName("name").description("식당 이름")
+          )
+        );
+    }
+
     public static RestDocumentationFilter requestNewRestaurantDocument() {
         return document("식당 등록 요청",
           resourceDetails().tag("Restaurant").description("식당 등록 요청"),
