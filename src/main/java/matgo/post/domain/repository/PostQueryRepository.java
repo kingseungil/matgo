@@ -138,13 +138,11 @@ public class PostQueryRepository {
     private OrderSpecifier<?>[] getOrderSpecifier(Sort sort) {
         return sort.stream()
                    .map(order -> switch (order.getProperty()) {
-                       case "createdAt" ->
-                         order.isAscending() ? QPost.post.createdAt.asc() : QPost.post.createdAt.desc();
-                       case "likeCount" ->
-                         order.isAscending() ? QPost.post.likeCount.asc() : QPost.post.likeCount.desc();
+                       case "createdAt" -> order.isAscending() ? qPost.createdAt.asc() : qPost.createdAt.desc();
+                       case "likeCount" -> order.isAscending() ? qPost.likeCount.asc() : qPost.likeCount.desc();
                        case "dislikeCount" ->
-                         order.isAscending() ? QPost.post.dislikeCount.asc() : QPost.post.dislikeCount.desc();
-                       default -> QPost.post.createdAt.desc();
+                         order.isAscending() ? qPost.dislikeCount.asc() : qPost.dislikeCount.desc();
+                       default -> qPost.createdAt.desc();
                    })
                    .toArray(OrderSpecifier[]::new);
     }
