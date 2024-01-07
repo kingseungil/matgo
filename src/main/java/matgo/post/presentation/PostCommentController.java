@@ -5,10 +5,15 @@ import lombok.RequiredArgsConstructor;
 import matgo.auth.security.OnlyUser;
 import matgo.post.application.PostCommentService;
 import matgo.post.dto.request.PostCommentCreateRequest;
+import matgo.post.dto.response.PostCommentSliceResponse;
+import matgo.restaurant.dto.request.CustomPageRequest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -57,6 +62,24 @@ public class PostCommentController {
     ) {
         postCommentService.deleteComment(Long.parseLong(userDetails.getUsername()), commentId);
         return ResponseEntity.ok().build();
+    }
+
+    // 내가 작성한 댓글 조회
+    @GetMapping("/my/writable-comments")
+    @OnlyUser
+    public ResponseEntity<PostCommentSliceResponse> getMyWritableComments(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @Valid CustomPageRequest customPageRequest
+    ) {
+        Pageable pageable = PageRequest.of(
+          customPageRequest.page(),
+          customPageRequest.size(),
+          customPageRequest.getSort()
+        );
+
+        PostCommentSliceResponse postCommentSliceResponse = postCommentService.getMyComments(
+          Long.parseLong(userDetails.getUsername()), pageable);
+        return ResponseEntity.ok(postCommentSliceResponse);
     }
 
 }

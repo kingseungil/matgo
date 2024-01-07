@@ -12,10 +12,13 @@ import matgo.member.domain.repository.MemberRepository;
 import matgo.member.exception.MemberException;
 import matgo.post.domain.entity.Post;
 import matgo.post.domain.entity.PostComment;
+import matgo.post.domain.repository.PostCommentQueryRepository;
 import matgo.post.domain.repository.PostCommentRepository;
 import matgo.post.domain.repository.PostRepository;
 import matgo.post.dto.request.PostCommentCreateRequest;
+import matgo.post.dto.response.PostCommentSliceResponse;
 import matgo.post.exception.PostException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +29,7 @@ public class PostCommentService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final PostCommentRepository postCommentRepository;
+    private final PostCommentQueryRepository postCommentQueryRepository;
 
     @DistributedLock(key = "'createComment-' + #postId")
     public void createComment(Long memberId, Long postId, PostCommentCreateRequest postCommentCreateRequest) {
@@ -86,5 +90,10 @@ public class PostCommentService {
     private PostComment getPostCommentById(Long commentId) {
         return postCommentRepository.findById(commentId)
                                     .orElseThrow(() -> new PostException(NOT_FOUND_POST_COMMENT));
+    }
+
+    @Transactional(readOnly = true)
+    public PostCommentSliceResponse getMyComments(Long memberId, Pageable pageable) {
+        return postCommentQueryRepository.findAllByMemberId(memberId, pageable);
     }
 }
