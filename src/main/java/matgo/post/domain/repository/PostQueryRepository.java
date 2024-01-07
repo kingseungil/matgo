@@ -12,6 +12,7 @@ import matgo.member.dto.response.MemberResponse;
 import matgo.post.domain.entity.QPost;
 import matgo.post.domain.entity.QPostComment;
 import matgo.post.domain.entity.QPostImage;
+import matgo.post.dto.response.MyPostSliceResponse;
 import matgo.post.dto.response.PostCommentResponse;
 import matgo.post.dto.response.PostDetailResponse;
 import matgo.post.dto.response.PostListResponse;
@@ -155,5 +156,15 @@ public class PostQueryRepository {
         );
     }
 
+    public MyPostSliceResponse findAllMyPostSliceByMemberId(Long memberId, Pageable pageable) {
+        List<PostResponse> responses = jpaQueryFactory.select(postProjection())
+                                                      .from(qPost)
+                                                      .where(qPost.member.id.eq(memberId))
+                                                      .orderBy(getOrderSpecifier(pageable.getSort()))
+                                                      .offset(pageable.getOffset())
+                                                      .limit(pageable.getPageSize())
+                                                      .fetch();
 
+        return new MyPostSliceResponse(responses, responses.size() == pageable.getPageSize());
+    }
 }

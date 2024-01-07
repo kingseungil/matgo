@@ -9,6 +9,7 @@ import matgo.global.type.Reaction;
 import matgo.post.application.PostService;
 import matgo.post.dto.request.PostCreateRequest;
 import matgo.post.dto.request.PostUpdateRequest;
+import matgo.post.dto.response.MyPostSliceResponse;
 import matgo.post.dto.response.PostCreateResponse;
 import matgo.post.dto.response.PostDetailResponse;
 import matgo.post.dto.response.PostSliceResponse;
@@ -113,5 +114,22 @@ public class PostController {
     ) {
         postService.addPostReaction(Long.parseLong(userDetails.getUsername()), postId, reactionType);
         return ResponseEntity.noContent().build();
+    }
+
+    // 내가 작성한 게시글 조회
+    @GetMapping("/my/writable-posts")
+    @OnlyUser
+    public ResponseEntity<MyPostSliceResponse> getMyPosts(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @Valid CustomPageRequest customPageRequest
+    ) {
+        Pageable pageable = PageRequest.of(
+          customPageRequest.page(),
+          customPageRequest.size(),
+          customPageRequest.getSort()
+        );
+
+        MyPostSliceResponse response = postService.getMyPosts(Long.parseLong(userDetails.getUsername()), pageable);
+        return ResponseEntity.ok().body(response);
     }
 }

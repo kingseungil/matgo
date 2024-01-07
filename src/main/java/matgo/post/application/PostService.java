@@ -26,6 +26,7 @@ import matgo.post.domain.repository.PostReactionRepository;
 import matgo.post.domain.repository.PostRepository;
 import matgo.post.dto.request.PostCreateRequest;
 import matgo.post.dto.request.PostUpdateRequest;
+import matgo.post.dto.response.MyPostSliceResponse;
 import matgo.post.dto.response.PostCreateResponse;
 import matgo.post.dto.response.PostDetailResponse;
 import matgo.post.dto.response.PostSliceResponse;
@@ -215,5 +216,10 @@ public class PostService {
         } else {
             post.increaseDislikeCount();
         }
+    }
+
+    @Transactional(readOnly = true)
+    public MyPostSliceResponse getMyPosts(Long memberId, Pageable pageable) {
+        return postQueryRepository.findAllMyPostSliceByMemberId(memberId, pageable);
     }
 }

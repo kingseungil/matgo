@@ -78,6 +78,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/posts/detail/{postId}").hasRole("USER") // 게시글 상세 조회
             .requestMatchers(HttpMethod.GET, "/api/posts").hasRole("USER") // 게시글 목록 조회
             .requestMatchers(HttpMethod.GET, "/api/posts/{postId}/reactions").hasRole("USER") // 게시글 좋아요/싫어요
+            .requestMatchers(HttpMethod.GET, "/api/posts/my/writable-posts").hasRole("USER") // 내가 작성한 게시글 목록 조회
             .requestMatchers("/api/comments/**").hasRole("USER") // 댓글 작성/수정/삭제
             // 관리자만 허용
             .requestMatchers(HttpMethod.PUT, "/api/restaurants/approve/{restaurantId}").hasRole("ADMIN") // 식당 등록 승인
