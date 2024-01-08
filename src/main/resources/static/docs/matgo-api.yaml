@@ -8,12 +8,46 @@ servers:
 tags: []
 paths:
   /api/member:
+    get:
+      tags:
+      - Member
+      summary: 회원 상세 조회
+      description: 회원 상세 조회
+      operationId: 회원 상세 조회
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                회원 상세 조회:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",
+                      "nickname" : "testnick"
+                    }
+      security:
+      - bearerAuthJWT: []
     put:
       tags:
       - Member
       summary: 회원 정보 수정
       description: 회원 정보 수정
       operationId: 회원 정보 수정
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+    delete:
+      tags:
+      - Member
+      summary: 회원 탈퇴
+      description: 회원 탈퇴
+      operationId: 회원 탈퇴
       responses:
         "204":
           description: "204"
@@ -57,21 +91,22 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/api-posts486549215'
+                $ref: '#/components/schemas/api-member-signup486549215'
               examples:
                 게시글 조회(페이징):
                   value: |-
                     {
                       "posts" : [ {
                         "post" : {
-                          "postId" : 1,
+                          "id" : 1,
                           "title" : "title",
                           "content" : "content",
                           "likeCount" : 0,
                           "dislikeCount" : 0,
+                          "commentCount" : 0,
                           "regionName" : "효자동3가",
-                          "createdAt" : "2024-01-06T12:35:17.688593",
-                          "modifiedAt" : "2024-01-06T12:35:17.690755"
+                          "createdAt" : "2024-01-08T12:05:02.526079",
+                          "modifiedAt" : "2024-01-08T12:05:02.527486"
                         },
                         "member" : {
                           "id" : 1,
@@ -121,7 +156,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/api-posts486549215'
+                $ref: '#/components/schemas/api-member-signup486549215'
               examples:
                 전체 식당 목록 조회:
                   value: |-
@@ -265,12 +300,12 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/api-posts486549215'
+                $ref: '#/components/schemas/api-member-signup486549215'
               examples:
                 로그인:
                   value: |-
                     {
-                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwNDUxMjExMSwiaXNzIjoibWF0Z28iLCJleHAiOjE3MDQ1MTIxNzF9.xLaPWetCQXbBxeu7EANb9yowJx9R_2nGewVcF64zmb4"
+                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwNDY4MzA5MiwiaXNzIjoibWF0Z28iLCJleHAiOjE3MDQ2ODMxNTJ9.X5hr24oQ5xiNlyzsPyG5ieC4T4TTQHapVNNd7QqJRAM"
                     }
   /api/auth/logout:
     delete:
@@ -327,6 +362,84 @@ paths:
       responses:
         "204":
           description: "204"
+  /api/comments/{commentId}:
+    put:
+      tags:
+      - PostComment
+      summary: 댓글 수정
+      description: 댓글 수정
+      operationId: 댓글 수정
+      parameters:
+      - name: commentId
+        in: path
+        description: 댓글 아이디
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-comments-commentId739802942'
+            examples:
+              댓글 수정:
+                value: |-
+                  {
+                    "content" : "updated content"
+                  }
+      responses:
+        "200":
+          description: "200"
+      security:
+      - bearerAuthJWT: []
+    delete:
+      tags:
+      - PostComment
+      summary: 댓글 삭제
+      description: 댓글 삭제
+      operationId: 댓글 삭제
+      parameters:
+      - name: commentId
+        in: path
+        description: 댓글 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+      security:
+      - bearerAuthJWT: []
+  /api/comments/{postId}:
+    post:
+      tags:
+      - PostComment
+      summary: 댓글 작성
+      description: 댓글 작성
+      operationId: 댓글 작성
+      parameters:
+      - name: postId
+        in: path
+        description: 게시글 아이디
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-comments-commentId739802942'
+            examples:
+              댓글 작성:
+                value: |-
+                  {
+                    "content" : "content"
+                  }
+      responses:
+        "200":
+          description: "200"
+      security:
+      - bearerAuthJWT: []
   /api/member/reset-password:
     put:
       tags:
@@ -364,7 +477,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/api-posts486549215'
+                $ref: '#/components/schemas/api-member-signup486549215'
               examples:
                 회원가입:
                   value: signup@naver.com
@@ -461,7 +574,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/api-posts486549215'
+                $ref: '#/components/schemas/api-member-signup486549215'
               examples:
                 주소로 식당 목록 조회:
                   value: |-
@@ -617,7 +730,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/api-posts486549215'
+                $ref: '#/components/schemas/api-member-signup486549215'
               examples:
                 주변 식당 목록 조회:
                   value: |-
@@ -786,7 +899,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/api-posts486549215'
+                $ref: '#/components/schemas/api-member-signup486549215'
               examples:
                 식당 검색:
                   value: |-
@@ -848,33 +961,88 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/api-posts486549215'
+                $ref: '#/components/schemas/api-member-signup486549215'
               examples:
                 리뷰 조회(페이징):
                   value: |-
                     {
                       "reviews" : [ {
-                        "reviewId" : 1,
-                        "content" : "리뷰",
-                        "rating" : 5,
-                        "imageUrl" : "mocked_url",
-                        "revisit" : true,
-                        "likeCount" : 0,
-                        "dislikeCount" : 0,
-                        "createdAt" : "2024-01-06T12:35:23.756627",
+                        "review" : {
+                          "id" : 1,
+                          "content" : "리뷰",
+                          "rating" : 5,
+                          "imageUrl" : "mocked_url",
+                          "revisit" : true,
+                          "likeCount" : 0,
+                          "dislikeCount" : 0,
+                          "createdAt" : "2024-01-08T12:05:08.457505"
+                        },
                         "member" : {
                           "id" : 1,
                           "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",
                           "nickname" : "testnick"
                         },
                         "restaurant" : {
-                          "restaurantId" : 1,
+                          "id" : 1,
                           "name" : "식당",
                           "roadAddress" : "서울시 강남구 테헤란로 427"
                         }
                       } ],
                       "hasNext" : false
                     }
+  /api/comments/my/writable-comments:
+    get:
+      tags:
+      - PostComment
+      summary: 내가 작성한 댓글 조회
+      description: 내가 작성한 댓글 조회
+      operationId: 댓글 조회(페이징)
+      parameters:
+      - name: page
+        in: query
+        description: 페이지 번호
+        required: true
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기
+        required: true
+        schema:
+          type: string
+      - name: direction
+        in: query
+        description: "정렬 방향(DESC,ASC)"
+        required: false
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: 정렬 기준(createdAt)
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                댓글 조회(페이징):
+                  value: |-
+                    {
+                      "comments" : [ {
+                        "id" : 1,
+                        "content" : "content",
+                        "createdAt" : "2024-01-08T12:04:58.529649",
+                        "modifiedAt" : "2024-01-08T12:04:58.529649"
+                      } ],
+                      "hasNext" : false
+                    }
+      security:
+      - bearerAuthJWT: []
   /api/posts/detail/{postId}:
     get:
       tags:
@@ -895,28 +1063,60 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/api-posts486549215'
+                $ref: '#/components/schemas/api-member-signup486549215'
               examples:
                 게시글 상세 조회:
                   value: |-
                     {
                       "post" : {
-                        "postId" : 1,
+                        "id" : 1,
                         "title" : "title",
                         "content" : "content",
                         "likeCount" : 0,
                         "dislikeCount" : 0,
+                        "commentCount" : 0,
                         "regionName" : "효자동3가",
-                        "createdAt" : "2024-01-06T12:35:15.921593",
-                        "modifiedAt" : "2024-01-06T12:35:15.923373"
+                        "createdAt" : "2024-01-08T12:05:01.063851",
+                        "modifiedAt" : "2024-01-08T12:05:01.065665"
                       },
                       "postImages" : [ null ],
                       "member" : {
                         "id" : 1,
                         "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",
                         "nickname" : "testnick"
-                      }
+                      },
+                      "postComments" : [ {
+                        "id" : null,
+                        "content" : null,
+                        "createdAt" : null,
+                        "modifiedAt" : null
+                      } ]
                     }
+      security:
+      - bearerAuthJWT: []
+  /api/posts/{postId}/reactions:
+    post:
+      tags:
+      - Post
+      summary: 게시글 좋아요/싫어요
+      description: 게시글 좋아요/싫어요
+      operationId: 게시글 좋아요/싫어요
+      parameters:
+      - name: postId
+        in: path
+        description: 게시글 아이디
+        required: true
+        schema:
+          type: string
+      - name: reactionType
+        in: query
+        description: LIKE/DISLIKE
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
       security:
       - bearerAuthJWT: []
   /api/restaurants/approve/{restaurantId}:
@@ -958,7 +1158,7 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/api-posts486549215'
+                $ref: '#/components/schemas/api-member-signup486549215'
               examples:
                 식당 상세 조회:
                   value: |-
@@ -994,30 +1194,96 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/api-posts486549215'
+                $ref: '#/components/schemas/api-member-signup486549215'
               examples:
                 리뷰 상세 조회:
                   value: |-
                     {
-                      "reviewId" : 1,
-                      "content" : "리뷰",
-                      "rating" : 5,
-                      "imageUrl" : "mocked_url",
-                      "revisit" : true,
-                      "likeCount" : 0,
-                      "dislikeCount" : 0,
-                      "createdAt" : "2024-01-06T12:35:23.305017",
+                      "review" : {
+                        "id" : 1,
+                        "content" : "리뷰",
+                        "rating" : 5,
+                        "imageUrl" : "mocked_url",
+                        "revisit" : true,
+                        "likeCount" : 0,
+                        "dislikeCount" : 0,
+                        "createdAt" : "2024-01-08T12:05:08.012403"
+                      },
                       "member" : {
                         "id" : 1,
                         "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",
                         "nickname" : "testnick"
                       },
                       "restaurant" : {
-                        "restaurantId" : 1,
+                        "id" : 1,
                         "name" : "식당",
                         "roadAddress" : "서울시 강남구 테헤란로 427"
                       }
                     }
+  /api/reviews/my/writable-reviews:
+    get:
+      tags:
+      - Review
+      summary: 내가 쓴 리뷰 조회
+      description: 내가 쓴 리뷰 조회
+      operationId: 내가 쓴 리뷰 조회
+      parameters:
+      - name: page
+        in: query
+        description: 페이지 번호
+        required: true
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기
+        required: true
+        schema:
+          type: string
+      - name: direction
+        in: query
+        description: "정렬 방향(DESC,ASC)"
+        required: false
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: "정렬 기준(rating,createdAt,likeCount,dislikeCount)"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                내가 쓴 리뷰 조회:
+                  value: |-
+                    {
+                      "reviews" : [ {
+                        "review" : {
+                          "id" : 1,
+                          "content" : "리뷰",
+                          "rating" : 5,
+                          "imageUrl" : "mocked_url",
+                          "revisit" : true,
+                          "likeCount" : 0,
+                          "dislikeCount" : 0,
+                          "createdAt" : "2024-01-08T12:05:08.889727"
+                        },
+                        "restaurant" : {
+                          "id" : 1,
+                          "name" : "식당",
+                          "roadAddress" : "서울시 강남구 테헤란로 427"
+                        }
+                      } ],
+                      "hasNext" : false
+                    }
+      security:
+      - bearerAuthJWT: []
   /api/reviews/new/{restaurantId}:
     post:
       tags:
@@ -1140,6 +1406,12 @@ components:
         email:
           type: string
           description: 이메일
+    api-comments-commentId739802942:
+      type: object
+      properties:
+        content:
+          type: string
+          description: 내용
     api-member-reset-password-244801712:
       type: object
       properties:
@@ -1149,7 +1421,7 @@ components:
         currentPassword:
           type: string
           description: 현재 비밀번호
-    api-posts486549215:
+    api-member-signup486549215:
       type: object
   securitySchemes:
     bearerAuthJWT:

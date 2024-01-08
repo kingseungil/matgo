@@ -3,6 +3,7 @@ package matgo.review.presentation;
 import static matgo.review.presentation.ReviewDocument.addReviewReactionDocument;
 import static matgo.review.presentation.ReviewDocument.createReviewDocument;
 import static matgo.review.presentation.ReviewDocument.deleteReviewDocument;
+import static matgo.review.presentation.ReviewDocument.getMyReviewsDocument;
 import static matgo.review.presentation.ReviewDocument.getReviewDetailDocument;
 import static matgo.review.presentation.ReviewDocument.getReviewsDocument;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +23,7 @@ import matgo.global.type.S3Directory;
 import matgo.restaurant.domain.entity.Restaurant;
 import matgo.restaurant.dto.request.CustomPageRequest;
 import matgo.review.domain.entity.Review;
+import matgo.review.dto.response.MyReviewSliceResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -177,7 +179,7 @@ class ReviewControllerTest extends BaseControllerTest {
         // then
         assertSoftly(softly -> {
             softly.assertThat(response.statusCode()).isEqualTo(200);
-            softly.assertThat(response.body().jsonPath().getLong("reviewId")).isEqualTo(reviewId);
+            softly.assertThat(response.body().jsonPath().getLong("review.id")).isEqualTo(reviewId);
         });
     }
 
@@ -210,5 +212,41 @@ class ReviewControllerTest extends BaseControllerTest {
 
         // then
         assertThat(response.statusCode()).isEqualTo(204);
+    }
+
+    @Test
+    @DisplayName("[성공]내가 작성한 리뷰 조회(페이징)")
+    void getMyReviews_success() {
+        // given
+        Long reviewId = 1L;
+        Review review = Review.builder()
+                              .id(reviewId)
+                              .content("리뷰")
+                              .rating(5)
+                              .imageUrl("mocked_url")
+                              .revisit(true)
+                              .likeCount(0)
+                              .dislikeCount(0)
+                              .member(member)
+                              .restaurant(restaurant)
+                              .build();
+        reviewRepository.save(review);
+        // when
+        Response response = customGivenWithDocs(getMyReviewsDocument())
+          .contentType(ContentType.JSON)
+          .header("Authorization", "Bearer " + accessToken)
+          .queryParam("page", customPageRequest.page())
+          .queryParam("size", customPageRequest.size())
+          .queryParam("direction", customPageRequest.direction().get())
+          .queryParam("sortBy", customPageRequest.sortBy().get())
+          .get("/api/reviews/my/writable-reviews");
+
+        // then
+        assertSoftly(softly -> {
+            softly.assertThat(response.statusCode()).isEqualTo(200);
+            MyReviewSliceResponse myReviewSliceResponse = response.as(MyReviewSliceResponse.class);
+            softly.assertThat(myReviewSliceResponse.reviews()).hasSize(1);
+            softly.assertThat(myReviewSliceResponse.reviews().get(0).review().id()).isEqualTo(review.getId());
+        });
     }
 }

@@ -74,4 +74,16 @@ public class PostDocument {
           )
         );
     }
+
+    public static RestDocumentationFilter addPostReactionDocument() {
+        return document("게시글 좋아요/싫어요",
+          resourceDetails().tag("Post").description("게시글 좋아요/싫어요"),
+          pathParameters(
+            parameterWithName("postId").description("게시글 아이디")
+          ),
+          queryParameters(
+            parameterWithName("reactionType").description("LIKE/DISLIKE")
+          )
+        );
+    }
 }

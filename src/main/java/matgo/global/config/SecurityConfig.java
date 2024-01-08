@@ -65,6 +65,7 @@ public class SecurityConfig {
             // 고객만 허용
             .requestMatchers(HttpMethod.PUT, "/api/member").hasRole("USER") // 회원 정보 수정
             .requestMatchers(HttpMethod.PUT, "/api/member/reset-password").hasRole("USER") // 비밀번호 재설정
+            .requestMatchers(HttpMethod.DELETE, "/api/member").hasRole("USER") // 회원 탈퇴
             .requestMatchers(HttpMethod.GET, "/api/restaurants/nearby").hasRole("USER") // 내 주변 식당 목록 조회
             .requestMatchers(HttpMethod.POST, "/api/restaurants/new").hasRole("USER") // 식당 등록 요청
             .requestMatchers(HttpMethod.POST, "/api/reviews/new/{restaurantId}").hasRole("USER") // 리뷰 작성

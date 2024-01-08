@@ -26,6 +26,7 @@ import matgo.member.domain.repository.RegionRepository;
 import matgo.member.domain.type.UserRole;
 import matgo.member.dto.request.MemberUpdateRequest;
 import matgo.member.dto.request.SignUpRequest;
+import matgo.post.domain.repository.PostCommentRepository;
 import matgo.post.domain.repository.PostQueryRepository;
 import matgo.post.domain.repository.PostRepository;
 import matgo.post.dto.request.PostCreateRequest;
@@ -100,6 +101,8 @@ public abstract class BaseControllerTest {
     protected PostRepository postRepository;
     @Autowired
     protected PostQueryRepository postQueryRepository;
+    @Autowired
+    protected PostCommentRepository postCommentRepository;
     @LocalServerPort
     int port;
 

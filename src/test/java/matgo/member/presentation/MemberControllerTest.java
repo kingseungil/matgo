@@ -1,5 +1,7 @@
 package matgo.member.presentation;
 
+import static matgo.member.presentation.MemberDocument.deleteMemberDocument;
+import static matgo.member.presentation.MemberDocument.getMemberDetailDocument;
 import static matgo.member.presentation.MemberDocument.registerMemberDocument;
 import static matgo.member.presentation.MemberDocument.resetPasswordDocument;
 import static matgo.member.presentation.MemberDocument.updateMemberDocument;
@@ -91,4 +93,31 @@ class MemberControllerTest extends BaseControllerTest {
         // then
         assertThat(response.statusCode()).isEqualTo(204);
     }
+
+    @Test
+    @DisplayName("[성공]내 정보 조회")
+    void getMyInfo() {
+        // when
+        Response response = customGivenWithDocs(getMemberDetailDocument())
+          .header("Authorization", "Bearer " + accessToken)
+          .accept(ContentType.JSON)
+          .get("/api/member");
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(200);
+    }
+
+    @Test
+    @DisplayName("[성공]회원 탈퇴")
+    void deleteMember() {
+        // when
+        Response response = customGivenWithDocs(deleteMemberDocument())
+          .header("Authorization", "Bearer " + accessToken)
+          .accept(ContentType.JSON)
+          .delete("/api/member");
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(204);
+    }
+
 }

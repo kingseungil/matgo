@@ -31,6 +31,8 @@ import matgo.post.domain.entity.Post;
 import matgo.post.domain.entity.PostComment;
 import matgo.post.domain.entity.PostReaction;
 import matgo.review.domain.entity.Review;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
@@ -44,6 +46,8 @@ import matgo.review.domain.entity.Review;
     @UniqueConstraint(name = "UK_nickname", columnNames = {"nickname"}),
   }
 )
+@SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class Member extends BaseEntity {
 
     @Id
