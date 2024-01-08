@@ -92,7 +92,6 @@ public class DataInitializer implements ApplicationRunner {
         if (existAdmin.isPresent()) {
             return;
         }
-        Region adminRegion = new Region("효자동3가");
         Member admin = Member.builder()
                              .nickname("admin")
                              .email(adminEmail)
@@ -100,7 +99,7 @@ public class DataInitializer implements ApplicationRunner {
                              .isActive(true)
                              .profileImage("admin")
                              .role(UserRole.ROLE_ADMIN)
-                             .region(adminRegion)
+                             .region(regionRepository.findById(10L).orElseThrow())
                              .build();
 
         memberRepository.save(admin);
