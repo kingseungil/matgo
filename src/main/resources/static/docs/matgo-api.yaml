@@ -105,8 +105,8 @@ paths:
                           "dislikeCount" : 0,
                           "commentCount" : 0,
                           "regionName" : "효자동3가",
-                          "createdAt" : "2024-01-08T12:05:02.526079",
-                          "modifiedAt" : "2024-01-08T12:05:02.527486"
+                          "createdAt" : "2024-01-08T17:25:22.861206",
+                          "modifiedAt" : "2024-01-08T17:25:22.862761"
                         },
                         "member" : {
                           "id" : 1,
@@ -305,7 +305,7 @@ paths:
                 로그인:
                   value: |-
                     {
-                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwNDY4MzA5MiwiaXNzIjoibWF0Z28iLCJleHAiOjE3MDQ2ODMxNTJ9.X5hr24oQ5xiNlyzsPyG5ieC4T4TTQHapVNNd7QqJRAM"
+                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwNDcwMjMxMSwiaXNzIjoibWF0Z28iLCJleHAiOjE3MDQ3MDIzNzF9.ujIfYNUlL6WAZ9P91er7xSzGwiibSJUY7Pp20odyEb0"
                     }
   /api/auth/logout:
     delete:
@@ -975,7 +975,7 @@ paths:
                           "revisit" : true,
                           "likeCount" : 0,
                           "dislikeCount" : 0,
-                          "createdAt" : "2024-01-08T12:05:08.457505"
+                          "createdAt" : "2024-01-08T17:25:29.414233"
                         },
                         "member" : {
                           "id" : 1,
@@ -1036,8 +1036,8 @@ paths:
                       "comments" : [ {
                         "id" : 1,
                         "content" : "content",
-                        "createdAt" : "2024-01-08T12:04:58.529649",
-                        "modifiedAt" : "2024-01-08T12:04:58.529649"
+                        "createdAt" : "2024-01-08T17:25:18.334716",
+                        "modifiedAt" : "2024-01-08T17:25:18.334716"
                       } ],
                       "hasNext" : false
                     }
@@ -1076,8 +1076,8 @@ paths:
                         "dislikeCount" : 0,
                         "commentCount" : 0,
                         "regionName" : "효자동3가",
-                        "createdAt" : "2024-01-08T12:05:01.063851",
-                        "modifiedAt" : "2024-01-08T12:05:01.065665"
+                        "createdAt" : "2024-01-08T17:25:21.41791",
+                        "modifiedAt" : "2024-01-08T17:25:21.419322"
                       },
                       "postImages" : [ null ],
                       "member" : {
@@ -1125,7 +1125,7 @@ paths:
       - Restaurant
       summary: "[관리자]식당 등록 승인"
       description: "[관리자]식당 등록 승인"
-      operationId: "[관리자]식당 등록 승인식당 등록 승인"
+      operationId: "[관리자]식당 등록 승인"
       parameters:
       - name: restaurantId
         in: path
@@ -1207,7 +1207,7 @@ paths:
                         "revisit" : true,
                         "likeCount" : 0,
                         "dislikeCount" : 0,
-                        "createdAt" : "2024-01-08T12:05:08.012403"
+                        "createdAt" : "2024-01-08T17:25:28.920368"
                       },
                       "member" : {
                         "id" : 1,
@@ -1272,7 +1272,7 @@ paths:
                           "revisit" : true,
                           "likeCount" : 0,
                           "dislikeCount" : 0,
-                          "createdAt" : "2024-01-08T12:05:08.889727"
+                          "createdAt" : "2024-01-08T17:25:29.872255"
                         },
                         "restaurant" : {
                           "id" : 1,

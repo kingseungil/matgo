@@ -2,7 +2,21 @@ version: '3.7'
 name: matgo
 
 services:
-  # backend server 추가
+  matgo-server:
+    image: ${MY_HUB_ID}/matgo-api:1.0.0
+    container_name: matgo-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    env_file:
+      - env.properties
+    expose:
+      - "8080"
+    depends_on:
+      - mysql
+      - redis
+      - elasticsearch
+    networks:
+      - matgo
 
   mysql:
     image: mysql:latest
@@ -15,6 +29,17 @@ services:
       - ./mysql-data:/var/lib/mysql
     ports:
       - "3306:3306"
+    networks:
+      - matgo
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-docker
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     networks:
       - matgo
 

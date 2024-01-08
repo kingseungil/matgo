@@ -45,3 +45,4 @@ out/
 ### docker ###
 /docker/mysql-data
 /docker/redis-data
+/docker/.env
