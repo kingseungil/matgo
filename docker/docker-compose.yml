@@ -18,19 +18,19 @@ services:
     networks:
       - matgo
 
-  mysql:
-    image: mysql:latest
-    container_name: mysql
-    env_file:
-      - env.properties
-    environment:
-      TZ: Asia/Seoul
-    volumes:
-      - ./mysql-data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    networks:
-      - matgo
+  #  mysql:
+  #    image: mysql:latest
+  #    container_name: mysql
+  #    env_file:
+  #      - env.properties
+  #    environment:
+  #      TZ: Asia/Seoul
+  #    volumes:
+  #      - ./mysql-data:/var/lib/mysql
+  #    ports:
+  #      - "3306:3306"
+  #    networks:
+  #      - matgo
 
   nginx:
     image: nginx:latest
