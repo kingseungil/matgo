@@ -55,7 +55,7 @@ public class RestaurantService {
     @Transactional
     // 한달에 한번씩 실행
 //    @Scheduled(cron = "0 0 0 1 * *")
-    @Scheduled(cron = "0 10 * * * *")
+    @Scheduled(cron = "0 20 * * * *")
     public void fetchAndSaveRestaurants() {
         int page = 1;
         int perPage = 100;
