@@ -1,9 +1,14 @@
 package matgo.global.util;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import matgo.member.domain.entity.Member;
 import matgo.member.domain.entity.Region;
+import matgo.member.domain.repository.MemberRepository;
 import matgo.member.domain.repository.RegionRepository;
+import matgo.member.domain.type.UserRole;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -13,6 +18,12 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements ApplicationRunner {
 
     private final RegionRepository regionRepository;
+    private final MemberRepository memberRepository;
+
+    @Value("${admin.email}")
+    private String adminEmail;
+    @Value("${admin.password}")
+    private String adminPassword;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -75,5 +86,22 @@ public class DataInitializer implements ApplicationRunner {
             regionRepository.saveAll(regionList);
         }
 
+        // admin
+        Optional<Member> existAdmin = memberRepository.findByEmail(adminEmail);
+
+        if (existAdmin.isPresent()) {
+            return;
+        }
+        Member admin = Member.builder()
+                             .nickname("admin")
+                             .email(adminEmail)
+                             .password(adminPassword)
+                             .isActive(true)
+                             .profileImage("admin")
+                             .role(UserRole.ROLE_ADMIN)
+                             .region(regionRepository.findById(1L).orElseThrow())
+                             .build();
+
+        memberRepository.save(admin);
     }
 }

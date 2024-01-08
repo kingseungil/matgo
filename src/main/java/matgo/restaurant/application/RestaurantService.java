@@ -203,4 +203,23 @@ public class RestaurantService {
 
         restaurantSearchRepository.save(RestaurantSearch.from(restaurant));
     }
+
+    @Transactional
+    public void fetchRestaurants() {
+        int page = 1;
+        int perPage = 100;
+
+        RestaurantDataResponse response;
+        do {
+            response = fetchRestaurantsFromAPI(page, perPage);
+            List<Restaurant> restaurants = convertToRestaurants(response.data());
+            Map<String, Restaurant> existingRestaurantsMap = getExistingRestaurantsMap(restaurants);
+            List<Restaurant> newRestaurants = getNewRestaurants(restaurants, existingRestaurantsMap);
+            saveRestaurants(newRestaurants);
+            page++;
+        } while (response.page() * response.perPage() < response.totalCount());
+
+        log.info("fetch and save restaurants success");
+        indexingToES();
+    }
 }
