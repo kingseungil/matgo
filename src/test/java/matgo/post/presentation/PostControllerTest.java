@@ -1,5 +1,6 @@
 package matgo.post.presentation;
 
+import static matgo.post.presentation.PostDocument.addPostReactionDocument;
 import static matgo.post.presentation.PostDocument.createPostDocument;
 import static matgo.post.presentation.PostDocument.deletePostDocument;
 import static matgo.post.presentation.PostDocument.getPostDetailDocument;
@@ -15,8 +16,10 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import java.util.Optional;
 import matgo.common.BaseControllerTest;
+import matgo.global.type.Reaction;
 import matgo.global.type.S3Directory;
 import matgo.post.domain.entity.Post;
+import matgo.post.dto.response.MyPostSliceResponse;
 import matgo.post.dto.response.PostDetailResponse;
 import matgo.post.dto.response.PostSliceResponse;
 import matgo.restaurant.dto.request.CustomPageRequest;
@@ -132,7 +135,7 @@ class PostControllerTest extends BaseControllerTest {
         assertSoftly(softly -> {
             softly.assertThat(response.statusCode()).isEqualTo(200);
             PostDetailResponse postDetailResponse = response.as(PostDetailResponse.class);
-            softly.assertThat(postDetailResponse.post().postId()).isEqualTo(postId);
+            softly.assertThat(postDetailResponse.post().id()).isEqualTo(postId);
             softly.assertThat(postDetailResponse.post().title()).isEqualTo(post.getTitle());
             softly.assertThat(postDetailResponse.member().id()).isEqualTo(member.getId());
         });
@@ -158,12 +161,53 @@ class PostControllerTest extends BaseControllerTest {
             softly.assertThat(response.statusCode()).isEqualTo(200);
             PostSliceResponse postSliceResponse = response.as(PostSliceResponse.class);
             softly.assertThat(postSliceResponse.posts()).hasSize(1);
-            softly.assertThat(postSliceResponse.posts().get(0).post().postId()).isEqualTo(post.getId());
+            softly.assertThat(postSliceResponse.posts().get(0).post().id()).isEqualTo(post.getId());
             softly.assertThat(postSliceResponse.posts().get(0).post().title()).isEqualTo(post.getTitle());
             softly.assertThat(postSliceResponse.posts().get(0).member().id()).isEqualTo(member.getId());
         });
     }
 
-//    @Test
-//    @DisplayName("[성공]게시글 좋아요/싫어요")
+    @Test
+    @DisplayName("[성공]게시글 좋아요/싫어요")
+    void addPostReaction() {
+        // given
+        Long postId = 1L;
+        Reaction reactionType = Reaction.LIKE;
+
+        // when
+        Response response = customGivenWithDocs(addPostReactionDocument())
+          .contentType(ContentType.JSON)
+          .header("Authorization", "Bearer " + accessToken)
+          .pathParam("postId", postId)
+          .queryParam("reactionType", reactionType)
+          .accept(ContentType.JSON)
+          .post("/api/posts/{postId}/reactions", postId);
+
+        // then
+        assertSoftly(softly -> softly.assertThat(response.statusCode()).isEqualTo(204));
+    }
+
+    @Test
+    @DisplayName("[성공]내가 작성한 게시글 조회")
+    void getMyPosts() {
+        // given
+        // when
+        Response response = customGivenWithDocs(getPostsDocument())
+          .contentType(ContentType.JSON)
+          .header("Authorization", "Bearer " + accessToken)
+          .queryParam("page", customPageRequest.page())
+          .queryParam("size", customPageRequest.size())
+          .queryParam("direction", customPageRequest.direction().get())
+          .queryParam("sortBy", customPageRequest.sortBy().get())
+          .accept(ContentType.JSON)
+          .get("/api/posts/my/writable-posts");
+
+        // then
+        assertSoftly(softly -> {
+            softly.assertThat(response.statusCode()).isEqualTo(200);
+            MyPostSliceResponse myPostSliceResponse = response.as(MyPostSliceResponse.class);
+            softly.assertThat(myPostSliceResponse.posts()).hasSize(1);
+            softly.assertThat(myPostSliceResponse.posts().get(0).id()).isEqualTo(post.getId());
+        });
+    }
 }

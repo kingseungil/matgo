@@ -148,4 +148,9 @@ public class MemberService {
         Member member = getMemberById(memberId);
         return MemberResponse.from(member);
     }
+
+    @Transactional
+    public void deleteMember(Long memberId) {
+        memberRepository.deleteById(memberId);
+    }
 }

@@ -32,6 +32,7 @@ import matgo.review.domain.entity.Review;
 import matgo.review.domain.entity.ReviewReaction;
 import matgo.review.dto.request.ReviewCreateRequest;
 import matgo.review.dto.response.ReviewCreateResponse;
+import matgo.review.dto.response.ReviewDetailResponse;
 import matgo.review.dto.response.ReviewResponse;
 import matgo.review.dto.response.ReviewSliceResponse;
 import matgo.review.exception.ReviewException;
@@ -157,34 +158,28 @@ class ReviewServiceTest extends BaseServiceTest {
         RestaurantResponse restaurantResponse = new RestaurantResponse(1L, "식당", "서울시 강남구 테헤란로 427");
 
         ReviewResponse reviewResponse = new ReviewResponse(1L, "맛있어요", 5, "mocked_url", true, 0, 0,
-          LocalDateTime.now(), memberResponse, restaurantResponse);
+          LocalDateTime.now());
         ReviewResponse reviewResponse2 = new ReviewResponse(2L, "맛있어요", 5, "mocked_url", true, 0, 0,
-          LocalDateTime.now(), memberResponse, restaurantResponse);
+          LocalDateTime.now());
+
+        ReviewDetailResponse reviewDetailResponse = new ReviewDetailResponse(reviewResponse, memberResponse,
+          restaurantResponse);
 
         @Test
-        @DisplayName("리뷰 상세 조회에 성공하면 ReviewResponse를 반환한다.")
+        @DisplayName("리뷰 상세 조회에 성공하면 ReviewDetailResponse를 반환한다.")
         void getReviewDetailSuccess() {
             // given
-            doReturn(Optional.of(reviewResponse)).when(reviewQueryRepository)
-                                                 .findReviewResponseByIdWithMemberAndRestaurant(anyLong());
+            doReturn(Optional.of(reviewDetailResponse)).when(reviewQueryRepository)
+                                                       .findReviewResponseByIdWithMemberAndRestaurant(anyLong());
 
             // when
-            ReviewResponse reviewResponse = reviewService.getReviewDetail(1L);
+            ReviewDetailResponse reviewDetail = reviewService.getReviewDetail(1L);
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(reviewResponse.reviewId()).isEqualTo(1L);
-                softly.assertThat(reviewResponse.content()).isEqualTo("맛있어요");
-                softly.assertThat(reviewResponse.rating()).isEqualTo(5);
-                softly.assertThat(reviewResponse.imageUrl()).isEqualTo("mocked_url");
-                softly.assertThat(reviewResponse.likeCount()).isEqualTo(0);
-                softly.assertThat(reviewResponse.createdAt()).isNotNull();
-                softly.assertThat(reviewResponse.member().id()).isEqualTo(1L);
-                softly.assertThat(reviewResponse.member().profileImage()).isEqualTo("image_url");
-                softly.assertThat(reviewResponse.member().nickname()).isEqualTo("nickname");
-                softly.assertThat(reviewResponse.restaurant().restaurantId()).isEqualTo(1L);
-                softly.assertThat(reviewResponse.restaurant().name()).isEqualTo("식당");
-                softly.assertThat(reviewResponse.restaurant().roadAddress()).isEqualTo("서울시 강남구 테헤란로 427");
+                softly.assertThat(reviewDetail.review()).isEqualTo(reviewResponse);
+                softly.assertThat(reviewDetail.member()).isEqualTo(memberResponse);
+                softly.assertThat(reviewDetail.restaurant()).isEqualTo(restaurantResponse);
             });
 
         }
@@ -207,7 +202,10 @@ class ReviewServiceTest extends BaseServiceTest {
         void getReviewsSuccess() {
             // given
             PageRequest pageRequest = PageRequest.of(0, 2);
-            List<ReviewResponse> reviewResponses = Arrays.asList(reviewResponse, reviewResponse2);
+            List<ReviewDetailResponse> reviewResponses = Arrays.asList(
+              new ReviewDetailResponse(reviewResponse, memberResponse, restaurantResponse),
+              new ReviewDetailResponse(reviewResponse2, memberResponse, restaurantResponse)
+            );
             ReviewSliceResponse reviewSliceResponse = new ReviewSliceResponse(reviewResponses, false);
 
             doReturn(reviewSliceResponse).when(reviewQueryRepository).findAllReviewSliceByRestaurantId(anyLong(),

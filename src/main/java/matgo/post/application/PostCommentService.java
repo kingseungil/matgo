@@ -16,6 +16,7 @@ import matgo.post.domain.repository.PostCommentQueryRepository;
 import matgo.post.domain.repository.PostCommentRepository;
 import matgo.post.domain.repository.PostRepository;
 import matgo.post.dto.request.PostCommentCreateRequest;
+import matgo.post.dto.request.PostCommentUpdateRequest;
 import matgo.post.dto.response.PostCommentSliceResponse;
 import matgo.post.exception.PostException;
 import org.springframework.data.domain.Pageable;
@@ -50,12 +51,12 @@ public class PostCommentService {
 
     @Transactional
     public void updateComment(Long memberId, Long commentId,
-      PostCommentCreateRequest postCommentCreateRequest) {
+      PostCommentUpdateRequest postCommentUpdateRequest) {
         Member member = getMemberById(memberId);
         PostComment postComment = getPostCommentById(commentId);
         checkPostCommentOwner(member, postComment);
 
-        updatePostCommentIfChanged(postComment, postCommentCreateRequest);
+        updatePostCommentIfChanged(postComment, postCommentUpdateRequest);
     }
 
     private void checkPostCommentOwner(Member member, PostComment postComment) {
@@ -64,7 +65,7 @@ public class PostCommentService {
         }
     }
 
-    private void updatePostCommentIfChanged(PostComment postComment, PostCommentCreateRequest request) {
+    private void updatePostCommentIfChanged(PostComment postComment, PostCommentUpdateRequest request) {
         if (request.content() != null && !request.content().isEmpty()) {
             postComment.updateContent(request.content());
         }

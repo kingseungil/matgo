@@ -74,4 +74,16 @@ public class ReviewDocument {
           )
         );
     }
+
+    public static RestDocumentationFilter getMyReviewsDocument() {
+        return document("내가 쓴 리뷰 조회",
+          resourceDetails().tag("Review").description("내가 쓴 리뷰 조회"),
+          queryParameters(
+            parameterWithName("page").description("페이지 번호"),
+            parameterWithName("size").description("페이지 크기"),
+            parameterWithName("direction").description("정렬 방향(DESC,ASC)").optional(),
+            parameterWithName("sortBy").description("정렬 기준(rating,createdAt,likeCount,dislikeCount)").optional()
+          )
+        );
+    }
 }

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -75,5 +76,15 @@ public class MemberController {
     ) {
         MemberResponse memberResponse = memberService.getMember(Long.parseLong(userDetails.getUsername()));
         return ResponseEntity.ok(memberResponse);
+    }
+
+    // 회원 탈퇴
+    @DeleteMapping
+    @OnlyUser
+    public ResponseEntity<Void> deleteMember(
+      @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        memberService.deleteMember(Long.parseLong(userDetails.getUsername()));
+        return ResponseEntity.noContent().build();
     }
 }

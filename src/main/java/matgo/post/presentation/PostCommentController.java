@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import matgo.auth.security.OnlyUser;
 import matgo.post.application.PostCommentService;
 import matgo.post.dto.request.PostCommentCreateRequest;
+import matgo.post.dto.request.PostCommentUpdateRequest;
 import matgo.post.dto.response.PostCommentSliceResponse;
 import matgo.restaurant.dto.request.CustomPageRequest;
 import org.springframework.data.domain.PageRequest;
@@ -46,10 +47,10 @@ public class PostCommentController {
     public ResponseEntity<Void> updateComment(
       @AuthenticationPrincipal UserDetails userDetails,
       @PathVariable Long commentId,
-      @RequestBody @Valid PostCommentCreateRequest postCommentCreateRequest
+      @RequestBody @Valid PostCommentUpdateRequest postCommentUpdateRequest
     ) {
         postCommentService.updateComment(Long.parseLong(userDetails.getUsername()), commentId,
-          postCommentCreateRequest);
+          postCommentUpdateRequest);
         return ResponseEntity.ok().build();
     }
 

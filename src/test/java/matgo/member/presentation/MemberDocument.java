@@ -53,4 +53,16 @@ public class MemberDocument {
           )
         );
     }
+
+    public static RestDocumentationFilter getMemberDetailDocument() {
+        return document("회원 상세 조회",
+          resourceDetails().tag("Member").description("회원 상세 조회")
+        );
+    }
+
+    public static RestDocumentationFilter deleteMemberDocument() {
+        return document("회원 탈퇴",
+          resourceDetails().tag("Member").description("회원 탈퇴")
+        );
+    }
 }
