@@ -15,6 +15,7 @@ services:
       - mysql
       - redis
       - elasticsearch
+    restart: always
     networks:
       - matgo
 
