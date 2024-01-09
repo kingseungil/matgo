@@ -9,7 +9,11 @@ import static matgo.review.presentation.ReviewDocument.getReviewsDocument;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 import io.restassured.builder.MultiPartSpecBuilder;
@@ -62,6 +66,7 @@ class ReviewControllerTest extends BaseControllerTest {
     @DisplayName("[성공]리뷰 작성")
     void createReview_success() {
         // given
+        doNothing().when(restaurantSearchRepositoryImpl).updateRatingAndReviewCount(anyString(), anyDouble(), anyInt());
         Long restaurantId = 1L;
         MultiPartSpecBuilder request = new MultiPartSpecBuilder(reviewCreateRequest);
         request.charset("UTF-8");
@@ -187,6 +192,7 @@ class ReviewControllerTest extends BaseControllerTest {
     @DisplayName("[성공]리뷰 삭제")
     void deleteReview_success() {
         // given
+        doNothing().when(restaurantSearchRepositoryImpl).updateRatingAndReviewCount(anyString(), anyDouble(), anyInt());
         Long restaurantId = 1L;
         Long reviewId = 1L;
         Review review = Review.builder()

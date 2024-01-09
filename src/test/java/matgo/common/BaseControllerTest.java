@@ -95,7 +95,7 @@ public abstract class BaseControllerTest {
     protected RestaurantRepository restaurantRepository;
     @MockBean
     protected RestaurantSearchRepository restaurantSearchRepository;
-    @Autowired
+    @MockBean
     protected RestaurantSearchRepositoryImpl restaurantSearchRepositoryImpl;
     @Autowired
     protected PostRepository postRepository;
