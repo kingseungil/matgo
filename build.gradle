@@ -115,7 +115,7 @@ clean.doLast {
 
 // --------restdocs, swagger 설정 ------------
 openapi3 {
-    setServer("http://localhost:8080")
+    setServer("http://61.97.184.147")
     title = "matgo-API"
     description = "matgo-API입니다"
     version = "1.0.0"
