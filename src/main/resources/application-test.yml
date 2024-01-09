@@ -44,6 +44,10 @@ spring:
             enable: true
     default-encoding: UTF-8
 
+admin:
+  email: ${ADMIN_EMAIL}
+  password: ${ADMIN_PASSWORD}
+
 elasticsearch:
   host: localhost
   port: 9200

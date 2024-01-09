@@ -84,6 +84,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/comments/my/writable-comments").hasRole("USER") // 내가 작성한 댓글 목록 조회
             // 관리자만 허용
             .requestMatchers(HttpMethod.PUT, "/api/restaurants/approve/{restaurantId}").hasRole("ADMIN") // 식당 등록 승인
+            .requestMatchers(HttpMethod.POST, "/api/restaurants/admin/fetch-restaurants").hasRole("ADMIN") // 식당 가져오기
             // 그 외는 인증 필요
             .anyRequest().authenticated())
           // jwt filter 추가

@@ -54,6 +54,10 @@ elasticsearch:
   host: elasticsearch
   port: 9200
 
+admin:
+  email: ${ADMIN_EMAIL}
+  password: ${ADMIN_PASSWORD}
+
 aws:
   access-key: ${AWS_ACCESS_KEY}
   secret-key: ${AWS_SECRET_KEY}
