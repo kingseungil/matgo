@@ -130,6 +130,7 @@ public abstract class BaseControllerTest {
 
         spec = new RequestSpecBuilder().addFilter(documentConfig).build();
 
+        databaseCleaner.execute();
         region = regionRepository.save(new Region("효자동3가"));
         String password = passwordEncoder.encode("1!asdasd");
         member = Member.builder()

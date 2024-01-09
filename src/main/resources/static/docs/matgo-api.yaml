@@ -6,6 +6,1425 @@ info:
 servers:
 - url: http://localhost:8080
 tags: []
-paths: {}
+paths:
+  /api/member:
+    get:
+      tags:
+      - Member
+      summary: 회원 상세 조회
+      description: 회원 상세 조회
+      operationId: 회원 상세 조회
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                회원 상세 조회:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",
+                      "nickname" : "testnick"
+                    }
+      security:
+      - bearerAuthJWT: []
+    put:
+      tags:
+      - Member
+      summary: 회원 정보 수정
+      description: 회원 정보 수정
+      operationId: 회원 정보 수정
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+    delete:
+      tags:
+      - Member
+      summary: 회원 탈퇴
+      description: 회원 탈퇴
+      operationId: 회원 탈퇴
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+  /api/posts:
+    get:
+      tags:
+      - Post
+      summary: 게시글 조회(페이징)
+      description: 게시글 조회(페이징)
+      operationId: 게시글 조회(페이징)
+      parameters:
+      - name: page
+        in: query
+        description: 페이지 번호
+        required: true
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기
+        required: true
+        schema:
+          type: string
+      - name: direction
+        in: query
+        description: "정렬 방향(DESC,ASC)"
+        required: false
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: "정렬 기준(createdAt,likeCount,dislikeCount)"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                게시글 조회(페이징):
+                  value: |-
+                    {
+                      "posts" : [ {
+                        "post" : {
+                          "id" : 1,
+                          "title" : "title",
+                          "content" : "content",
+                          "likeCount" : 0,
+                          "dislikeCount" : 0,
+                          "commentCount" : 0,
+                          "regionName" : "효자동3가",
+                          "createdAt" : "2024-01-09T18:41:35.497901",
+                          "modifiedAt" : "2024-01-09T18:41:35.499441"
+                        },
+                        "member" : {
+                          "id" : 1,
+                          "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",
+                          "nickname" : "testnick"
+                        }
+                      } ],
+                      "hasNext" : false
+                    }
+      security:
+      - bearerAuthJWT: []
+  /api/restaurants:
+    get:
+      tags:
+      - Restaurant
+      summary: 식당 목록 조회
+      description: 식당 목록 조회
+      operationId: 전체 식당 목록 조회
+      parameters:
+      - name: page
+        in: query
+        description: 페이지 번호
+        required: true
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기
+        required: true
+        schema:
+          type: string
+      - name: direction
+        in: query
+        description: "정렬 방향(DESC,ASC)"
+        required: false
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: "정렬 기준(rating,reviewCount)"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                전체 식당 목록 조회:
+                  value: |-
+                    {
+                      "restaurants" : [ {
+                        "id" : "1",
+                        "name" : "a",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 1.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "2",
+                        "name" : "b",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 2.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "3",
+                        "name" : "c",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 3.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "4",
+                        "name" : "d",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 4.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "5",
+                        "name" : "e",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 5.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "6",
+                        "name" : "f",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 4.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "7",
+                        "name" : "g",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 3.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "8",
+                        "name" : "h",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 2.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "9",
+                        "name" : "i",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 1.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "10",
+                        "name" : "j",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 1.0,
+                        "reviewCount" : 0
+                      } ],
+                      "hasNext" : false
+                    }
+  /api/auth/login:
+    post:
+      tags:
+      - Auth
+      summary: 로그인
+      description: 로그인
+      operationId: 로그인
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-auth-login-1354847443'
+            examples:
+              로그인:
+                value: |-
+                  {
+                    "email" : "test@naver.com",
+                    "password" : "1!asdasd",
+                    "role" : "ROLE_USER"
+                  }
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                로그인:
+                  value: |-
+                    {
+                      "accessToken" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTcwNDc5MzI4NCwiaXNzIjoibWF0Z28iLCJleHAiOjE3MDQ3OTMzNDR9.uGEb17rLH-bwSuW-unUPE3AoEfFulpB_tZ79B05b9Vo"
+                    }
+  /api/auth/logout:
+    delete:
+      tags:
+      - Auth
+      summary: 로그아웃
+      description: 로그아웃
+      operationId: 로그아웃
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+  /api/auth/send-temporary-password:
+    post:
+      tags:
+      - Auth
+      summary: 임시 비밀번호 발급
+      description: 임시 비밀번호 발급
+      operationId: 임시 비밀번호 발급
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-auth-send-temporary-password-272417006'
+            examples:
+              임시 비밀번호 발급:
+                value: |-
+                  {
+                    "email" : "test@naver.com"
+                  }
+      responses:
+        "204":
+          description: "204"
+  /api/auth/verify-emailcode:
+    post:
+      tags:
+      - Auth
+      summary: 이메일 인증
+      description: 이메일 인증
+      operationId: 이메일 인증
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-auth-verify-emailcode358504075'
+            examples:
+              이메일 인증:
+                value: |-
+                  {
+                    "email" : "test@naver.com",
+                    "code" : "123456"
+                  }
+      responses:
+        "204":
+          description: "204"
+  /api/comments/{commentId}:
+    put:
+      tags:
+      - PostComment
+      summary: 댓글 수정
+      description: 댓글 수정
+      operationId: 댓글 수정
+      parameters:
+      - name: commentId
+        in: path
+        description: 댓글 아이디
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-comments-commentId739802942'
+            examples:
+              댓글 수정:
+                value: |-
+                  {
+                    "content" : "updated content"
+                  }
+      responses:
+        "200":
+          description: "200"
+      security:
+      - bearerAuthJWT: []
+    delete:
+      tags:
+      - PostComment
+      summary: 댓글 삭제
+      description: 댓글 삭제
+      operationId: 댓글 삭제
+      parameters:
+      - name: commentId
+        in: path
+        description: 댓글 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+      security:
+      - bearerAuthJWT: []
+  /api/comments/{postId}:
+    post:
+      tags:
+      - PostComment
+      summary: 댓글 작성
+      description: 댓글 작성
+      operationId: 댓글 작성
+      parameters:
+      - name: postId
+        in: path
+        description: 게시글 아이디
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-comments-commentId739802942'
+            examples:
+              댓글 작성:
+                value: |-
+                  {
+                    "content" : "content"
+                  }
+      responses:
+        "200":
+          description: "200"
+      security:
+      - bearerAuthJWT: []
+  /api/member/reset-password:
+    put:
+      tags:
+      - Member
+      summary: 비밀번호 초기화
+      description: 비밀번호 초기화
+      operationId: 비밀번호 초기화
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-member-reset-password-244801712'
+            examples:
+              비밀번호 초기화:
+                value: |-
+                  {
+                    "currentPassword" : "1!asdasd",
+                    "newPassword" : "1!qweqwe"
+                  }
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+  /api/member/signup:
+    post:
+      tags:
+      - Member
+      summary: 회원가입
+      description: 회원가입
+      operationId: 회원가입
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                회원가입:
+                  value: signup@naver.com
+  /api/posts/new:
+    post:
+      tags:
+      - Post
+      summary: 게시글 작성
+      description: 게시글 작성
+      operationId: 게시글 작성
+      responses:
+        "201":
+          description: "201"
+      security:
+      - bearerAuthJWT: []
+  /api/posts/{postId}:
+    put:
+      tags:
+      - Post
+      summary: 게시글 수정
+      description: 게시글 수정
+      operationId: 게시글 수정
+      parameters:
+      - name: postId
+        in: path
+        description: 게시글 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+    delete:
+      tags:
+      - Post
+      summary: 게시글 삭제
+      description: 게시글 삭제
+      operationId: 게시글 삭제
+      parameters:
+      - name: postId
+        in: path
+        description: 게시글 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+  /api/restaurants/address:
+    get:
+      tags:
+      - Restaurant
+      summary: 주소로 식당 목록 조회
+      description: 주소로 식당 목록 조회
+      operationId: 주소로 식당 목록 조회
+      parameters:
+      - name: keyword
+        in: query
+        description: 주소 키워드
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: 페이지 번호
+        required: true
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기
+        required: true
+        schema:
+          type: string
+      - name: direction
+        in: query
+        description: "정렬 방향(DESC,ASC)"
+        required: false
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: "정렬 기준(rating,reviewCount)"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                주소로 식당 목록 조회:
+                  value: |-
+                    {
+                      "restaurants" : [ {
+                        "id" : "1",
+                        "name" : "a",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 1.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "2",
+                        "name" : "b",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 2.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "3",
+                        "name" : "c",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 3.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "4",
+                        "name" : "d",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 4.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "5",
+                        "name" : "e",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 5.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "6",
+                        "name" : "f",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 4.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "7",
+                        "name" : "g",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 3.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "8",
+                        "name" : "h",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 2.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "9",
+                        "name" : "i",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 1.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "10",
+                        "name" : "j",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 1.0,
+                        "reviewCount" : 0
+                      } ],
+                      "hasNext" : false
+                    }
+  /api/restaurants/nearby:
+    get:
+      tags:
+      - Restaurant
+      summary: 주변 식당 목록 조회
+      description: 주변 식당 목록 조회
+      operationId: 주변 식당 목록 조회
+      parameters:
+      - name: page
+        in: query
+        description: 페이지 번호
+        required: true
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기
+        required: true
+        schema:
+          type: string
+      - name: direction
+        in: query
+        description: "정렬 방향(DESC,ASC)"
+        required: false
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: "정렬 기준(rating,reviewCount)"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                주변 식당 목록 조회:
+                  value: |-
+                    {
+                      "restaurants" : [ {
+                        "id" : "1",
+                        "name" : "a",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 1.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "2",
+                        "name" : "b",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 2.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "3",
+                        "name" : "c",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 3.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "4",
+                        "name" : "d",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 4.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "5",
+                        "name" : "e",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 5.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "6",
+                        "name" : "f",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 4.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "7",
+                        "name" : "g",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 3.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "8",
+                        "name" : "h",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 2.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "9",
+                        "name" : "i",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 1.0,
+                        "reviewCount" : 0
+                      }, {
+                        "id" : "10",
+                        "name" : "j",
+                        "roadAddress" : "address",
+                        "address" : "효자동3가",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 1.0,
+                        "reviewCount" : 0
+                      } ],
+                      "hasNext" : false
+                    }
+      security:
+      - bearerAuthJWT: []
+  /api/restaurants/new:
+    post:
+      tags:
+      - Restaurant
+      summary: 식당 등록 요청
+      description: 식당 등록 요청
+      operationId: 식당 등록 요청
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-restaurants-new-818907071'
+            examples:
+              식당 등록 요청:
+                value: |-
+                  {
+                    "name" : "test1",
+                    "roadAddress" : "test1",
+                    "address" : "test1",
+                    "phoneNumber" : "test1",
+                    "lat" : 1.0,
+                    "lon" : 1.0,
+                    "description" : "test1"
+                  }
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+  /api/restaurants/search:
+    get:
+      tags:
+      - Restaurant
+      summary: 이름으로 식당 검색
+      description: 이름으로 식당 검색
+      operationId: 식당 검색
+      parameters:
+      - name: name
+        in: query
+        description: 식당 이름
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                식당 검색:
+                  value: |-
+                    {
+                      "restaurants" : [ {
+                        "id" : 1,
+                        "name" : "name",
+                        "roadAddress" : "address",
+                        "address" : "roadAddress",
+                        "phoneNumber" : "phoneNumber",
+                        "lat" : 1.0,
+                        "lon" : 1.0,
+                        "description" : "description",
+                        "rating" : 0.0,
+                        "reviewCount" : 0
+                      } ]
+                    }
+  /api/reviews/{restaurantId}:
+    get:
+      tags:
+      - Review
+      summary: 리뷰 조회(페이징)
+      description: 리뷰 조회(페이징)
+      operationId: 리뷰 조회(페이징)
+      parameters:
+      - name: restaurantId
+        in: path
+        description: ""
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: 페이지 번호
+        required: true
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기
+        required: true
+        schema:
+          type: string
+      - name: direction
+        in: query
+        description: "정렬 방향(DESC,ASC)"
+        required: false
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: "정렬 기준(rating,createdAt,likeCount,dislikeCount)"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                리뷰 조회(페이징):
+                  value: |-
+                    {
+                      "reviews" : [ {
+                        "review" : {
+                          "id" : 1,
+                          "content" : "리뷰",
+                          "rating" : 5,
+                          "imageUrl" : "mocked_url",
+                          "revisit" : true,
+                          "likeCount" : 0,
+                          "dislikeCount" : 0,
+                          "createdAt" : "2024-01-09T18:41:41.860463"
+                        },
+                        "member" : {
+                          "id" : 1,
+                          "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",
+                          "nickname" : "testnick"
+                        },
+                        "restaurant" : {
+                          "id" : 1,
+                          "name" : "식당",
+                          "roadAddress" : "서울시 강남구 테헤란로 427"
+                        }
+                      } ],
+                      "hasNext" : false
+                    }
+  /api/comments/my/writable-comments:
+    get:
+      tags:
+      - PostComment
+      summary: 내가 작성한 댓글 조회
+      description: 내가 작성한 댓글 조회
+      operationId: 댓글 조회(페이징)
+      parameters:
+      - name: page
+        in: query
+        description: 페이지 번호
+        required: true
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기
+        required: true
+        schema:
+          type: string
+      - name: direction
+        in: query
+        description: "정렬 방향(DESC,ASC)"
+        required: false
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: 정렬 기준(createdAt)
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                댓글 조회(페이징):
+                  value: |-
+                    {
+                      "comments" : [ {
+                        "id" : 1,
+                        "content" : "content",
+                        "createdAt" : "2024-01-09T18:41:31.256183",
+                        "modifiedAt" : "2024-01-09T18:41:31.256183"
+                      } ],
+                      "hasNext" : false
+                    }
+      security:
+      - bearerAuthJWT: []
+  /api/posts/detail/{postId}:
+    get:
+      tags:
+      - Post
+      summary: 게시글 상세 조회
+      description: 게시글 상세 조회
+      operationId: 게시글 상세 조회
+      parameters:
+      - name: postId
+        in: path
+        description: 게시글 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                게시글 상세 조회:
+                  value: |-
+                    {
+                      "post" : {
+                        "id" : 1,
+                        "title" : "title",
+                        "content" : "content",
+                        "likeCount" : 0,
+                        "dislikeCount" : 0,
+                        "commentCount" : 0,
+                        "regionName" : "효자동3가",
+                        "createdAt" : "2024-01-09T18:41:33.993066",
+                        "modifiedAt" : "2024-01-09T18:41:33.994351"
+                      },
+                      "postImages" : [ null ],
+                      "member" : {
+                        "id" : 1,
+                        "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",
+                        "nickname" : "testnick"
+                      },
+                      "postComments" : [ {
+                        "id" : null,
+                        "content" : null,
+                        "createdAt" : null,
+                        "modifiedAt" : null
+                      } ]
+                    }
+      security:
+      - bearerAuthJWT: []
+  /api/posts/{postId}/reactions:
+    post:
+      tags:
+      - Post
+      summary: 게시글 좋아요/싫어요
+      description: 게시글 좋아요/싫어요
+      operationId: 게시글 좋아요/싫어요
+      parameters:
+      - name: postId
+        in: path
+        description: 게시글 아이디
+        required: true
+        schema:
+          type: string
+      - name: reactionType
+        in: query
+        description: LIKE/DISLIKE
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+  /api/restaurants/approve/{restaurantId}:
+    put:
+      tags:
+      - Restaurant
+      summary: "[관리자]식당 등록 승인"
+      description: "[관리자]식당 등록 승인"
+      operationId: "[관리자]식당 등록 승인"
+      parameters:
+      - name: restaurantId
+        in: path
+        description: 식당 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+  /api/restaurants/detail/{restaurantId}:
+    get:
+      tags:
+      - Restaurant
+      summary: 식당 상세 조회
+      description: 식당 상세 조회
+      operationId: 식당 상세 조회
+      parameters:
+      - name: restaurantId
+        in: path
+        description: 식당 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                식당 상세 조회:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "name" : "test1",
+                      "roadAddress" : "test1",
+                      "address" : "test1",
+                      "phoneNumber" : "test1",
+                      "lat" : 1.0,
+                      "lon" : 1.0,
+                      "description" : "test1",
+                      "rating" : 0.0,
+                      "reviewCount" : 0
+                    }
+  /api/reviews/detail/{reviewId}:
+    get:
+      tags:
+      - Review
+      summary: 리뷰 상세 조회
+      description: 리뷰 상세 조회
+      operationId: 리뷰 상세 조회
+      parameters:
+      - name: reviewId
+        in: path
+        description: 리뷰 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                리뷰 상세 조회:
+                  value: |-
+                    {
+                      "review" : {
+                        "id" : 1,
+                        "content" : "리뷰",
+                        "rating" : 5,
+                        "imageUrl" : "mocked_url",
+                        "revisit" : true,
+                        "likeCount" : 0,
+                        "dislikeCount" : 0,
+                        "createdAt" : "2024-01-09T18:41:41.399363"
+                      },
+                      "member" : {
+                        "id" : 1,
+                        "profileImage" : "https://matgo-bucket.s3.ap-northeast-2.amazonaws.com/matgo/member/default_image",
+                        "nickname" : "testnick"
+                      },
+                      "restaurant" : {
+                        "id" : 1,
+                        "name" : "식당",
+                        "roadAddress" : "서울시 강남구 테헤란로 427"
+                      }
+                    }
+  /api/reviews/my/writable-reviews:
+    get:
+      tags:
+      - Review
+      summary: 내가 쓴 리뷰 조회
+      description: 내가 쓴 리뷰 조회
+      operationId: 내가 쓴 리뷰 조회
+      parameters:
+      - name: page
+        in: query
+        description: 페이지 번호
+        required: true
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기
+        required: true
+        schema:
+          type: string
+      - name: direction
+        in: query
+        description: "정렬 방향(DESC,ASC)"
+        required: false
+        schema:
+          type: string
+      - name: sortBy
+        in: query
+        description: "정렬 기준(rating,createdAt,likeCount,dislikeCount)"
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/api-member-signup486549215'
+              examples:
+                내가 쓴 리뷰 조회:
+                  value: |-
+                    {
+                      "reviews" : [ {
+                        "review" : {
+                          "id" : 1,
+                          "content" : "리뷰",
+                          "rating" : 5,
+                          "imageUrl" : "mocked_url",
+                          "revisit" : true,
+                          "likeCount" : 0,
+                          "dislikeCount" : 0,
+                          "createdAt" : "2024-01-09T18:41:42.316528"
+                        },
+                        "restaurant" : {
+                          "id" : 1,
+                          "name" : "식당",
+                          "roadAddress" : "서울시 강남구 테헤란로 427"
+                        }
+                      } ],
+                      "hasNext" : false
+                    }
+      security:
+      - bearerAuthJWT: []
+  /api/reviews/new/{restaurantId}:
+    post:
+      tags:
+      - Review
+      summary: 리뷰 작성
+      description: 리뷰 작성
+      operationId: 리뷰 작성
+      parameters:
+      - name: restaurantId
+        in: path
+        description: 식당 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: "201"
+      security:
+      - bearerAuthJWT: []
+  /api/reviews/{restaurantId}/{reviewId}:
+    delete:
+      tags:
+      - Review
+      summary: 리뷰 삭제
+      description: 리뷰 삭제
+      operationId: 리뷰 삭제
+      parameters:
+      - name: restaurantId
+        in: path
+        description: 식당 아이디
+        required: true
+        schema:
+          type: string
+      - name: reviewId
+        in: path
+        description: 리뷰 아이디
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
+  /api/reviews/{reviewId}/reactions:
+    post:
+      tags:
+      - Review
+      summary: 리뷰 좋아요/싫어요
+      description: 리뷰 좋아요/싫어요
+      operationId: 리뷰 좋아요/싫어요
+      parameters:
+      - name: reviewId
+        in: path
+        description: 리뷰 아이디
+        required: true
+        schema:
+          type: string
+      - name: reactionType
+        in: query
+        description: LIKE/DISLIKE
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+      security:
+      - bearerAuthJWT: []
 components:
-  schemas: {}
+  schemas:
+    api-restaurants-new-818907071:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          description: 전화번호
+        address:
+          type: string
+          description: 지번 주소
+        roadAddress:
+          type: string
+          description: 도로명 주소
+        name:
+          type: string
+          description: 식당 이름
+        description:
+          type: string
+          description: 식당 설명
+        lon:
+          type: number
+          description: 경도
+        lat:
+          type: number
+          description: 위도
+    api-auth-send-temporary-password-272417006:
+      type: object
+      properties:
+        email:
+          type: string
+          description: 이메일
+    api-auth-login-1354847443:
+      type: object
+      properties:
+        password:
+          type: string
+          description: 비밀번호
+        role:
+          type: string
+          description: 유저 권한
+        email:
+          type: string
+          description: 이메일
+    api-auth-verify-emailcode358504075:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 인증 코드
+        email:
+          type: string
+          description: 이메일
+    api-comments-commentId739802942:
+      type: object
+      properties:
+        content:
+          type: string
+          description: 내용
+    api-member-reset-password-244801712:
+      type: object
+      properties:
+        newPassword:
+          type: string
+          description: 새 비밀번호
+        currentPassword:
+          type: string
+          description: 현재 비밀번호
+    api-member-signup486549215:
+      type: object
+  securitySchemes:
+    bearerAuthJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
