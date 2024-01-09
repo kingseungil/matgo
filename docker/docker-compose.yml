@@ -3,7 +3,7 @@ name: matgo
 
 services:
   matgo-server:
-    image: ${MY_HUB_ID}/matgo-api:1.0.0
+    image: ${NCP_CONTAINER_REGISTRY}/matgo:latest
     container_name: matgo-server
     environment:
       - SPRING_PROFILES_ACTIVE=prod
