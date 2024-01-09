@@ -19,8 +19,18 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
+      - name: Set environment values
+        run: |
+          cd ./src/main/resources
+          mkdir properties
+          cd properties
+          touch ./env.properties
+          echo "${{ secrets.ENV }}" > ./env.properties
+
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+        with:
+          arguments: build -x test
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -54,10 +64,10 @@ jobs:
       - name: connect ssh
         uses: appleboy/ssh-action@master
         with:
-          host: 49.236.134.215
-          username: root
-          password: F2=Ty$E8rr
-          port: 1028
+          host: ${{ secrets.NCP_SERVER_IP }}
+          username: ${{ secrets.NCP_SERVER_USERNAME }}
+          password: ${{ secrets.NCP_SERVER_PASSWORD }}
+          port: ${{ secrets.NCP_SERVER_PORT }}
           script: |
             echo "${{ secrets.NCP_SECRET_KEY }}" | docker login ${{ secrets.NCP_CONTAINER_REGISTRY }} --username ${{ secrets.NCP_ACCESS_KEY }} --password-stdin
             docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/matgo:latest
