@@ -38,7 +38,9 @@ jobs:
           context: .
           file: ./docker/api/Dockerfile
           push: true
-          tags: ${{ secrets.NCP_CONTAINER_REGISTRY }}/matgo:${{ github.run_number }}
+          tags: |
+            ${{ secrets.NCP_CONTAINER_REGISTRY }}/matgo:${{ github.sha }}
+            ${{ secrets.NCP_CONTAINER_REGISTRY }}/matgo:latest
           cache-from: type=registry,ref=${{ secrets.NCP_CONTAINER_REGISTRY }}/matgo:latest
           cache-to: type=inline
           secrets: |
