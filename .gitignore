@@ -38,6 +38,7 @@ out/
 
 ### env.properties ###
 **/env.properties
+**/.env**
 
 ### querydsl ###
 /src/main/generated/
