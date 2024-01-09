@@ -102,4 +102,10 @@ public class RestaurantController {
         restaurantService.approveRestaurant(restaurantId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/admin/fetch-restaurants")
+    @OnlyAdmin
+    public void fetchRestaurants() {
+        restaurantService.fetchRestaurants();
+    }
 }
