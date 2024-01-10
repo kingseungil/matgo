@@ -17,6 +17,10 @@
 
 </div>
 
+## 서비스 아키텍처
+
+![](images/architecture.png)
+
 ## 프로젝트 기능 및 설계
 
 - [회원 기능]
@@ -96,12 +100,8 @@
 
 ### Back-end
 
-![img.png](images/backend-techstack.png)
+![](images/backend-teckstack.png.png)
 
 ### Infra
 
-> \[!NOTE]
->
-> 아직 배포를 어떻게 할지 정하지 않았습니다.
->
-> 추후에 정해지면 업데이트하겠습니다.
+![](images/infra-teckstack.png)
