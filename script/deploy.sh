@@ -17,7 +17,7 @@ if [ $(docker ps | grep -c "matgo-db") -eq 0 ]; then
 else
   echo "### Database already running ###"
 fi
-
+echo "pwd: $(pwd)"
 # redis container가 없으면 실행
 if [ $(docker ps | grep -c "matgo-redis") -eq 0 ]; then
   echo "### Starting redis ###"
@@ -45,11 +45,11 @@ if [ "$IS_BLUE" -eq 1 ]; then
   docker-compose up -d matgo-server-green
 
   echo "Waiting for the green application to fully start..."
-  sleep 60
+  sleep 45
 
   echo "2. reload nginx"
-  cd nginx
-  sed -i '' "s/server matgo-server-blue:8080/server matgo-server-green:8080/" nginx.conf
+  cd /root/matgo/docker/nginx || exit
+  sed -i "s/server matgo-server-blue:8080/server matgo-server-green:8080/" nginx.conf
   docker-compose exec matgo-proxy nginx -s reload
 
   MAX_ATTEMPTS=10
@@ -84,11 +84,11 @@ else
   docker-compose up -d matgo-server-blue
 
   echo "Waiting for the blue application to fully start..."
-  sleep 60
+  sleep 45
 
   echo "2. reload nginx"
-  cd nginx
-  sed -i '' "s/server matgo-server-green:8080/server matgo-server-blue:8080/" nginx.conf
+  cd /root/matgo/docker/nginx || exit
+  sed -i "s/server matgo-server-green:8080/server matgo-server-blue:8080/" nginx.conf
   docker-compose exec matgo-proxy nginx -s reload
 
   MAX_ATTEMPTS=10
@@ -108,7 +108,7 @@ else
 
     if [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; then
       echo "Blue health check failed after $MAX_ATTEMPTS attempts. Reverting Nginx configuration."
-      sed -i '' "s/server matgo-server-blue:8080/server matgo-server-green:8080/" nginx.conf
+      sed -i "s/server matgo-server-blue:8080/server matgo-server-green:8080/" nginx.conf
       docker-compose exec matgo-proxy nginx -s reload
       exit 1
     fi
