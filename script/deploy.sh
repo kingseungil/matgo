@@ -17,7 +17,6 @@ if [ $(docker ps | grep -c "matgo-db") -eq 0 ]; then
 else
   echo "### Database already running ###"
 fi
-echo "pwd: $(pwd)"
 # redis container가 없으면 실행
 if [ $(docker ps | grep -c "matgo-redis") -eq 0 ]; then
   echo "### Starting redis ###"
@@ -48,9 +47,9 @@ if [ "$IS_BLUE" -eq 1 ]; then
   sleep 45
 
   echo "2. reload nginx"
-  cd /root/matgo/docker/nginx || exit
-  sed -i "s/server matgo-server-blue:8080/server matgo-server-green:8080/" nginx.conf
-  docker-compose exec matgo-proxy nginx -s reload
+#  cd /root/matgo/docker/nginx || exit
+  cd nginx || exit
+  docker-compose exec matgo-proxy /bin/bash -c "cp /etc/nginx/nginx.green.conf /etc/nginx/nginx.conf && nginx -s reload"
 
   MAX_ATTEMPTS=10
   ATTEMPTS=0
@@ -59,7 +58,8 @@ if [ "$IS_BLUE" -eq 1 ]; then
     echo "3. green container health check"
     sleep 3
 
-    REQUEST=$(curl http://115.85.180.17/)
+#    REQUEST=$(curl http://115.85.180.17/)
+    REQUEST=$(curl http://127.0.0.1/)
     if [ -n "$REQUEST" ]; then
       echo "4. green container health check success"
       break
@@ -69,8 +69,7 @@ if [ "$IS_BLUE" -eq 1 ]; then
 
     if [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; then
       echo "Green health check failed after $MAX_ATTEMPTS attempts. Reverting Nginx configuration."
-      sed -i '' "s/server matgo-server-green:8080/server matgo-server-blue:8080/" nginx.conf
-      docker-compose exec matgo-proxy nginx -s reload
+      docker-compose exec matgo-proxy /bin/bash -c "cp /etc/nginx/nginx.blue.conf /etc/nginx/nginx.conf && nginx -s reload"
       exit 1
     fi
   done
@@ -87,9 +86,10 @@ else
   sleep 45
 
   echo "2. reload nginx"
-  cd /root/matgo/docker/nginx || exit
-  sed -i "s/server matgo-server-green:8080/server matgo-server-blue:8080/" nginx.conf
-  docker-compose exec matgo-proxy nginx -s reload
+#  cd /root/matgo/docker/nginx || exit
+  cd nginx || exit
+  docker-compose exec matgo-proxy /bin/bash -c "cp /etc/nginx/nginx.blue.conf /etc/nginx/nginx.conf && nginx -s reload"
+
 
   MAX_ATTEMPTS=10
   ATTEMPTS=0
@@ -98,7 +98,8 @@ else
     echo "3. blue container health check"
     sleep 3
 
-    REQUEST=$(curl http://115.85.180.17/)
+#    REQUEST=$(curl http://115.85.180.17/)
+    REQUEST=$(curl http://127.0.0.1/)
     if [ -n "$REQUEST" ]; then
       echo "4. blue container health check success"
       break
@@ -108,8 +109,7 @@ else
 
     if [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; then
       echo "Blue health check failed after $MAX_ATTEMPTS attempts. Reverting Nginx configuration."
-      sed -i "s/server matgo-server-blue:8080/server matgo-server-green:8080/" nginx.conf
-      docker-compose exec matgo-proxy nginx -s reload
+      docker-compose exec matgo-proxy /bin/bash -c "cp /etc/nginx/nginx.green.conf /etc/nginx/nginx.conf && nginx -s reload"
       exit 1
     fi
   done
