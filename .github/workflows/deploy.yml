@@ -81,10 +81,11 @@ jobs:
           script: |
             echo "${{ secrets.NCP_SECRET_KEY }}" | docker login ${{ secrets.NCP_CONTAINER_REGISTRY }} --username ${{ secrets.NCP_ACCESS_KEY }} --password-stdin
             docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/matgo:latest
-            cd matgo/docker
-            docker-compose down
+            cd matgo/script
+            chmod +x deploy.sh
+            ./deploy.sh
             docker image prune -f --filter "until=24h"
-            docker-compose up -d
+
       - name: Notify to slack
         uses: 8398a7/action-slack@v3
         with:

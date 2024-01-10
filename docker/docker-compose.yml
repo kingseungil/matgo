@@ -2,22 +2,29 @@ version: '3.7'
 name: matgo
 
 services:
-  matgo-server:
+  matgo-server-blue:
     image: ${NCP_CONTAINER_REGISTRY}/matgo:latest
-    container_name: matgo-server
+    container_name: matgo-server-blue
     env_file:
       - .env
     expose:
       - "8080"
-    depends_on:
-      - mysql
-      - redis
-      - elasticsearch
     restart: always
     networks:
       - matgo
 
-  mysql:
+  matgo-server-green:
+    image: ${NCP_CONTAINER_REGISTRY}/matgo:latest
+    container_name: matgo-server-green
+    env_file:
+      - .env
+    expose:
+      - "8080"
+    restart: always
+    networks:
+      - matgo
+
+  matgo-db:
     image: mysql:latest
     container_name: mysql
     env_file:
@@ -33,7 +40,7 @@ services:
     networks:
       - matgo
 
-  nginx:
+  matgo-proxy:
     image: nginx:latest
     container_name: nginx-docker
     restart: always
@@ -44,7 +51,7 @@ services:
     networks:
       - matgo
 
-  redis:
+  matgo-redis:
     image: redis:alpine
     container_name: redis
     environment:
@@ -60,7 +67,7 @@ services:
       - matgo
     restart: always
 
-  elasticsearch:
+  matgo-es:
     build:
       context: ./elastic
       dockerfile: Dockerfile
