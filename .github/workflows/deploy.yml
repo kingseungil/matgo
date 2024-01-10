@@ -85,3 +85,12 @@ jobs:
             docker-compose down
             docker image prune -f --filter "until=24h"
             docker-compose up -d
+      - name: Notify to slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: Matgo
+          fields: repo,message,commit,action,eventName,ref,workflow,job,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
