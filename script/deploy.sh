@@ -47,8 +47,8 @@ if [ "$IS_BLUE" -eq 1 ]; then
   sleep 45
 
   echo "2. reload nginx"
-#  cd /root/matgo/docker/nginx || exit
-  cd nginx || exit
+  cd /root/matgo/docker/nginx || exit
+#  cd nginx || exit
   docker-compose exec matgo-proxy /bin/bash -c "cp /etc/nginx/nginx.green.conf /etc/nginx/nginx.conf && nginx -s reload"
 
   MAX_ATTEMPTS=10
@@ -58,8 +58,8 @@ if [ "$IS_BLUE" -eq 1 ]; then
     echo "3. green container health check"
     sleep 3
 
-#    REQUEST=$(curl http://115.85.180.17/)
-    REQUEST=$(curl http://127.0.0.1/)
+    REQUEST=$(curl http://115.85.180.17/)
+#    REQUEST=$(curl http://127.0.0.1/)
     if [ -n "$REQUEST" ]; then
       echo "4. green container health check success"
       break
@@ -86,8 +86,8 @@ else
   sleep 45
 
   echo "2. reload nginx"
-#  cd /root/matgo/docker/nginx || exit
-  cd nginx || exit
+  cd /root/matgo/docker/nginx || exit
+#  cd nginx || exit
   docker-compose exec matgo-proxy /bin/bash -c "cp /etc/nginx/nginx.blue.conf /etc/nginx/nginx.conf && nginx -s reload"
 
 
@@ -98,8 +98,8 @@ else
     echo "3. blue container health check"
     sleep 3
 
-#    REQUEST=$(curl http://115.85.180.17/)
-    REQUEST=$(curl http://127.0.0.1/)
+    REQUEST=$(curl http://115.85.180.17/)
+#    REQUEST=$(curl http://127.0.0.1/)
     if [ -n "$REQUEST" ]; then
       echo "4. blue container health check success"
       break
