@@ -79,10 +79,11 @@ jobs:
           password: ${{ secrets.NCP_SERVER_PASSWORD }}
           port: ${{ secrets.NCP_SERVER_PORT }}
           script: |
+            cd matgo
             git pull
             echo "${{ secrets.NCP_SECRET_KEY }}" | docker login ${{ secrets.NCP_CONTAINER_REGISTRY }} --username ${{ secrets.NCP_ACCESS_KEY }} --password-stdin
             docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/matgo:latest
-            cd matgo/script
+            cd script
             chmod +x deploy.sh
             ./deploy.sh
             docker image prune -f --filter "until=24h"
