@@ -117,7 +117,7 @@ clean.doLast {
 openapi3 {
     setServer("http://115.85.180.17")
     title = "matgo-API"
-    description = "matgo-API입니다"
+    description = "matgo-API입니다. 현재 form-data타입이 문서화되지 않습니다..https://documenter.getpostman.com/view/24155473/2s9YsMBBm9 이 링크를 참고해주세요."
     version = "1.0.0"
     format = "yaml"
     outputFileNamePrefix = "matgo-api"

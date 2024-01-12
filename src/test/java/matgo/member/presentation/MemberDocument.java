@@ -15,7 +15,8 @@ public class MemberDocument {
 
 
     public static RestDocumentationFilter registerMemberDocument() {
-        return document("회원가입",
+        return document(
+          "회원가입",
           resourceDetails().tag("Member").description(
             "회원가입/form-data타입이 문서화되지 않습니다..https://documenter.getpostman.com/view/24155473/2s9YsMBBm9 이 링크를 참고해주세요."),
           requestParts(
@@ -34,7 +35,7 @@ public class MemberDocument {
     public static RestDocumentationFilter updateMemberDocument() {
         return document("회원 정보 수정",
           resourceDetails().tag("Member").description(
-            "회원 정보 수정//form-data타입이 문서화되지 않습니다..https://documenter.getpostman.com/view/24155473/2s9YsMBBm9 이 링크를 참고해주세요.\"),"),
+            "회원 정보 수정/form-data타입이 문서화되지 않습니다..https://documenter.getpostman.com/view/24155473/2s9YsMBBm9 이 링크를 참고해주세요."),
           requestParts(
             partWithName("memberUpdateRequest").description("회원 정보 수정 정보"),
             partWithName("profileImage").description("프로필 이미지").optional()
