@@ -16,7 +16,8 @@ public class PostDocument {
 
     public static RestDocumentationFilter createPostDocument() {
         return document("게시글 작성",
-          resourceDetails().tag("Post").description("게시글 작성"),
+          resourceDetails().tag("Post").description(
+            "게시글 작성//form-data타입이 문서화되지 않습니다..https://documenter.getpostman.com/view/24155473/2s9YsMBBm9 이 링크를 참고해주세요.\"),"),
           requestParts(
             partWithName("postCreateRequest").description("게시글 등록 정보"),
             partWithName("postImages").description("게시글 이미지(최대3장)").optional()
@@ -30,7 +31,8 @@ public class PostDocument {
 
     public static RestDocumentationFilter updatePostDocument() {
         return document("게시글 수정",
-          resourceDetails().tag("Post").description("게시글 수정"),
+          resourceDetails().tag("Post").description(
+            "게시글 수정//form-data타입이 문서화되지 않습니다..https://documenter.getpostman.com/view/24155473/2s9YsMBBm9 이 링크를 참고해주세요.\"),"),
           pathParameters(
             parameterWithName("postId").description("게시글 아이디")
           ),

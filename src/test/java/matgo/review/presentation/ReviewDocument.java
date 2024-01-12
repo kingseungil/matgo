@@ -16,7 +16,8 @@ public class ReviewDocument {
 
     public static RestDocumentationFilter createReviewDocument() {
         return document("리뷰 작성",
-          resourceDetails().tag("Review").description("리뷰 작성"),
+          resourceDetails().tag("Review").description(
+            "리뷰 작성//form-data타입이 문서화되지 않습니다..https://documenter.getpostman.com/view/24155473/2s9YsMBBm9 이 링크를 참고해주세요.\"),"),
           pathParameters(
             parameterWithName("restaurantId").description("식당 아이디")
           ),
